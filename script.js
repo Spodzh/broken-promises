@@ -1,7 +1,10 @@
 let storyData = null;
 let currentSceneId = 'start';
 let visitedScenes = new Set();
-const LANG = 'ru';
+let isTyping = false;
+let typeTimer = null;
+let fullText = '';
+let LANG = 'ru';
 
 async function loadStory() {
     try {
@@ -32,23 +35,39 @@ function renderScene(sceneId) {
     visitedScenes.add(sceneId);
     localStorage.setItem('saveProgress', JSON.stringify({ scene: sceneId, visited: Array.from(visitedScenes) }));
 
+    // Фон
     if (scene.background) {
         document.getElementById('background').style.backgroundImage = `url('${scene.background}')`;
     }
 
+    // Изображение
     const img = document.getElementById('scene-img');
     if (scene.image) {
         img.src = scene.image;
         img.style.display = 'block';
+        img.style.opacity = '0';
+        setTimeout(() => { img.style.opacity = '1'; }, 50);
     } else {
         img.style.display = 'none';
     }
 
+    // Имя говорящего
+    const speakerEl = document.getElementById('speaker-name');
+    if (scene.speaker) {
+        speakerEl.textContent = scene.speaker;
+        speakerEl.className = 'visible';
+    } else {
+        speakerEl.className = '';
+    }
+
+    // Текст
     const textEl = document.getElementById('scene-text');
     textEl.innerHTML = '';
-    const text = scene.text_ru || scene.text || '';
-    typeText(textEl, text, 0, 25);
+    fullText = scene.text_ru || scene.text || '';
+    isTyping = true;
+    typeText(textEl, fullText, 0, 20);
 
+    // Кнопки выбора
     const choicesEl = document.getElementById('choices');
     choicesEl.innerHTML = '';
     if (scene.choices && scene.choices.length > 0) {
@@ -66,13 +85,32 @@ function renderScene(sceneId) {
             choicesEl.appendChild(btn);
         });
     } else {
-        // Концовка — показываем кнопку рестарта
+        // Концовка
         showEnding();
     }
 
+    // Обновление прогресса
     const total = storyData.scenes.length;
     const progress = Math.min(100, Math.round((visitedScenes.size / total) * 100));
     document.getElementById('progress-text').textContent = progress + '%';
+
+    // Клик по тексту для ускорения печати
+    textEl.onclick = function() {
+        if (isTyping) {
+            clearTimeout(typeTimer);
+            textEl.innerHTML = fullText;
+            isTyping = false;
+        }
+    };
+}
+
+function typeText(element, text, index, speed) {
+    if (index < text.length) {
+        element.innerHTML += text.charAt(index);
+        typeTimer = setTimeout(() => typeText(element, text, index + 1, speed), speed);
+    } else {
+        isTyping = false;
+    }
 }
 
 function showEnding() {
@@ -86,6 +124,7 @@ function showEnding() {
     restartBtn.addEventListener('click', resetGame);
     choicesEl.appendChild(restartBtn);
     localStorage.removeItem('saveProgress');
+    document.getElementById('speaker-name').className = '';
 }
 
 function resetGame() {
@@ -93,13 +132,6 @@ function resetGame() {
     visitedScenes = new Set();
     currentSceneId = storyData.startScene;
     renderScene(currentSceneId);
-}
-
-function typeText(element, text, index, speed) {
-    if (index < text.length) {
-        element.innerHTML += text.charAt(index);
-        setTimeout(() => typeText(element, text, index + 1, speed), speed);
-    }
 }
 
 window.onload = loadStory;
