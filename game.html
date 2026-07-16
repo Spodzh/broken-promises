@@ -33,16 +33,14 @@
         <div id="choices"></div>
         <div id="progress"><div id="fill"></div></div>
     </div>
-    <div id="version">v0.3.4</div>
+    <div id="version">v0.3.5</div>
     <button id="back" onclick="window.location.href='index.html'">← Menu</button>
 </div>
 <script>
 // =================== ВСЕ ДАННЫЕ В BASE64 ===================
 const b64 = {
-    // Интерфейс
     ui: 'eyJiYWNrIjoi4oaQINCc0LXQvdGOKiIsInJlc3RhcnQiOiLQodC90LDRh9Cw0LvQviIsIm1lbnUiOiLQkiDQvNC10L3RjiIsImVuZFRpdGxlIjoi0JrQntCd0JXQpiJ9',
-    // Сценарий (все сцены)
-    story: 'eyJzdGFydFNjZW5lIjoiYmlydGgiLCJzY2VuZXMiOlt7ImlkIjoiYmlydGgiLCJzcGVha2VyIjoi0J/QvtCy0LXRgdGC0LLQvtCy0LDRgtC10LvRjCIsInRleHQiOiLQlNC10LrQsNCx0YDRjCAyMDAwLiDQl9Cw0LLQtdGC0YfQtdC90YHQutCwLiDQotGLINGA0L7QtNC40LvRgdGPINCyINGE0YDRg9GJ0ZHQstC60LUuINCe0YLQtdGGIC0g0LPRgNGD0LfRh9C40LosINC80LDRgtGMIC0g0YPQsdC+0YDQvtGJ0LjQutCwLiDQlNC10L3QtdCzINCyINC+0LHRgNC10LcuINCk0LXQsdGPINC90LDQt9C+0LLQsNC70Lgg0JzQsNGA0LrQvtC8LiDQotCy0L7RjyDQttC40LfQvdGMIC0g0LjRgdGC0L7RgNC40Y8g0YHQu9C+0LzQsNC90L3Ri9GFINC+0LHQtdGJ0LDQvdC40LkuiwiaW1hZ2UiOiJpbWFnZXMvYmlydGgucG5nIiwiYmFja2dyb3VuZCI6ImltYWdlcy93aW50ZXJfYmcucG5nIiwiY2hvaWNlcyI6W3sidGV4dCI6ItCf0L7RgdC80L7RgtGA0LXRgtGMINC90LAg0LzQuNGAIOKGkiIsIm5leHRJZCI6ImNoaWxkaG9vZF8xIn1dfSx7ImlkIjoiY2hpbGRob29kXzEiLCJzcGVha2VyIjoi0J/QvtCy0LXRgdGC0LLQvtCy0LDRgtC10LvRjCIsInRleHQiOiLQpNC10LHQvSAzINCz0L7QtNCwLiDQnNCw0LzQsCDQv9C10YDQtdGB0YfQuNGC0YvQstCw0LXRgiDQvNC10LvQvtGF0YwuINCe0YLQtdGGINC/0L7QtNC90LjQvNCw0LXRgtGB0Y8g0L/QviDQu9C10YHRgtC90LjRhtC1IC0g0YjQsNCz0Lgg0YLRj9C20ZbQvtC70YzQuSwg0L3QtdC00L7QsdGA0YvQtS4iLCJpbWFnZSI6ImltYWdlcy9yb29tLnBuZyIsImJhY2tncm91bmQiOiJpbWFnZXMvYXB0X2JnLnBuZyIsImNob2ljZXMiOlt7InRleHQiOiLQktGL0LnRgtC4INC6INC+0YLQtdCz0YMifSx7InRleHQiOiLQodC/0YDRj9GC0LDRgtGM0YHRjyDQv9C+0LQg0YHRgtC+0LwifV19XX0='
+    story: 'eyJzdGFydFNjZW5lIjoiYmlydGgiLCJzY2VuZXMiOlt7ImlkIjoiYmlydGgiLCJzcGVha2VyIjoi0J/QvtCy0LXRgdGC0LLQvtCy0LDRgtC10LvRjCIsInRleHQiOiLQlNC10LrQsNCx0YDRjCAyMDAwLiDQl9Cw0LLQtdGC0YfQtdC90YHQutCwLiDQotGLINGA0L7QtNC40LvRgdGPINCyINGE0YDRg9GJ0ZHQstC60LUuINCe0YLQtdGGIC0g0LPRgNGD0LfRh9C40LosINC80LDRgtGMIC0g0YPQsdC+0YDQvtGJ0LjQutCwLiDQlNC10L3QtdCzINCyINC+0LHRgNC10LcuINCk0LXQsdGPINC90LDQt9C+0LLQsNC70Lgg0JzQsNGA0LrQvtC8LiDQotCy0L7RjyDQttC40LfQvdGMIC0g0LjRgdGC0L7RgNC40Y8g0YHQu9C+0LzQsNC90L3Ri9GFINC+0LHQtdGJ0LDQvdC40LkuiwiaW1hZ2UiOiJpbWFnZXMvYmlydGgucG5nIiwiYmFja2dyb3VuZCI6ImltYWdlcy93aW50ZXJfYmcucG5nIiwiY2hvaWNlcyI6W3sidGV4dCI6ItCf0L7RgdC80L7RgtGA0LXRgtGMINC90LAg0LzQuNGAIOKGkiIsIm5leHRJZCI6ImNoaWxkaG9vZF8xIn1dfSx7ImlkIjoiY2hpbGRob29kXzEiLCJzcGVha2VyIjoi0J/QvtCy0LXRgdGC0LLQvtCy0LDRgtC10LvRjCIsInRleHQiOiLQpNC10LHRjCAzINCz0L7QtNCwLiDQnNCw0LzQsCDQv9C10YDQtdGB0YfQuNGC0YvQstCw0LXRgiDQvNC10LvQvtGF0YwuINCe0YLQtdGGINC/0L7QtNC90LjQvNCw0LXRgtGB0Y8g0L/QviDQu9C10YHRgtC90LjRhtC1IC0g0YjQsNCz0Lgg0YLRj9C20ZbQvtC70YzQuSwg0L3QtdC00L7QsdGA0YvQtS4iLCJpbWFnZSI6ImltYWdlcy9yb29tLnBuZyIsImJhY2tncm91bmQiOiJpbWFnZXMvYXB0X2JnLnBuZyIsImNob2ljZXMiOlt7InRleHQiOiLQktGL0LnRgtC4INC6INC+0YLQtdCz0YMifSx7InRleHQiOiLQodC/0YDRj9GC0LDRgtGM0YHRjyDQv9C+0LQg0YHRgtC+0LwifV19XX0='
 };
 
 // Декодер
@@ -70,8 +68,6 @@ function render(sceneId) {
     localStorage.setItem('save', JSON.stringify({ scene: sceneId, visited: [...visited], stats }));
 
     if (scene.background) document.getElementById('bg').style.backgroundImage = `url('${scene.background}')`;
-    const img = document.getElementById('bg'); // используем фон как картинку
-    // (можно добавить img-тег, но для краткости оставляем фон)
 
     const speaker = document.getElementById('speaker');
     if (scene.speaker) { speaker.textContent = scene.speaker; speaker.className = 'show'; }
