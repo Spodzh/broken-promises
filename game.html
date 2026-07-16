@@ -64,7 +64,7 @@
         <div id="progress-fill"></div>
         <span id="progress-text">0%</span>
     </div>
-    <div id="version">v0.2.5</div>
+    <div id="version">v0.2.6</div>
     <button id="back-btn" onclick="window.location.href='index.html'">← Menu</button>
     <div id="ending-overlay">
         <div id="ending-modal">
@@ -80,7 +80,7 @@
 </div>
 <script>
 // ------------------------------------------------------------
-//  ALL RUSSIAN TEXT IS STORED AS UNICODE ESCAPES IN THIS SCRIPT
+//  ALL RUSSIAN TEXTS ARE STORED AS UNICODE ESCAPES
 // ------------------------------------------------------------
 var LANG = {
     speaker: {
@@ -95,9 +95,7 @@ var LANG = {
     }
 };
 
-// ------------------------------------------------------------
-//  SCENARIO DATA (all texts in Unicode escapes)
-// ------------------------------------------------------------
+// SCENARIO DATA
 var storyData = {
   "startScene": "birth",
   "scenes": [
@@ -161,7 +159,7 @@ endingMenu.addEventListener('click', function() {
     window.location.href = 'index.html';
 });
 
-// Set UI texts in Russian
+// Override UI texts
 document.getElementById('back-btn').textContent = LANG.ui.back;
 document.getElementById('ending-title').textContent = LANG.ui.endTitle;
 endingRestart.textContent = LANG.ui.restart;
