@@ -88,6 +88,7 @@ function renderScene(sceneId) {
             btn.className = 'choice-btn';
             btn.textContent = choice.text_ru || choice.text || '';
             btn.addEventListener('click', () => {
+                // Сбор статистики
                 if (choice.nextId === 'school_1_1' && choice.text_ru && choice.text_ru.includes('Довериться')) stats.trustDimon = true;
                 if (choice.nextId === 'school_2_1' && choice.text_ru && choice.text_ru.includes('заступиться')) stats.stoodUp = true;
                 if (choice.nextId === 'work_honest') stats.choseHonest = true;
