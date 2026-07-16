@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Broken Promises — игра</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/game.css">
+</head>
+<body>
+<div id="game-container">
+    <div id="bg-layer"></div>
+    <div id="background"></div>
+    <div id="text-box">
+        <div id="speaker-name"></div>
+        <div id="scene-image"><img id="scene-img" src="" alt=""></div>
+        <div id="scene-text"></div>
+        <div id="choices"></div>
+    </div>
+    <div id="progress-bar">
+        <div id="progress-fill"></div>
+        <span id="progress-text">0%</span>
+    </div>
+    <div id="version">v0.3.1</div>
+    <button id="back-btn"></button>
+    <div id="ending-overlay">
+        <div id="ending-modal">
+            <div id="ending-title"></div>
+            <div id="ending-text"></div>
+            <div id="ending-stats"></div>
+            <div id="ending-buttons">
+                <button class="ending-btn primary" id="ending-restart"></button>
+                <button class="ending-btn" id="ending-menu"></button>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="js/lang.js" charset="UTF-8"></script>
+<script src="js/story.js" charset="UTF-8"></script>
+<script src="js/game.js" charset="UTF-8"></script>
+</body>
+</html>
