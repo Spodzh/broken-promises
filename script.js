@@ -17,8 +17,17 @@ let stats = {
 async function loadStory() {
     try {
         const response = await fetch('story.json');
-        if (!response.ok) throw new Error('Ошибка загрузки сценария');
-        storyData = await response.json();
+        if (!response.ok) throw new Error(`HTTP ошибка: ${response.status}`);
+        const text = await response.text();
+        try {
+            storyData = JSON.parse(text);
+        } catch (e) {
+            throw new Error('Синтаксическая ошибка в story.json: ' + e.message);
+        }
+        // Проверка структуры
+        if (!storyData.startScene || !storyData.scenes) {
+            throw new Error('В story.json отсутствует startScene или scenes');
+        }
         const saved = localStorage.getItem('saveProgress');
         if (saved) {
             const data = JSON.parse(saved);
@@ -30,15 +39,15 @@ async function loadStory() {
         }
         renderScene(currentSceneId);
     } catch (e) {
-        document.getElementById('scene-text').innerHTML = '❌ Не удалось загрузить сценарий. Проверьте story.json';
-        console.error(e);
+        document.getElementById('scene-text').innerHTML = '❌ Ошибка загрузки сценария:\n' + e.message;
+        console.error('Ошибка загрузки:', e);
     }
 }
 
 function renderScene(sceneId) {
     const scene = storyData.scenes.find(s => s.id === sceneId);
     if (!scene) {
-        document.getElementById('scene-text').innerHTML = 'Сцена не найдена.';
+        document.getElementById('scene-text').innerHTML = 'Сцена ' + sceneId + ' не найдена.';
         return;
     }
     visitedScenes.add(sceneId);
@@ -81,17 +90,16 @@ function renderScene(sceneId) {
             btn.textContent = choice.text_ru || choice.text || '';
             btn.addEventListener('click', () => {
                 // Сбор статистики
-                if (choice.nextId === 'school_1_1' && choice.text_ru.includes('Довериться')) stats.trustDimon = true;
-                if (choice.nextId === 'school_2_1' && choice.text_ru.includes('заступиться')) stats.stoodUp = true;
+                if (choice.nextId === 'school_1_1' && choice.text_ru && choice.text_ru.includes('Довериться')) stats.trustDimon = true;
+                if (choice.nextId === 'school_2_1' && choice.text_ru && choice.text_ru.includes('заступиться')) stats.stoodUp = true;
                 if (choice.nextId === 'work_honest') stats.choseHonest = true;
                 if (choice.nextId === 'work_criminal') stats.choseCriminal = true;
                 if (choice.nextId === 'work_security') stats.choseSecurity = true;
-                if (choice.nextId === 'ptu_1' && choice.text_ru.includes('Поцеловать')) stats.kissedKira = true;
+                if (choice.nextId === 'ptu_1' && choice.text_ru && choice.text_ru.includes('Поцеловать')) stats.kissedKira = true;
 
                 if (choice.nextId) {
                     renderScene(choice.nextId);
                 } else {
-                    // Концовка, запоминаем тип
                     stats.finalEnding = sceneId;
                     showEnding();
                 }
@@ -128,7 +136,6 @@ function typeText(element, text, index, speed) {
 
 function showEnding() {
     const textEl = document.getElementById('scene-text');
-    // Показываем статистику
     let statsText = '\n\n--- СТАТИСТИКА ---\n';
     statsText += 'Ты доверился Димону? ' + (stats.trustDimon ? 'Да' : 'Нет') + '\n';
     statsText += 'Заступался за слабых? ' + (stats.stoodUp ? 'Да' : 'Нет') + '\n';
