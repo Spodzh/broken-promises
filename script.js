@@ -60,24 +60,39 @@ function renderScene(sceneId) {
                 if (choice.nextId) {
                     renderScene(choice.nextId);
                 } else {
-                    document.getElementById('scene-text').innerHTML = '🏁 Конец. Спасибо за игру!';
-                    choicesEl.innerHTML = '';
-                    localStorage.removeItem('saveProgress');
+                    showEnding();
                 }
             });
             choicesEl.appendChild(btn);
         });
     } else {
-        const endMsg = document.createElement('p');
-        endMsg.textContent = '🏁 Конец.';
-        endMsg.style.color = '#b8a090';
-        endMsg.style.textAlign = 'center';
-        choicesEl.appendChild(endMsg);
+        // Концовка — показываем кнопку рестарта
+        showEnding();
     }
 
     const total = storyData.scenes.length;
     const progress = Math.min(100, Math.round((visitedScenes.size / total) * 100));
     document.getElementById('progress-text').textContent = progress + '%';
+}
+
+function showEnding() {
+    const textEl = document.getElementById('scene-text');
+    textEl.innerHTML = '🏁 Конец. Спасибо за игру!';
+    const choicesEl = document.getElementById('choices');
+    choicesEl.innerHTML = '';
+    const restartBtn = document.createElement('button');
+    restartBtn.className = 'restart-btn';
+    restartBtn.textContent = '🔄 Начать заново';
+    restartBtn.addEventListener('click', resetGame);
+    choicesEl.appendChild(restartBtn);
+    localStorage.removeItem('saveProgress');
+}
+
+function resetGame() {
+    localStorage.removeItem('saveProgress');
+    visitedScenes = new Set();
+    currentSceneId = storyData.startScene;
+    renderScene(currentSceneId);
 }
 
 function typeText(element, text, index, speed) {
