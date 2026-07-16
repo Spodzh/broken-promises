@@ -7,65 +7,65 @@
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { background: #0d0a08; display: flex; justify-content: center; align-items: center; min-height: 100vh; font-family: 'Press Start 2P', monospace; }
-        #menu { width: 700px; max-width: 100%; height: 500px; max-height: 90vh; background: #1a1410; border: 4px solid #3a2c24; display: flex; flex-direction: column; justify-content: center; align-items: center; position: relative; }
-        #title { font-size: 32px; color: #d4c4b0; text-shadow: 0 0 20px rgba(180,80,60,0.4); margin-bottom: 10px; }
-        #subtitle { font-size: 12px; color: #7a6a5a; margin-bottom: 30px; }
-        .btn { background: #1e1612; border: 2px solid #4a3a32; color: #d4c4b0; padding: 12px 24px; font-family: 'Press Start 2P', monospace; font-size: 14px; cursor: pointer; margin: 6px; width: 60%; text-align: center; }
+        body { background: #0d0a08; display: flex; justify-content: center; align-items: center; min-height: 100vh; font-family: 'Press Start 2P', monospace; padding: 10px; }
+        #menu { width: 700px; max-width: 100%; height: 500px; max-height: 90vh; background: #1a1410; border: 4px solid #3a2c24; display: flex; flex-direction: column; justify-content: center; align-items: center; position: relative; padding: 20px; }
+        #title { font-size: 28px; color: #d4c4b0; letter-spacing: 4px; margin-bottom: 8px; }
+        #sub { font-size: 12px; color: #7a6a5a; margin-bottom: 30px; }
+        #btns { display: flex; flex-direction: column; gap: 12px; width: 70%; max-width: 250px; }
+        .btn { background: #1e1612; border: 2px solid #4a3a32; color: #d4c4b0; padding: 12px; font-family: 'Press Start 2P', monospace; font-size: 12px; cursor: pointer; text-align: center; }
         .btn:hover { background: #3a2c24; }
         .btn.play { border-color: #b06040; }
         #version { position: absolute; bottom: 8px; right: 12px; font-size: 8px; color: #3a2a22; }
-        #warning { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); display: flex; justify-content: center; align-items: center; flex-direction: column; padding: 20px; text-align: center; }
-        #warning div { background: #1e1612; border: 4px solid #4a3a32; padding: 20px; max-width: 80%; }
-        #warning h2 { color: #f0d8c8; font-size: 16px; margin-bottom: 10px; }
-        #warning p { color: #d4c4b0; font-size: 11px; line-height: 1.6; white-space: pre-line; }
-        #warning a { color: #c07050; }
-        #warning button { background: #2a1e18; border: 2px solid #b06040; color: #f0d8c8; padding: 10px 20px; font-family: 'Press Start 2P', monospace; font-size: 12px; cursor: pointer; margin-top: 10px; }
-        @media (max-width: 600px) { #title { font-size: 22px; } .btn { font-size: 12px; padding: 10px; } }
+        #warning { display: flex; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); justify-content: center; align-items: center; flex-direction: column; padding: 20px; }
+        #warning.hidden { display: none; }
+        #wtitle { font-size: 16px; color: #f0d8c8; margin-bottom: 12px; }
+        #wtext { font-size: 10px; color: #d4c4b0; text-align: center; line-height: 1.8; max-width: 400px; margin-bottom: 16px; }
+        #wbtn { background: #2a1e18; border: 2px solid #b06040; color: #f0d8c8; padding: 10px 20px; font-family: 'Press Start 2P', monospace; font-size: 12px; cursor: pointer; }
+        @media (max-width: 600px) { #title { font-size: 22px; } .btn { font-size: 10px; } }
     </style>
 </head>
 <body>
 <div id="menu">
     <div id="title">BROKEN PROMISES</div>
-    <div id="subtitle"></div>
-    <button class="btn play" id="playBtn"></button>
-    <button class="btn" id="settingsBtn"></button>
-    <button class="btn" id="supportBtn"></button>
-    <div id="version">v0.3.4</div>
+    <div id="sub"></div>
+    <div id="btns">
+        <button class="btn play" id="playBtn"></button>
+        <button class="btn" id="settingsBtn"></button>
+        <button class="btn" id="supportBtn"></button>
+    </div>
+    <div id="version">v0.3.5</div>
     <div id="warning">
-        <div>
-            <h2 id="warnTitle"></h2>
-            <p id="warnText"></p>
-            <button id="warnBtn"></button>
-        </div>
+        <div id="wtitle"></div>
+        <div id="wtext"></div>
+        <button id="wbtn"></button>
     </div>
 </div>
 <script>
-// Base64 тексты для меню
-const b64menu = {
-    subtitle: '0JjRgdGC0L7RgNC40Y8g0L7QtNC90L7QuSDRgdC40LfQvdC4',
+// Base64 тексты
+const b64 = {
+    sub: '0JjRgdGC0L7RgNC40Y8g0L7QtNC90L7QuSDRgdC40LfQvdC4',
     play: '4pa6INCY0LPRgNCw0YLRjA==',
     settings: '4pmZINCd0LDRgdGC0YDQvtC50LrQuA==',
     support: '4pyJINCf0L7QtNC00LXRgNC20LDRgtGMPw==',
-    warnTitle: '4p2gINCS0J3QmNCc0JDQndCY0JU=',
-    warnText: '0JjQs9GA0LAg0L3QsNGF0L7QtNC40YLRgdGPINC90LAg0YDQsNC90L3QtdC5INGB0YLQsNC00LjQuCDRgNCw0LfRgNCw0LHQvtGC0LrQuC4K0J3QvtC30LzQvtC20L3RiyDQsdCw0LPQuCwg0LjQt9C80LXQvdC10L3QuNGPINGB0Y7QttC10YLQsCDQuCDQtNC40LfQsNC50L3QsC4KCtCf0L7QtNC00LXRgNC20LDRgtGMPyDQuCDRgdC70LXQtNC40YLRjCDQt9CwINC90L7QstC+0YHRgtGP0LzQuCDQvNC+0LbQvdC+INCyINGC0LXQu9C10LPRgNCw0Lwt0LrQsNC90LDQu9C1Ogq0Lgv0Lwu0Lwv0LDRgNC+0LrQtdC+0L3Qv9Cg0L7QvNC40YHQu9Cw0L3QuA==',
-    warnBtn: '0K8g0L/QvtC90Y/Riwwg0L/RgNC+0LTQvtC70LbQuNGC0Yw='
+    wtitle: '4p2gINCS0J3QmNCc0JDQndCY0JU=',
+    wtext: '0JjQs9GA0LAg0L3QsNGF0L7QtNC40YLRgdGPINC90LAg0YDQsNC90L3QtdC5INGB0YLQsNC00LjQuCDRgNCw0LfRgNCw0LHQvtGC0LrQuC4NCtCS0L7Qt9C80L7QttC90Ysg0LHQoNCz0LgsINC40LfQvNC10L3QtdC90LjRjyDRgdGO0LbQtdGC0LAg0Lgg0LTQuNC30LDQudC90LAuDQoNClDQn9C+0LTQtNC10YDQttCw0YLRjCDQuCDRgdC70LXQtNC40YLRjCDQt9CwINC90L7QstC+0YHRgtGP0LzQuCDQvNC+0LbQvdC+INCyINGC0LXQu9C10LPRgNCw0Lwt0LrQsNC90LDQu9C1Og0KdC5tZS9icm9rZW5wcm9taXNlc2dhbWU=',
+    wbtn: '0K8g0L/QvtC90Y/Riywg0L/RgNC+0LTQvtC70LbQuNGC0Yw='
 };
 
 function d(s) { return atob(s); }
 
-document.getElementById('subtitle').textContent = d(b64menu.subtitle);
-document.getElementById('playBtn').textContent = d(b64menu.play);
-document.getElementById('settingsBtn').textContent = d(b64menu.settings);
-document.getElementById('supportBtn').textContent = d(b64menu.support);
-document.getElementById('warnTitle').textContent = d(b64menu.warnTitle);
-document.getElementById('warnText').textContent = d(b64menu.warnText);
-document.getElementById('warnBtn').textContent = d(b64menu.warnBtn);
+document.getElementById('sub').textContent = d(b64.sub);
+document.getElementById('playBtn').textContent = d(b64.play);
+document.getElementById('settingsBtn').textContent = d(b64.settings);
+document.getElementById('supportBtn').textContent = d(b64.support);
+document.getElementById('wtitle').textContent = d(b64.wtitle);
+document.getElementById('wtext').textContent = d(b64.wtext);
+document.getElementById('wbtn').textContent = d(b64.wbtn);
 
 document.getElementById('playBtn').onclick = () => window.location.href = 'game.html';
 document.getElementById('settingsBtn').onclick = () => alert(d('0J3QsNGB0YLRgNC+0LnQutC4INCx0YPQtNGD0YIg0L/QvtC30LbQtQ=='));
 document.getElementById('supportBtn').onclick = () => window.open('https://t.me/brokenpromisesgame', '_blank');
-document.getElementById('warnBtn').onclick = () => document.getElementById('warning').style.display = 'none';
+document.getElementById('wbtn').onclick = () => document.getElementById('warning').classList.add('hidden');
 </script>
 </body>
 </html>
