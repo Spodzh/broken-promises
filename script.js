@@ -4,7 +4,15 @@ let visitedScenes = new Set();
 let isTyping = false;
 let typeTimer = null;
 let fullText = '';
-let LANG = 'ru';
+let stats = {
+    trustDimon: false,
+    stoodUp: false,
+    choseHonest: false,
+    choseCriminal: false,
+    choseSecurity: false,
+    kissedKira: false,
+    finalEnding: ''
+};
 
 async function loadStory() {
     try {
@@ -16,6 +24,7 @@ async function loadStory() {
             const data = JSON.parse(saved);
             currentSceneId = data.scene || storyData.startScene;
             visitedScenes = new Set(data.visited || []);
+            if (data.stats) stats = data.stats;
         } else {
             currentSceneId = storyData.startScene;
         }
@@ -33,7 +42,7 @@ function renderScene(sceneId) {
         return;
     }
     visitedScenes.add(sceneId);
-    localStorage.setItem('saveProgress', JSON.stringify({ scene: sceneId, visited: Array.from(visitedScenes) }));
+    localStorage.setItem('saveProgress', JSON.stringify({ scene: sceneId, visited: Array.from(visitedScenes), stats: stats }));
 
     if (scene.background) {
         document.getElementById('background').style.backgroundImage = `url('${scene.background}')`;
@@ -71,22 +80,32 @@ function renderScene(sceneId) {
             btn.className = 'choice-btn';
             btn.textContent = choice.text_ru || choice.text || '';
             btn.addEventListener('click', () => {
+                // Сбор статистики
+                if (choice.nextId === 'school_1_1' && choice.text_ru.includes('Довериться')) stats.trustDimon = true;
+                if (choice.nextId === 'school_2_1' && choice.text_ru.includes('заступиться')) stats.stoodUp = true;
+                if (choice.nextId === 'work_honest') stats.choseHonest = true;
+                if (choice.nextId === 'work_criminal') stats.choseCriminal = true;
+                if (choice.nextId === 'work_security') stats.choseSecurity = true;
+                if (choice.nextId === 'ptu_1' && choice.text_ru.includes('Поцеловать')) stats.kissedKira = true;
+
                 if (choice.nextId) {
                     renderScene(choice.nextId);
                 } else {
+                    // Концовка, запоминаем тип
+                    stats.finalEnding = sceneId;
                     showEnding();
                 }
             });
             choicesEl.appendChild(btn);
         });
     } else {
+        stats.finalEnding = sceneId;
         showEnding();
     }
 
     const total = storyData.scenes.length;
     const progress = Math.min(100, Math.round((visitedScenes.size / total) * 100));
     document.getElementById('progress-text').textContent = progress + '%';
-    // Обновляем ширину прогресс-бара через after
     document.querySelector('#progress-bar::after').style.width = progress + '%';
 
     textEl.onclick = function() {
@@ -109,7 +128,16 @@ function typeText(element, text, index, speed) {
 
 function showEnding() {
     const textEl = document.getElementById('scene-text');
-    textEl.innerHTML = '🏁 Конец. Спасибо за игру!';
+    // Показываем статистику
+    let statsText = '\n\n--- СТАТИСТИКА ---\n';
+    statsText += 'Ты доверился Димону? ' + (stats.trustDimon ? 'Да' : 'Нет') + '\n';
+    statsText += 'Заступался за слабых? ' + (stats.stoodUp ? 'Да' : 'Нет') + '\n';
+    statsText += 'Выбрал честный труд? ' + (stats.choseHonest ? 'Да' : 'Нет') + '\n';
+    statsText += 'Пошёл в криминал? ' + (stats.choseCriminal ? 'Да' : 'Нет') + '\n';
+    statsText += 'Работал в охране? ' + (stats.choseSecurity ? 'Да' : 'Нет') + '\n';
+    statsText += 'Поцеловал Киру? ' + (stats.kissedKira ? 'Да' : 'Нет') + '\n';
+    statsText += 'Финальная концовка: ' + (stats.finalEnding || 'неизвестно') + '\n';
+    textEl.innerHTML = '🏁 Конец.\n\nСпасибо за игру!\n\n' + statsText;
     const choicesEl = document.getElementById('choices');
     choicesEl.innerHTML = '';
     const restartBtn = document.createElement('button');
@@ -125,6 +153,7 @@ function showEnding() {
 function resetGame() {
     localStorage.removeItem('saveProgress');
     visitedScenes = new Set();
+    stats = { trustDimon: false, stoodUp: false, choseHonest: false, choseCriminal: false, choseSecurity: false, kissedKira: false, finalEnding: '' };
     currentSceneId = storyData.startScene;
     renderScene(currentSceneId);
 }
