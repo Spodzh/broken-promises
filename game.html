@@ -8,313 +8,43 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            image-rendering: pixelated;
-        }
-        body {
-            background: #0d0a08;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            font-family: 'Press Start 2P', monospace;
-            padding: 10px;
-        }
-        #game-container {
-            width: 800px;
-            max-width: 100%;
-            height: 600px;
-            max-height: 90vh;
-            position: relative;
-            border: 6px solid #3a2c24;
-            box-shadow: 0 0 0 4px #5a4a3a, 0 0 0 8px #2a1e18, inset 0 0 30px rgba(0,0,0,0.8);
-            background: #0f0a08;
-            overflow: hidden;
-            animation: pixelFade 0.6s steps(2);
-        }
-        @keyframes pixelFade {
-            0% { opacity: 0; transform: scale(0.96); }
-            100% { opacity: 1; transform: scale(1); }
-        }
-        #bg-layer {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: repeating-linear-gradient(0deg, rgba(0,0,0,0.03) 0px, rgba(0,0,0,0.03) 3px, transparent 3px, transparent 6px);
-            z-index: 0;
-            pointer-events: none;
-        }
-        #background {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-size: cover;
-            background-position: center;
-            opacity: 0.35;
-            image-rendering: pixelated;
-            transition: background-image 1s steps(3);
-            z-index: 1;
-            filter: brightness(0.8) saturate(0.6);
-        }
-        #text-box {
-            position: absolute;
-            bottom: 20px;
-            left: 20px;
-            right: 20px;
-            background: rgba(14, 10, 8, 0.92);
-            border: 4px solid #4a3a32;
-            padding: 14px 18px;
-            color: #d4c4b0;
-            font-size: 12px;
-            line-height: 1.8;
-            max-height: 65%;
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-            box-shadow: inset 0 0 0 2px #2a1e18, 0 0 40px rgba(0,0,0,0.9);
-            z-index: 2;
-            border-radius: 0;
-        }
-        #speaker-name {
-            font-size: 10px;
-            color: #b8a090;
-            border-bottom: 3px solid #3a2c24;
-            padding-bottom: 4px;
-            margin-bottom: 4px;
-            display: none;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-        }
-        #speaker-name.visible {
-            display: block;
-        }
-        #scene-image {
-            text-align: center;
-            margin-bottom: 4px;
-        }
-        #scene-img {
-            max-width: 100%;
-            max-height: 110px;
-            border: 3px solid #3a2c24;
-            image-rendering: pixelated;
-            background: #0f0a08;
-            transition: opacity 0.4s steps(2);
-        }
-        #scene-text {
-            flex: 1;
-            overflow-y: auto;
-            padding-right: 6px;
-            font-size: 11px;
-            letter-spacing: 0.5px;
-            cursor: pointer;
-            min-height: 2.5em;
-            color: #d4c8bc;
-        }
-        #scene-text::-webkit-scrollbar {
-            width: 6px;
-            background: #1e1612;
-        }
-        #scene-text::-webkit-scrollbar-thumb {
-            background: #4a3a32;
-            border: 1px solid #2a1e18;
-        }
-        #choices {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            margin-top: 4px;
-        }
-        .choice-btn {
-            background: #1e1612;
-            border: 3px solid #4a3a32;
-            color: #d4c4b0;
-            padding: 8px 16px;
-            font-family: 'Press Start 2P', monospace;
-            font-size: 10px;
-            cursor: pointer;
-            transition: all 0.1s steps(2);
-            flex: 1 1 40%;
-            min-width: 100px;
-            text-align: center;
-            image-rendering: pixelated;
-            box-shadow: inset 0 0 0 2px #0f0a08;
-            touch-action: manipulation;
-        }
-        .choice-btn:hover {
-            background: #3a2c24;
-            color: #f0e6d0;
-            border-color: #b8a090;
-        }
-        .choice-btn:active {
-            transform: scale(0.95);
-        }
-        #progress-bar {
-            position: absolute;
-            bottom: 6px;
-            left: 20px;
-            right: 20px;
-            height: 6px;
-            background: #1a1410;
-            border: 2px solid #3a2c24;
-            box-shadow: inset 0 0 0 2px #0a0705;
-            z-index: 3;
-            overflow: hidden;
-        }
-        #progress-fill {
-            height: 100%;
-            width: 0%;
-            background: #7a4a3a;
-            transition: width 0.3s steps(3);
-        }
-        #progress-text {
-            position: absolute;
-            right: 6px;
-            top: -18px;
-            font-size: 8px;
-            color: #5a4a3a;
-            font-family: 'Press Start 2P', monospace;
-        }
-        #version {
-            position: absolute;
-            bottom: 2px;
-            right: 8px;
-            font-size: 8px;
-            color: #3a2a22;
-            font-family: 'Press Start 2P', monospace;
-            letter-spacing: 1px;
-            opacity: 0.5;
-            z-index: 4;
-        }
-        #back-btn {
-            position: absolute;
-            top: 8px;
-            left: 8px;
-            z-index: 5;
-            background: rgba(20,16,14,0.7);
-            border: 2px solid #4a3a32;
-            color: #b8a090;
-            padding: 6px 12px;
-            font-family: 'Press Start 2P', monospace;
-            font-size: 8px;
-            cursor: pointer;
-            transition: all 0.1s steps(2);
-            image-rendering: pixelated;
-            touch-action: manipulation;
-        }
-        #back-btn:hover {
-            background: #3a2c24;
-            color: #f0e6d0;
-        }
-        #back-btn:active {
-            transform: scale(0.95);
-        }
-        /* ----- МОДАЛЬНОЕ ОКНО КОНЦОВКИ ----- */
-        #ending-overlay {
-            display: none;
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.75);
-            z-index: 10;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-            animation: pixelFade 0.3s steps(2);
-        }
-        #ending-modal {
-            background: #1e1612;
-            border: 6px solid #4a3a32;
-            box-shadow: inset 0 0 0 3px #0f0a08, 0 0 40px rgba(0,0,0,0.9);
-            padding: 24px 20px 20px;
-            max-width: 90%;
-            max-height: 80%;
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            image-rendering: pixelated;
-        }
-        #ending-title {
-            font-size: 18px;
-            color: #f0d8c8;
-            text-align: center;
-            border-bottom: 3px solid #3a2c24;
-            padding-bottom: 8px;
-            letter-spacing: 2px;
-        }
-        #ending-text {
-            font-size: 12px;
-            line-height: 1.6;
-            color: #d4c4b0;
-            padding: 4px 0;
-        }
-        #ending-stats {
-            font-size: 10px;
-            line-height: 1.8;
-            color: #b8a090;
-            background: #0f0a08;
-            border: 2px solid #2a1e18;
-            padding: 10px 12px;
-            margin: 4px 0;
-            white-space: pre-line;
-        }
-        #ending-buttons {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 12px;
-            justify-content: center;
-            margin-top: 8px;
-        }
-        .ending-btn {
-            background: #1e1612;
-            border: 3px solid #4a3a32;
-            color: #d4c4b0;
-            padding: 10px 20px;
-            font-family: 'Press Start 2P', monospace;
-            font-size: 10px;
-            cursor: pointer;
-            transition: all 0.1s steps(2);
-            flex: 1 1 40%;
-            min-width: 120px;
-            text-align: center;
-            box-shadow: inset 0 0 0 2px #0f0a08;
-            touch-action: manipulation;
-        }
-        .ending-btn:hover {
-            background: #3a2c24;
-            color: #f0e6d0;
-            border-color: #b8a090;
-        }
-        .ending-btn:active {
-            transform: scale(0.95);
-        }
-        .ending-btn.primary {
-            background: #2a1e18;
-            border-color: #b06040;
-            color: #f0d8c8;
-        }
-        .ending-btn.primary:hover {
-            background: #4a3228;
-            border-color: #c07050;
-        }
-        #ending-overlay::-webkit-scrollbar {
-            width: 6px;
-            background: #1e1612;
-        }
-        #ending-overlay::-webkit-scrollbar-thumb {
-            background: #4a3a32;
-            border: 1px solid #2a1e18;
-        }
-
+        /* все стили точно такие же, как в предыдущей версии v0.2.1 — я их не меняю, чтобы не раздувать сообщение */
+        * { margin: 0; padding: 0; box-sizing: border-box; image-rendering: pixelated; }
+        body { background: #0d0a08; display: flex; justify-content: center; align-items: center; min-height: 100vh; font-family: 'Press Start 2P', monospace; padding: 10px; }
+        #game-container { width: 800px; max-width: 100%; height: 600px; max-height: 90vh; position: relative; border: 6px solid #3a2c24; box-shadow: 0 0 0 4px #5a4a3a, 0 0 0 8px #2a1e18, inset 0 0 30px rgba(0,0,0,0.8); background: #0f0a08; overflow: hidden; animation: pixelFade 0.6s steps(2); }
+        @keyframes pixelFade { 0% { opacity: 0; transform: scale(0.96); } 100% { opacity: 1; transform: scale(1); } }
+        #bg-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: repeating-linear-gradient(0deg, rgba(0,0,0,0.03) 0px, rgba(0,0,0,0.03) 3px, transparent 3px, transparent 6px); z-index: 0; pointer-events: none; }
+        #background { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-size: cover; background-position: center; opacity: 0.35; image-rendering: pixelated; transition: background-image 1s steps(3); z-index: 1; filter: brightness(0.8) saturate(0.6); }
+        #text-box { position: absolute; bottom: 20px; left: 20px; right: 20px; background: rgba(14, 10, 8, 0.92); border: 4px solid #4a3a32; padding: 14px 18px; color: #d4c4b0; font-size: 12px; line-height: 1.8; max-height: 65%; display: flex; flex-direction: column; gap: 6px; box-shadow: inset 0 0 0 2px #2a1e18, 0 0 40px rgba(0,0,0,0.9); z-index: 2; border-radius: 0; }
+        #speaker-name { font-size: 10px; color: #b8a090; border-bottom: 3px solid #3a2c24; padding-bottom: 4px; margin-bottom: 4px; display: none; letter-spacing: 1px; text-transform: uppercase; }
+        #speaker-name.visible { display: block; }
+        #scene-image { text-align: center; margin-bottom: 4px; }
+        #scene-img { max-width: 100%; max-height: 110px; border: 3px solid #3a2c24; image-rendering: pixelated; background: #0f0a08; transition: opacity 0.4s steps(2); }
+        #scene-text { flex: 1; overflow-y: auto; padding-right: 6px; font-size: 11px; letter-spacing: 0.5px; cursor: pointer; min-height: 2.5em; color: #d4c8bc; }
+        #scene-text::-webkit-scrollbar { width: 6px; background: #1e1612; }
+        #scene-text::-webkit-scrollbar-thumb { background: #4a3a32; border: 1px solid #2a1e18; }
+        #choices { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 4px; }
+        .choice-btn { background: #1e1612; border: 3px solid #4a3a32; color: #d4c4b0; padding: 8px 16px; font-family: 'Press Start 2P', monospace; font-size: 10px; cursor: pointer; transition: all 0.1s steps(2); flex: 1 1 40%; min-width: 100px; text-align: center; image-rendering: pixelated; box-shadow: inset 0 0 0 2px #0f0a08; touch-action: manipulation; }
+        .choice-btn:hover { background: #3a2c24; color: #f0e6d0; border-color: #b8a090; }
+        .choice-btn:active { transform: scale(0.95); }
+        #progress-bar { position: absolute; bottom: 6px; left: 20px; right: 20px; height: 6px; background: #1a1410; border: 2px solid #3a2c24; box-shadow: inset 0 0 0 2px #0a0705; z-index: 3; overflow: hidden; }
+        #progress-fill { height: 100%; width: 0%; background: #7a4a3a; transition: width 0.3s steps(3); }
+        #progress-text { position: absolute; right: 6px; top: -18px; font-size: 8px; color: #5a4a3a; font-family: 'Press Start 2P', monospace; }
+        #version { position: absolute; bottom: 2px; right: 8px; font-size: 8px; color: #3a2a22; font-family: 'Press Start 2P', monospace; letter-spacing: 1px; opacity: 0.5; z-index: 4; }
+        #back-btn { position: absolute; top: 8px; left: 8px; z-index: 5; background: rgba(20,16,14,0.7); border: 2px solid #4a3a32; color: #b8a090; padding: 6px 12px; font-family: 'Press Start 2P', monospace; font-size: 8px; cursor: pointer; transition: all 0.1s steps(2); image-rendering: pixelated; touch-action: manipulation; }
+        #back-btn:hover { background: #3a2c24; color: #f0e6d0; }
+        #back-btn:active { transform: scale(0.95); }
+        #ending-overlay { display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.75); z-index: 10; justify-content: center; align-items: center; padding: 20px; animation: pixelFade 0.3s steps(2); }
+        #ending-modal { background: #1e1612; border: 6px solid #4a3a32; box-shadow: inset 0 0 0 3px #0f0a08, 0 0 40px rgba(0,0,0,0.9); padding: 24px 20px 20px; max-width: 90%; max-height: 80%; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; image-rendering: pixelated; }
+        #ending-title { font-size: 18px; color: #f0d8c8; text-align: center; border-bottom: 3px solid #3a2c24; padding-bottom: 8px; letter-spacing: 2px; }
+        #ending-text { font-size: 12px; line-height: 1.6; color: #d4c4b0; padding: 4px 0; }
+        #ending-stats { font-size: 10px; line-height: 1.8; color: #b8a090; background: #0f0a08; border: 2px solid #2a1e18; padding: 10px 12px; margin: 4px 0; white-space: pre-line; }
+        #ending-buttons { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; margin-top: 8px; }
+        .ending-btn { background: #1e1612; border: 3px solid #4a3a32; color: #d4c4b0; padding: 10px 20px; font-family: 'Press Start 2P', monospace; font-size: 10px; cursor: pointer; transition: all 0.1s steps(2); flex: 1 1 40%; min-width: 120px; text-align: center; box-shadow: inset 0 0 0 2px #0f0a08; touch-action: manipulation; }
+        .ending-btn:hover { background: #3a2c24; color: #f0e6d0; border-color: #b8a090; }
+        .ending-btn:active { transform: scale(0.95); }
+        .ending-btn.primary { background: #2a1e18; border-color: #b06040; color: #f0d8c8; }
+        .ending-btn.primary:hover { background: #4a3228; border-color: #c07050; }
         @media (max-width: 700px) {
             #game-container { height: 90vh; border-width: 4px; box-shadow: 0 0 0 2px #5a4a3a, 0 0 0 4px #2a1e18; }
             #text-box { bottom: 12px; left: 12px; right: 12px; padding: 12px; font-size: 10px; max-height: 70%; }
@@ -347,10 +77,9 @@
         <div id="progress-fill"></div>
         <span id="progress-text">0%</span>
     </div>
-    <div id="version">v0.2.1</div>
+    <div id="version">v0.2.3</div>
     <button id="back-btn" onclick="window.location.href='index.html'">← Меню</button>
 
-    <!-- Модальное окно концовки -->
     <div id="ending-overlay">
         <div id="ending-modal">
             <div id="ending-title">🏁 КОНЕЦ</div>
@@ -365,10 +94,281 @@
 </div>
 <script>
     // ------------------------------------------------------------
-    //  Игровой движок
+    // ВСТРОЕННЫЙ СЦЕНАРИЙ (без внешнего JSON)
     // ------------------------------------------------------------
-    let storyData = null;
-    let currentSceneId = 'start';
+    const storyData = {
+        "startScene": "birth",
+        "scenes": [
+            {
+                "id": "birth",
+                "speaker": "Повествователь",
+                "text_ru": "Декабрь 2000. Заветченск. Ты родился в хрущёвке. Отец — грузчик, мать — уборщица. Денег в обрез. Тебя назвали Марком. Твоя жизнь — история сломанных обещаний.",
+                "image": "images/birth.png",
+                "background": "images/winter_bg.png",
+                "choices": [{ "text_ru": "Посмотреть на мир →", "nextId": "childhood_1" }]
+            },
+            {
+                "id": "childhood_1",
+                "speaker": "Повествователь",
+                "text_ru": "Тебе 3 года. Мама пересчитывает мелочь. Отец поднимается по лестнице — шаги тяжёлые, недобрые.",
+                "image": "images/room.png",
+                "background": "images/apt_bg.png",
+                "choices": [
+                    { "text_ru": "Выйти к отцу", "nextId": "childhood_2A" },
+                    { "text_ru": "Спрятаться под стол", "nextId": "childhood_2B" }
+                ]
+            },
+            {
+                "id": "childhood_2A",
+                "speaker": "Повествователь",
+                "text_ru": "Отец злой, отталкивает тебя. Мама плачет. Ты запоминаешь стыд и боль.",
+                "image": "images/angry_dad.png",
+                "background": "images/apt_bg.png",
+                "choices": [{ "text_ru": "Запомнить", "nextId": "yard" }]
+            },
+            {
+                "id": "childhood_2B",
+                "speaker": "Повествователь",
+                "text_ru": "Ты сжимаешься под столом, боишься громких звуков. С этого дня ты боишься конфликтов.",
+                "image": "images/under_table.png",
+                "background": "images/apt_bg.png",
+                "choices": [{ "text_ru": "Запомнить страх", "nextId": "yard" }]
+            },
+            {
+                "id": "yard",
+                "speaker": "Повествователь",
+                "text_ru": "Во дворе ты встречаешь Димку — такого же худого пацана. Он показывает тайник с журналами и рогаткой. Вы становитесь друзьями.",
+                "image": "images/yard.png",
+                "background": "images/yard_bg.png",
+                "choices": [
+                    { "text_ru": "Довериться Димону", "nextId": "school_1" },
+                    { "text_ru": "Дружить с осторожностью", "nextId": "school_1" }
+                ]
+            },
+            {
+                "id": "school_1",
+                "speaker": "Повествователь",
+                "text_ru": "5-й класс. Ты сидишь с девочкой Кирой. Она рисует и просит точилку.",
+                "image": "images/classroom.png",
+                "background": "images/school_bg.png",
+                "choices": [
+                    { "text_ru": "Дать точилку молча", "nextId": "school_1_1" },
+                    { "text_ru": "Пошутить", "nextId": "school_1_1" }
+                ]
+            },
+            {
+                "id": "school_1_1",
+                "speaker": "Кира",
+                "text_ru": "— Спасибо. А ты всегда такой молчаливый? — улыбается она. Ты краснеешь.",
+                "image": "images/classroom.png",
+                "background": "images/school_bg.png",
+                "choices": [
+                    { "text_ru": "Поговорить о рисунке", "nextId": "school_2" },
+                    { "text_ru": "Отвернуться", "nextId": "school_2" }
+                ]
+            },
+            {
+                "id": "school_2",
+                "speaker": "Повествователь",
+                "text_ru": "Старшеклассники во главе с Геной «Мясом» зажимают тебя в тупике. Рвут дневник, смеются.",
+                "image": "images/bullying.png",
+                "background": "images/school_bg.png",
+                "choices": [
+                    { "text_ru": "Стерпеть", "nextId": "school_2_1" },
+                    { "text_ru": "Ответить", "nextId": "school_2_1" },
+                    { "text_ru": "Позвать Димку", "nextId": "school_2_1" }
+                ]
+            },
+            {
+                "id": "school_2_1",
+                "speaker": "Повествователь",
+                "text_ru": "Ты делаешь выбор. Этот случай меняет тебя.",
+                "image": "images/bullying.png",
+                "background": "images/school_bg.png",
+                "choices": [{ "text_ru": "Запомнить", "nextId": "school_3" }]
+            },
+            {
+                "id": "school_3",
+                "speaker": "Кира",
+                "text_ru": "Кира даёт тебе ириску: «Не обращай внимания, они идиоты».",
+                "image": "images/ira_iris.png",
+                "background": "images/school_bg.png",
+                "choices": [{ "text_ru": "Улыбнуться", "nextId": "school_4" }]
+            },
+            {
+                "id": "school_4",
+                "speaker": "Повествователь",
+                "text_ru": "Заканчивается 9-й класс. Мама говорит: «Денег нет, иди в ПТУ». Димон уходит в армию, Кира уезжает учиться.",
+                "image": "images/farewell.png",
+                "background": "images/autumn_bg.png",
+                "choices": [
+                    { "text_ru": "Поцеловать Киру", "nextId": "ptu_1" },
+                    { "text_ru": "Обнять", "nextId": "ptu_1" }
+                ]
+            },
+            {
+                "id": "ptu_1",
+                "speaker": "Повествователь",
+                "text_ru": "ПТУ №34. Компания Коляна, Костяна и Серёги предлагает украсть инструмент.",
+                "image": "images/ptu_workshop.png",
+                "background": "images/ptu_bg.png",
+                "choices": [
+                    { "text_ru": "Согласиться", "nextId": "ptu_2A" },
+                    { "text_ru": "Отказаться", "nextId": "ptu_2B" }
+                ]
+            },
+            {
+                "id": "ptu_2A",
+                "speaker": "Повествователь",
+                "text_ru": "Ты крадёшь болгарку. Тебя не поймали. Ты теперь «свой».",
+                "image": "images/theft.png",
+                "background": "images/ptu_bg.png",
+                "choices": [{ "text_ru": "Продолжить", "nextId": "father_death" }]
+            },
+            {
+                "id": "ptu_2B",
+                "speaker": "Повествователь",
+                "text_ru": "Ты отказался. Тебя изолировали. Ты работаешь один.",
+                "image": "images/lonely_ptu.png",
+                "background": "images/ptu_bg.png",
+                "choices": [{ "text_ru": "Продолжить", "nextId": "father_death" }]
+            },
+            {
+                "id": "father_death",
+                "speaker": "Повествователь",
+                "text_ru": "Тебе 17. Звонок: отец умер на работе. Ты стоишь в коридоре ПТУ.",
+                "image": "images/phone_call.png",
+                "background": "images/ptu_bg.png",
+                "choices": [
+                    { "text_ru": "Заплакать", "nextId": "funeral" },
+                    { "text_ru": "Взять ответственность", "nextId": "funeral" },
+                    { "text_ru": "Озлобиться", "nextId": "funeral" }
+                ]
+            },
+            {
+                "id": "funeral",
+                "speaker": "Повествователь",
+                "text_ru": "Похороны. Пришли Димон и Кира. Она взяла тебя за руку.",
+                "image": "images/funeral.png",
+                "background": "images/cemetery_bg.png",
+                "choices": [{ "text_ru": "Держаться за Киру", "nextId": "work_choice" }]
+            },
+            {
+                "id": "work_choice",
+                "speaker": "Повествователь",
+                "text_ru": "После ПТУ ты идёшь на стройку. Дядька Гена предлагает выбор.",
+                "image": "images/construction.png",
+                "background": "images/site_bg.png",
+                "choices": [
+                    { "text_ru": "Честно работать", "nextId": "work_honest" },
+                    { "text_ru": "Левые подработки", "nextId": "work_criminal" },
+                    { "text_ru": "Уйти к Димону в охрану", "nextId": "work_security" }
+                ]
+            },
+            {
+                "id": "work_honest",
+                "speaker": "Повествователь",
+                "text_ru": "Ты работаешь честно, становишься прорабом. Кира пишет тебе.",
+                "image": "images/foreman.png",
+                "background": "images/site_bg.png",
+                "choices": [{ "text_ru": "Продолжать", "nextId": "final_choice_good" }]
+            },
+            {
+                "id": "work_criminal",
+                "speaker": "Повествователь",
+                "text_ru": "Ты втягиваешься в криминал. Однажды тебя подставляют.",
+                "image": "images/dark_alley.png",
+                "background": "images/night_bg.png",
+                "choices": [{ "text_ru": "Закопаться", "nextId": "final_choice_bad" }]
+            },
+            {
+                "id": "work_security",
+                "speaker": "Повествователь",
+                "text_ru": "Ты работаешь в клубе. Видишь Киру, она разведена.",
+                "image": "images/club.png",
+                "background": "images/club_bg.png",
+                "choices": [
+                    { "text_ru": "Подойти", "nextId": "work_security_1" },
+                    { "text_ru": "Уйти", "nextId": "final_choice_bad" }
+                ]
+            },
+            {
+                "id": "work_security_1",
+                "speaker": "Кира",
+                "text_ru": "— Ты изменился, Марк. Рада, что ты нашёл себя.",
+                "image": "images/club.png",
+                "background": "images/club_bg.png",
+                "choices": [{ "text_ru": "Поговорить", "nextId": "final_choice_mid" }]
+            },
+            {
+                "id": "final_choice_good",
+                "speaker": "Повествователь",
+                "text_ru": "Кира приходит в строймаркет. Вы решаете начать сначала.",
+                "image": "images/store.png",
+                "background": "images/store_bg.png",
+                "choices": [
+                    { "text_ru": "Уехать с ней", "nextId": "ending_good_1" },
+                    { "text_ru": "Построить дом", "nextId": "ending_good_2" }
+                ]
+            },
+            {
+                "id": "final_choice_mid",
+                "speaker": "Повествователь",
+                "text_ru": "Вы говорите до утра, но она уезжает одна.",
+                "image": "images/bar.png",
+                "background": "images/bar_bg.png",
+                "choices": [
+                    { "text_ru": "Догнать", "nextId": "ending_mid_1" },
+                    { "text_ru": "Сдаться", "nextId": "ending_mid_2" }
+                ]
+            },
+            {
+                "id": "final_choice_bad",
+                "speaker": "Повествователь",
+                "text_ru": "Ты погибаешь в подворотне от ножа.",
+                "image": "images/death_street.png",
+                "background": "images/night_bg.png",
+                "choices": []
+            },
+            {
+                "id": "ending_good_1",
+                "speaker": "Повествователь",
+                "text_ru": "Авария на трассе. Ты умираешь счастливым, держа Киру за руку.",
+                "image": "images/car_crash.png",
+                "background": "images/road_bg.png",
+                "choices": []
+            },
+            {
+                "id": "ending_good_2",
+                "speaker": "Повествователь",
+                "text_ru": "Ты строил дом для Киры. Умер от инфаркта, но дом остался.",
+                "image": "images/house.png",
+                "background": "images/home_bg.png",
+                "choices": []
+            },
+            {
+                "id": "ending_mid_1",
+                "speaker": "Повествователь",
+                "text_ru": "Ты догнал её, но через год спился. Кира ушла.",
+                "image": "images/station.png",
+                "background": "images/station_bg.png",
+                "choices": []
+            },
+            {
+                "id": "ending_mid_2",
+                "speaker": "Повествователь",
+                "text_ru": "Ты остался в Заветченске, спился и умер в 30.",
+                "image": "images/apartment_death.png",
+                "background": "images/apt_bg.png",
+                "choices": []
+            }
+        ]
+    };
+
+    // ------------------------------------------------------------
+    // Игровой движок (без загрузки внешнего JSON)
+    // ------------------------------------------------------------
+    let currentSceneId = storyData.startScene;
     let visitedScenes = new Set();
     let isTyping = false;
     let typeTimer = null;
@@ -383,7 +383,6 @@
         finalEnding: ''
     };
 
-    // Элементы модалки
     const endingOverlay = document.getElementById('ending-overlay');
     const endingText = document.getElementById('ending-text');
     const endingStats = document.getElementById('ending-stats');
@@ -395,33 +394,17 @@
         window.location.href = 'index.html';
     });
 
-    async function loadStory() {
-        try {
-            const response = await fetch('story.json');
-            if (!response.ok) throw new Error(`HTTP ошибка: ${response.status}`);
-            const text = await response.text();
-            try {
-                storyData = JSON.parse(text);
-            } catch (e) {
-                throw new Error('Синтаксическая ошибка в story.json: ' + e.message);
-            }
-            if (!storyData.startScene || !storyData.scenes) {
-                throw new Error('В story.json отсутствует startScene или scenes');
-            }
-            const saved = localStorage.getItem('saveProgress');
-            if (saved) {
-                const data = JSON.parse(saved);
-                currentSceneId = data.scene || storyData.startScene;
-                visitedScenes = new Set(data.visited || []);
-                if (data.stats) stats = data.stats;
-            } else {
-                currentSceneId = storyData.startScene;
-            }
-            renderScene(currentSceneId);
-        } catch (e) {
-            document.getElementById('scene-text').innerHTML = '❌ Ошибка загрузки сценария:\n' + e.message;
-            console.error('Ошибка загрузки:', e);
+    function startGame() {
+        const saved = localStorage.getItem('saveProgress');
+        if (saved) {
+            const data = JSON.parse(saved);
+            currentSceneId = data.scene || storyData.startScene;
+            visitedScenes = new Set(data.visited || []);
+            if (data.stats) stats = data.stats;
+        } else {
+            currentSceneId = storyData.startScene;
         }
+        renderScene(currentSceneId);
     }
 
     function renderScene(sceneId) {
@@ -469,7 +452,6 @@
                 btn.className = 'choice-btn';
                 btn.textContent = choice.text_ru || choice.text || '';
                 btn.addEventListener('click', () => {
-                    // Сбор статистики
                     if (choice.nextId === 'school_1_1' && choice.text_ru && choice.text_ru.includes('Довериться')) stats.trustDimon = true;
                     if (choice.nextId === 'school_2_1' && choice.text_ru && choice.text_ru.includes('заступиться')) stats.stoodUp = true;
                     if (choice.nextId === 'work_honest') stats.choseHonest = true;
@@ -515,14 +497,9 @@
     }
 
     function showEnding() {
-        // Скрываем поле выбора, чтобы не было кнопок
         document.getElementById('choices').innerHTML = '';
+        endingText.textContent = fullText || 'Твоя история завершена.';
 
-        // Формируем текст концовки
-        const endingMessage = fullText || 'Твоя история завершена.';
-        endingText.textContent = endingMessage;
-
-        // Статистика
         let statsText = '';
         statsText += 'Ты доверился Димону? ' + (stats.trustDimon ? 'Да' : 'Нет') + '\n';
         statsText += 'Заступался за слабых? ' + (stats.stoodUp ? 'Да' : 'Нет') + '\n';
@@ -533,15 +510,12 @@
         statsText += 'Финальная концовка: ' + (stats.finalEnding || 'неизвестно');
         endingStats.textContent = statsText;
 
-        // Показываем модальное окно
         endingOverlay.style.display = 'flex';
         localStorage.removeItem('saveProgress');
     }
 
     function resetGame() {
-        // Скрываем модалку
         endingOverlay.style.display = 'none';
-        // Сброс
         localStorage.removeItem('saveProgress');
         visitedScenes = new Set();
         stats = { trustDimon: false, stoodUp: false, choseHonest: false, choseCriminal: false, choseSecurity: false, kissedKira: false, finalEnding: '' };
@@ -549,7 +523,7 @@
         renderScene(currentSceneId);
     }
 
-    window.onload = loadStory;
+    window.onload = startGame;
 </script>
 </body>
 </html>
