@@ -57,36 +57,41 @@
     </div>
 </div>
 <script>
-var MENU_TEXTS = {
-    subtitle: '\u0418\u0441\u0442\u043e\u0440\u0438\u044f \u043e\u0434\u043d\u043e\u0439 \u0436\u0438\u0437\u043d\u0438',
-    play: '\u25b6 \u0418\u0433\u0440\u0430\u0442\u044c',
-    settings: '\u2699 \u041d\u0430\u0441\u0442\u0440\u043e\u0439\u043a\u0438',
-    support: '\u2709 \u041f\u043e\u0434\u0434\u0435\u0440\u0436\u0430\u0442\u044c',
-    warningTitle: '\u26a0 \u0412\u041d\u0418\u041c\u0410\u041d\u0418\u0415',
-    warningText: '\u0418\u0433\u0440\u0430 \u043d\u0430\u0445\u043e\u0434\u0438\u0442\u0441\u044f \u043d\u0430 \u0440\u0430\u043d\u043d\u0435\u0439 \u0441\u0442\u0430\u0434\u0438\u0438 \u0440\u0430\u0437\u0440\u0430\u0431\u043e\u0442\u043a\u0438.\n\u0412\u043e\u0437\u043c\u043e\u0436\u043d\u044b \u0431\u0430\u0433\u0438, \u0438\u0437\u043c\u0435\u043d\u0435\u043d\u0438\u044f \u0441\u044e\u0436\u0435\u0442\u0430 \u0438 \u0434\u0438\u0437\u0430\u0439\u043d\u0430.\n\n\u041f\u043e\u0434\u0434\u0435\u0440\u0436\u0430\u0442\u044c \u0438 \u0441\u043b\u0435\u0434\u0438\u0442\u044c \u0437\u0430 \u043d\u043e\u0432\u043e\u0441\u0442\u044f\u043c\u0438 \u043c\u043e\u0436\u043d\u043e \u0432 \u0442\u0435\u043b\u0435\u0433\u0440\u0430\u043c-\u043a\u0430\u043d\u0430\u043b\u0435:\nt.me/brokenpromisesgame',
-    warningBtn: '\u042f \u043f\u043e\u043d\u044f\u043b, \u043f\u0440\u043e\u0434\u043e\u043b\u0436\u0438\u0442\u044c'
+// Все русские тексты в Base64 (ASCII)
+var b64 = {
+    subtitle: '0JjRgdGC0L7RgNC40Y8g0L7QtNC90L7QuSDRgdC40LfQvdC4',
+    play: '4pa6INCY0LPRgNCw0YLRjA==',
+    settings: '4pmZINCd0LDRgdGC0YDQvtC50LrQuA==',
+    support: '4pyJINCf0L7QtNC00LXRgNC20LDRgtGMPw==',
+    warningTitle: '4p2gINCS0J3QmNCc0JDQndCY0JU=',
+    warningText: '0JjQs9GA0LAg0L3QsNGF0L7QtNC40YLRgdGPINC90LAg0YDQsNC90L3QtdC5INGB0YLQsNC00LjQuCDRgNCw0LfRgNCw0LHQvtGC0LrQuC4K0J3QvtC30LzQvtC20L3RiyDQsdCw0LPQuCwg0LjQt9C80LXQvdC10L3QuNGPINGB0Y7QttC10YLQsCDQuCDQtNC40LfQsNC50L3QsC4KCtCf0L7QtNC00LXRgNC20LDRgtGMPyDQuCDRgdC70LXQtNC40YLRjCDQt9CwINC90L7QstC+0YHRgtGP0LzQuCDQvNC+0LbQvdC+INCyINGC0LXQu9C10LPRgNCw0Lwt0LrQsNC90LDQu9C1Ogq0Lgv0Lwu0Lwv0LDRgNC+0LrQtdC+0L3Qv9Cg0L7QvNC50YHQu9Cw0L3QuA==',
+    warningBtn: '0K8g0L/QvtC90Y/Riwwg0L/RgNC+0LTQvtC70LbQuNGC0Yw='
 };
 
-document.getElementById('subtitle').textContent = MENU_TEXTS.subtitle;
-document.getElementById('play-btn').textContent = MENU_TEXTS.play;
-document.getElementById('settings-btn').textContent = MENU_TEXTS.settings;
-document.getElementById('support-btn').textContent = MENU_TEXTS.support;
-document.getElementById('warning-title').textContent = MENU_TEXTS.warningTitle;
-document.getElementById('warning-text').textContent = MENU_TEXTS.warningText;
-document.getElementById('warning-btn').textContent = MENU_TEXTS.warningBtn;
+// Декодируем и вставляем
+function decode(s) { return atob(s); }
+document.getElementById('subtitle').textContent = decode(b64.subtitle);
+document.getElementById('play-btn').textContent = decode(b64.play);
+document.getElementById('settings-btn').textContent = decode(b64.settings);
+document.getElementById('support-btn').textContent = decode(b64.support);
+document.getElementById('warning-title').textContent = decode(b64.warningTitle);
+document.getElementById('warning-text').textContent = decode(b64.warningText);
+document.getElementById('warning-btn').textContent = decode(b64.warningBtn);
 
+// Обработчики
 document.getElementById('play-btn').addEventListener('click', function() {
     window.location.href = 'game.html';
 });
 document.getElementById('settings-btn').addEventListener('click', function() {
-    alert('\u041d\u0430\u0441\u0442\u0440\u043e\u0439\u043a\u0438 \u0431\u0443\u0434\u0443\u0442 \u043f\u043e\u0437\u0436\u0435');
+    alert(decode('0J3QsNGB0YLRgNC+0LnQutC4INCx0YPQtNGD0YIg0L/QvtC30LbQtQ=='));
 });
 document.getElementById('support-btn').addEventListener('click', function() {
     window.open('https://t.me/brokenpromisesgame', '_blank');
 });
-document.getElementById('warning-btn').addEventListener('click', function() {
+function closeWarning() {
     document.getElementById('warning-overlay').style.display = 'none';
-});
+}
+document.getElementById('warning-btn').addEventListener('click', closeWarning);
 </script>
 </body>
 </html>
