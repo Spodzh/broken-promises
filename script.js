@@ -24,7 +24,6 @@ async function loadStory() {
         } catch (e) {
             throw new Error('Синтаксическая ошибка в story.json: ' + e.message);
         }
-        // Проверка структуры
         if (!storyData.startScene || !storyData.scenes) {
             throw new Error('В story.json отсутствует startScene или scenes');
         }
@@ -89,7 +88,6 @@ function renderScene(sceneId) {
             btn.className = 'choice-btn';
             btn.textContent = choice.text_ru || choice.text || '';
             btn.addEventListener('click', () => {
-                // Сбор статистики
                 if (choice.nextId === 'school_1_1' && choice.text_ru && choice.text_ru.includes('Довериться')) stats.trustDimon = true;
                 if (choice.nextId === 'school_2_1' && choice.text_ru && choice.text_ru.includes('заступиться')) stats.stoodUp = true;
                 if (choice.nextId === 'work_honest') stats.choseHonest = true;
@@ -114,7 +112,7 @@ function renderScene(sceneId) {
     const total = storyData.scenes.length;
     const progress = Math.min(100, Math.round((visitedScenes.size / total) * 100));
     document.getElementById('progress-text').textContent = progress + '%';
-    document.querySelector('#progress-bar::after').style.width = progress + '%';
+    document.getElementById('progress-fill').style.width = progress + '%';
 
     textEl.onclick = function() {
         if (isTyping) {
@@ -154,7 +152,7 @@ function showEnding() {
     choicesEl.appendChild(restartBtn);
     localStorage.removeItem('saveProgress');
     document.getElementById('speaker-name').className = '';
-    document.querySelector('#progress-bar::after').style.width = '100%';
+    document.getElementById('progress-fill').style.width = '100%';
 }
 
 function resetGame() {
