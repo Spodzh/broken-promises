@@ -131,7 +131,7 @@
             gap: 10px;
             margin-top: 4px;
         }
-        .choice-btn, .restart-btn {
+        .choice-btn {
             background: #1e1612;
             border: 3px solid #4a3a32;
             color: #d4c4b0;
@@ -147,23 +147,13 @@
             box-shadow: inset 0 0 0 2px #0f0a08;
             touch-action: manipulation;
         }
-        .choice-btn:hover, .restart-btn:hover {
+        .choice-btn:hover {
             background: #3a2c24;
             color: #f0e6d0;
             border-color: #b8a090;
         }
-        .choice-btn:active, .restart-btn:active {
+        .choice-btn:active {
             transform: scale(0.95);
-        }
-        .restart-btn {
-            flex: 1 1 100%;
-            background: #2a1e18;
-            border-color: #b06040;
-            color: #f0d8c8;
-        }
-        .restart-btn:hover {
-            background: #4a3228;
-            border-color: #c07050;
         }
         #progress-bar {
             position: absolute;
@@ -225,16 +215,121 @@
         #back-btn:active {
             transform: scale(0.95);
         }
+        /* ----- МОДАЛЬНОЕ ОКНО КОНЦОВКИ ----- */
+        #ending-overlay {
+            display: none;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.75);
+            z-index: 10;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            animation: pixelFade 0.3s steps(2);
+        }
+        #ending-modal {
+            background: #1e1612;
+            border: 6px solid #4a3a32;
+            box-shadow: inset 0 0 0 3px #0f0a08, 0 0 40px rgba(0,0,0,0.9);
+            padding: 24px 20px 20px;
+            max-width: 90%;
+            max-height: 80%;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            image-rendering: pixelated;
+        }
+        #ending-title {
+            font-size: 18px;
+            color: #f0d8c8;
+            text-align: center;
+            border-bottom: 3px solid #3a2c24;
+            padding-bottom: 8px;
+            letter-spacing: 2px;
+        }
+        #ending-text {
+            font-size: 12px;
+            line-height: 1.6;
+            color: #d4c4b0;
+            padding: 4px 0;
+        }
+        #ending-stats {
+            font-size: 10px;
+            line-height: 1.8;
+            color: #b8a090;
+            background: #0f0a08;
+            border: 2px solid #2a1e18;
+            padding: 10px 12px;
+            margin: 4px 0;
+            white-space: pre-line;
+        }
+        #ending-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            justify-content: center;
+            margin-top: 8px;
+        }
+        .ending-btn {
+            background: #1e1612;
+            border: 3px solid #4a3a32;
+            color: #d4c4b0;
+            padding: 10px 20px;
+            font-family: 'Press Start 2P', monospace;
+            font-size: 10px;
+            cursor: pointer;
+            transition: all 0.1s steps(2);
+            flex: 1 1 40%;
+            min-width: 120px;
+            text-align: center;
+            box-shadow: inset 0 0 0 2px #0f0a08;
+            touch-action: manipulation;
+        }
+        .ending-btn:hover {
+            background: #3a2c24;
+            color: #f0e6d0;
+            border-color: #b8a090;
+        }
+        .ending-btn:active {
+            transform: scale(0.95);
+        }
+        .ending-btn.primary {
+            background: #2a1e18;
+            border-color: #b06040;
+            color: #f0d8c8;
+        }
+        .ending-btn.primary:hover {
+            background: #4a3228;
+            border-color: #c07050;
+        }
+        #ending-overlay::-webkit-scrollbar {
+            width: 6px;
+            background: #1e1612;
+        }
+        #ending-overlay::-webkit-scrollbar-thumb {
+            background: #4a3a32;
+            border: 1px solid #2a1e18;
+        }
+
         @media (max-width: 700px) {
             #game-container { height: 90vh; border-width: 4px; box-shadow: 0 0 0 2px #5a4a3a, 0 0 0 4px #2a1e18; }
             #text-box { bottom: 12px; left: 12px; right: 12px; padding: 12px; font-size: 10px; max-height: 70%; }
-            .choice-btn, .restart-btn { font-size: 8px; padding: 6px 10px; min-width: 70px; flex: 1 1 100%; }
+            .choice-btn { font-size: 8px; padding: 6px 10px; min-width: 70px; flex: 1 1 100%; }
             #scene-text { font-size: 9px; }
             #speaker-name { font-size: 8px; }
             #scene-img { max-height: 80px; }
             #version { font-size: 6px; bottom: 1px; right: 4px; }
             #progress-text { font-size: 6px; top: -16px; }
             #back-btn { font-size: 6px; padding: 4px 8px; top: 4px; left: 4px; }
+            #ending-modal { padding: 16px; }
+            #ending-title { font-size: 14px; }
+            #ending-text { font-size: 10px; }
+            #ending-stats { font-size: 8px; padding: 8px; }
+            .ending-btn { font-size: 8px; padding: 8px 12px; min-width: 80px; }
         }
     </style>
 </head>
@@ -252,12 +347,25 @@
         <div id="progress-fill"></div>
         <span id="progress-text">0%</span>
     </div>
-    <div id="version">v0.2.0</div>
+    <div id="version">v0.2.1</div>
     <button id="back-btn" onclick="window.location.href='index.html'">← Меню</button>
+
+    <!-- Модальное окно концовки -->
+    <div id="ending-overlay">
+        <div id="ending-modal">
+            <div id="ending-title">🏁 КОНЕЦ</div>
+            <div id="ending-text"></div>
+            <div id="ending-stats"></div>
+            <div id="ending-buttons">
+                <button class="ending-btn primary" id="ending-restart">🔄 Начать заново</button>
+                <button class="ending-btn" id="ending-menu">🏠 В меню</button>
+            </div>
+        </div>
+    </div>
 </div>
 <script>
     // ------------------------------------------------------------
-    //  Игровой движок (всё в одном файле)
+    //  Игровой движок
     // ------------------------------------------------------------
     let storyData = null;
     let currentSceneId = 'start';
@@ -274,6 +382,18 @@
         kissedKira: false,
         finalEnding: ''
     };
+
+    // Элементы модалки
+    const endingOverlay = document.getElementById('ending-overlay');
+    const endingText = document.getElementById('ending-text');
+    const endingStats = document.getElementById('ending-stats');
+    const endingRestart = document.getElementById('ending-restart');
+    const endingMenu = document.getElementById('ending-menu');
+
+    endingRestart.addEventListener('click', resetGame);
+    endingMenu.addEventListener('click', function() {
+        window.location.href = 'index.html';
+    });
 
     async function loadStory() {
         try {
@@ -395,29 +515,33 @@
     }
 
     function showEnding() {
-        const textEl = document.getElementById('scene-text');
-        let statsText = '\n\n--- СТАТИСТИКА ---\n';
+        // Скрываем поле выбора, чтобы не было кнопок
+        document.getElementById('choices').innerHTML = '';
+
+        // Формируем текст концовки
+        const endingMessage = fullText || 'Твоя история завершена.';
+        endingText.textContent = endingMessage;
+
+        // Статистика
+        let statsText = '';
         statsText += 'Ты доверился Димону? ' + (stats.trustDimon ? 'Да' : 'Нет') + '\n';
         statsText += 'Заступался за слабых? ' + (stats.stoodUp ? 'Да' : 'Нет') + '\n';
         statsText += 'Выбрал честный труд? ' + (stats.choseHonest ? 'Да' : 'Нет') + '\n';
         statsText += 'Пошёл в криминал? ' + (stats.choseCriminal ? 'Да' : 'Нет') + '\n';
         statsText += 'Работал в охране? ' + (stats.choseSecurity ? 'Да' : 'Нет') + '\n';
         statsText += 'Поцеловал Киру? ' + (stats.kissedKira ? 'Да' : 'Нет') + '\n';
-        statsText += 'Финальная концовка: ' + (stats.finalEnding || 'неизвестно') + '\n';
-        textEl.innerHTML = '🏁 Конец.\n\nСпасибо за игру!\n\n' + statsText;
-        const choicesEl = document.getElementById('choices');
-        choicesEl.innerHTML = '';
-        const restartBtn = document.createElement('button');
-        restartBtn.className = 'restart-btn';
-        restartBtn.textContent = '🔄 Начать заново';
-        restartBtn.addEventListener('click', resetGame);
-        choicesEl.appendChild(restartBtn);
+        statsText += 'Финальная концовка: ' + (stats.finalEnding || 'неизвестно');
+        endingStats.textContent = statsText;
+
+        // Показываем модальное окно
+        endingOverlay.style.display = 'flex';
         localStorage.removeItem('saveProgress');
-        document.getElementById('speaker-name').className = '';
-        document.getElementById('progress-fill').style.width = '100%';
     }
 
     function resetGame() {
+        // Скрываем модалку
+        endingOverlay.style.display = 'none';
+        // Сброс
         localStorage.removeItem('saveProgress');
         visitedScenes = new Set();
         stats = { trustDimon: false, stoodUp: false, choseHonest: false, choseCriminal: false, choseSecurity: false, kissedKira: false, finalEnding: '' };
