@@ -8,7 +8,6 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
     <style>
-        /* все стили, как раньше, но я их встрою в index.html */
         * { margin: 0; padding: 0; box-sizing: border-box; image-rendering: pixelated; }
         body { background: #0d0a08; display: flex; justify-content: center; align-items: center; min-height: 100vh; font-family: 'Press Start 2P', monospace; padding: 10px; }
         #menu-container { width: 800px; max-width: 100%; height: 600px; max-height: 90vh; position: relative; border: 6px solid #3a2c24; box-shadow: 0 0 0 4px #5a4a3a, 0 0 0 8px #2a1e18, inset 0 0 30px rgba(0,0,0,0.8); background: #0f0a08; overflow: hidden; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 20px; animation: pixelFade 0.6s steps(2); }
@@ -47,9 +46,8 @@
         <button class="menu-btn" id="settings-btn"></button>
         <button class="menu-btn" id="support-btn"></button>
     </div>
-    <div id="version">v0.3.2</div>
+    <div id="version">v0.3.3</div>
     <div id="footer">32-bit pixel</div>
-    <!-- Предупреждение -->
     <div id="warning-overlay">
         <div id="warning-modal">
             <div id="warning-title"></div>
@@ -59,7 +57,6 @@
     </div>
 </div>
 <script>
-// Все русские тексты через JS (Unicode-эскейпы)
 var MENU_TEXTS = {
     subtitle: '\u0418\u0441\u0442\u043e\u0440\u0438\u044f \u043e\u0434\u043d\u043e\u0439 \u0436\u0438\u0437\u043d\u0438',
     play: '\u25b6 \u0418\u0433\u0440\u0430\u0442\u044c',
@@ -70,7 +67,6 @@ var MENU_TEXTS = {
     warningBtn: '\u042f \u043f\u043e\u043d\u044f\u043b, \u043f\u0440\u043e\u0434\u043e\u043b\u0436\u0438\u0442\u044c'
 };
 
-// Вставка текстов
 document.getElementById('subtitle').textContent = MENU_TEXTS.subtitle;
 document.getElementById('play-btn').textContent = MENU_TEXTS.play;
 document.getElementById('settings-btn').textContent = MENU_TEXTS.settings;
@@ -79,7 +75,6 @@ document.getElementById('warning-title').textContent = MENU_TEXTS.warningTitle;
 document.getElementById('warning-text').textContent = MENU_TEXTS.warningText;
 document.getElementById('warning-btn').textContent = MENU_TEXTS.warningBtn;
 
-// Обработчики
 document.getElementById('play-btn').addEventListener('click', function() {
     window.location.href = 'game.html';
 });
@@ -89,11 +84,9 @@ document.getElementById('settings-btn').addEventListener('click', function() {
 document.getElementById('support-btn').addEventListener('click', function() {
     window.open('https://t.me/brokenpromisesgame', '_blank');
 });
-
-function closeWarning() {
+document.getElementById('warning-btn').addEventListener('click', function() {
     document.getElementById('warning-overlay').style.display = 'none';
-}
-document.getElementById('warning-btn').addEventListener('click', closeWarning);
+});
 </script>
 </body>
 </html>
