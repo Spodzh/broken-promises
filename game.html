@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Broken Promises — игра</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            image-rendering: pixelated;
+        }
+        body {
+            background: #0d0a08;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            font-family: 'Press Start 2P', monospace;
+            padding: 10px;
+        }
+        #game-container {
+            width: 800px;
+            max-width: 100%;
+            height: 600px;
+            max-height: 90vh;
+            position: relative;
+            border: 6px solid #3a2c24;
+            box-shadow: 0 0 0 4px #5a4a3a, 0 0 0 8px #2a1e18, inset 0 0 30px rgba(0,0,0,0.8);
+            background: #0f0a08;
+            overflow: hidden;
+            animation: pixelFade 0.6s steps(2);
+        }
+        @keyframes pixelFade {
+            0% { opacity: 0; transform: scale(0.96); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+        #bg-layer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: repeating-linear-gradient(0deg, rgba(0,0,0,0.03) 0px, rgba(0,0,0,0.03) 3px, transparent 3px, transparent 6px);
+            z-index: 0;
+            pointer-events: none;
+        }
+        #background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-size: cover;
+            background-position: center;
+            opacity: 0.35;
+            image-rendering: pixelated;
+            transition: background-image 1s steps(3);
+            z-index: 1;
+            filter: brightness(0.8) saturate(0.6);
+        }
+        #text-box {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            right: 20px;
+            background: rgba(14, 10, 8, 0.92);
+            border: 4px solid #4a3a32;
+            padding: 14px 18px;
+            color: #d4c4b0;
+            font-size: 12px;
+            line-height: 1.8;
+            max-height: 65%;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            box-shadow: inset 0 0 0 2px #2a1e18, 0 0 40px rgba(0,0,0,0.9);
+            z-index: 2;
+            border-radius: 0;
+        }
+        #speaker-name {
+            font-size: 10px;
+            color: #b8a090;
+            border-bottom: 3px solid #3a2c24;
+            padding-bottom: 4px;
+            margin-bottom: 4px;
+            display: none;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+        #speaker-name.visible {
+            display: block;
+        }
+        #scene-image {
+            text-align: center;
+            margin-bottom: 4px;
+        }
+        #scene-img {
+            max-width: 100%;
+            max-height: 110px;
+            border: 3px solid #3a2c24;
+            image-rendering: pixelated;
+            background: #0f0a08;
+            transition: opacity 0.4s steps(2);
+        }
+        #scene-text {
+            flex: 1;
+            overflow-y: auto;
+            padding-right: 6px;
+            font-size: 11px;
+            letter-spacing: 0.5px;
+            cursor: pointer;
+            min-height: 2.5em;
+            color: #d4c8bc;
+        }
+        #scene-text::-webkit-scrollbar {
+            width: 6px;
+            background: #1e1612;
+        }
+        #scene-text::-webkit-scrollbar-thumb {
+            background: #4a3a32;
+            border: 1px solid #2a1e18;
+        }
+        #choices {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 4px;
+        }
+        .choice-btn, .restart-btn {
+            background: #1e1612;
+            border: 3px solid #4a3a32;
+            color: #d4c4b0;
+            padding: 8px 16px;
+            font-family: 'Press Start 2P', monospace;
+            font-size: 10px;
+            cursor: pointer;
+            transition: all 0.1s steps(2);
+            flex: 1 1 40%;
+            min-width: 100px;
+            text-align: center;
+            image-rendering: pixelated;
+            box-shadow: inset 0 0 0 2px #0f0a08;
+            touch-action: manipulation;
+        }
+        .choice-btn:hover, .restart-btn:hover {
+            background: #3a2c24;
+            color: #f0e6d0;
+            border-color: #b8a090;
+        }
+        .choice-btn:active, .restart-btn:active {
+            transform: scale(0.95);
+        }
+        .restart-btn {
+            flex: 1 1 100%;
+            background: #2a1e18;
+            border-color: #b06040;
+            color: #f0d8c8;
+        }
+        .restart-btn:hover {
+            background: #4a3228;
+            border-color: #c07050;
+        }
+        #progress-bar {
+            position: absolute;
+            bottom: 6px;
+            left: 20px;
+            right: 20px;
+            height: 6px;
+            background: #1a1410;
+            border: 2px solid #3a2c24;
+            box-shadow: inset 0 0 0 2px #0a0705;
+            z-index: 3;
+            overflow: hidden;
+        }
+        #progress-fill {
+            height: 100%;
+            width: 0%;
+            background: #7a4a3a;
+            transition: width 0.3s steps(3);
+        }
+        #progress-text {
+            position: absolute;
+            right: 6px;
+            top: -18px;
+            font-size: 8px;
+            color: #5a4a3a;
+            font-family: 'Press Start 2P', monospace;
+        }
+        #version {
+            position: absolute;
+            bottom: 2px;
+            right: 8px;
+            font-size: 8px;
+            color: #3a2a22;
+            font-family: 'Press Start 2P', monospace;
+            letter-spacing: 1px;
+            opacity: 0.5;
+            z-index: 4;
+        }
+        #back-btn {
+            position: absolute;
+            top: 8px;
+            left: 8px;
+            z-index: 5;
+            background: rgba(20,16,14,0.7);
+            border: 2px solid #4a3a32;
+            color: #b8a090;
+            padding: 6px 12px;
+            font-family: 'Press Start 2P', monospace;
+            font-size: 8px;
+            cursor: pointer;
+            transition: all 0.1s steps(2);
+            image-rendering: pixelated;
+            touch-action: manipulation;
+        }
+        #back-btn:hover {
+            background: #3a2c24;
+            color: #f0e6d0;
+        }
+        #back-btn:active {
+            transform: scale(0.95);
+        }
+        @media (max-width: 700px) {
+            #game-container { height: 90vh; border-width: 4px; box-shadow: 0 0 0 2px #5a4a3a, 0 0 0 4px #2a1e18; }
+            #text-box { bottom: 12px; left: 12px; right: 12px; padding: 12px; font-size: 10px; max-height: 70%; }
+            .choice-btn, .restart-btn { font-size: 8px; padding: 6px 10px; min-width: 70px; flex: 1 1 100%; }
+            #scene-text { font-size: 9px; }
+            #speaker-name { font-size: 8px; }
+            #scene-img { max-height: 80px; }
+            #version { font-size: 6px; bottom: 1px; right: 4px; }
+            #progress-text { font-size: 6px; top: -16px; }
+            #back-btn { font-size: 6px; padding: 4px 8px; top: 4px; left: 4px; }
+        }
+    </style>
+</head>
+<body>
+<div id="game-container">
+    <div id="bg-layer"></div>
+    <div id="background"></div>
+    <div id="text-box">
+        <div id="speaker-name"></div>
+        <div id="scene-image"><img id="scene-img" src="" alt=""></div>
+        <div id="scene-text"></div>
+        <div id="choices"></div>
+    </div>
+    <div id="progress-bar">
+        <div id="progress-fill"></div>
+        <span id="progress-text">0%</span>
+    </div>
+    <div id="version">v0.2.0</div>
+    <button id="back-btn" onclick="window.location.href='index.html'">← Меню</button>
+</div>
+<script>
+    // ------------------------------------------------------------
+    //  Игровой движок (всё в одном файле)
+    // ------------------------------------------------------------
+    let storyData = null;
+    let currentSceneId = 'start';
+    let visitedScenes = new Set();
+    let isTyping = false;
+    let typeTimer = null;
+    let fullText = '';
+    let stats = {
+        trustDimon: false,
+        stoodUp: false,
+        choseHonest: false,
+        choseCriminal: false,
+        choseSecurity: false,
+        kissedKira: false,
+        finalEnding: ''
+    };
+
+    async function loadStory() {
+        try {
+            const response = await fetch('story.json');
+            if (!response.ok) throw new Error(`HTTP ошибка: ${response.status}`);
+            const text = await response.text();
+            try {
+                storyData = JSON.parse(text);
+            } catch (e) {
+                throw new Error('Синтаксическая ошибка в story.json: ' + e.message);
+            }
+            if (!storyData.startScene || !storyData.scenes) {
+                throw new Error('В story.json отсутствует startScene или scenes');
+            }
+            const saved = localStorage.getItem('saveProgress');
+            if (saved) {
+                const data = JSON.parse(saved);
+                currentSceneId = data.scene || storyData.startScene;
+                visitedScenes = new Set(data.visited || []);
+                if (data.stats) stats = data.stats;
+            } else {
+                currentSceneId = storyData.startScene;
+            }
+            renderScene(currentSceneId);
+        } catch (e) {
+            document.getElementById('scene-text').innerHTML = '❌ Ошибка загрузки сценария:\n' + e.message;
+            console.error('Ошибка загрузки:', e);
+        }
+    }
+
+    function renderScene(sceneId) {
+        const scene = storyData.scenes.find(s => s.id === sceneId);
+        if (!scene) {
+            document.getElementById('scene-text').innerHTML = 'Сцена ' + sceneId + ' не найдена.';
+            return;
+        }
+        visitedScenes.add(sceneId);
+        localStorage.setItem('saveProgress', JSON.stringify({ scene: sceneId, visited: Array.from(visitedScenes), stats: stats }));
+
+        if (scene.background) {
+            document.getElementById('background').style.backgroundImage = `url('${scene.background}')`;
+        }
+
+        const img = document.getElementById('scene-img');
+        if (scene.image) {
+            img.src = scene.image;
+            img.style.display = 'block';
+            img.style.opacity = '0';
+            setTimeout(() => { img.style.opacity = '1'; }, 50);
+        } else {
+            img.style.display = 'none';
+        }
+
+        const speakerEl = document.getElementById('speaker-name');
+        if (scene.speaker) {
+            speakerEl.textContent = scene.speaker;
+            speakerEl.className = 'visible';
+        } else {
+            speakerEl.className = '';
+        }
+
+        const textEl = document.getElementById('scene-text');
+        textEl.innerHTML = '';
+        fullText = scene.text_ru || scene.text || '';
+        isTyping = true;
+        typeText(textEl, fullText, 0, 20);
+
+        const choicesEl = document.getElementById('choices');
+        choicesEl.innerHTML = '';
+        if (scene.choices && scene.choices.length > 0) {
+            scene.choices.forEach(choice => {
+                const btn = document.createElement('button');
+                btn.className = 'choice-btn';
+                btn.textContent = choice.text_ru || choice.text || '';
+                btn.addEventListener('click', () => {
+                    // Сбор статистики
+                    if (choice.nextId === 'school_1_1' && choice.text_ru && choice.text_ru.includes('Довериться')) stats.trustDimon = true;
+                    if (choice.nextId === 'school_2_1' && choice.text_ru && choice.text_ru.includes('заступиться')) stats.stoodUp = true;
+                    if (choice.nextId === 'work_honest') stats.choseHonest = true;
+                    if (choice.nextId === 'work_criminal') stats.choseCriminal = true;
+                    if (choice.nextId === 'work_security') stats.choseSecurity = true;
+                    if (choice.nextId === 'ptu_1' && choice.text_ru && choice.text_ru.includes('Поцеловать')) stats.kissedKira = true;
+
+                    if (choice.nextId) {
+                        renderScene(choice.nextId);
+                    } else {
+                        stats.finalEnding = sceneId;
+                        showEnding();
+                    }
+                });
+                choicesEl.appendChild(btn);
+            });
+        } else {
+            stats.finalEnding = sceneId;
+            showEnding();
+        }
+
+        const total = storyData.scenes.length;
+        const progress = Math.min(100, Math.round((visitedScenes.size / total) * 100));
+        document.getElementById('progress-text').textContent = progress + '%';
+        document.getElementById('progress-fill').style.width = progress + '%';
+
+        textEl.onclick = function() {
+            if (isTyping) {
+                clearTimeout(typeTimer);
+                textEl.innerHTML = fullText;
+                isTyping = false;
+            }
+        };
+    }
+
+    function typeText(element, text, index, speed) {
+        if (index < text.length) {
+            element.innerHTML += text.charAt(index);
+            typeTimer = setTimeout(() => typeText(element, text, index + 1, speed), speed);
+        } else {
+            isTyping = false;
+        }
+    }
+
+    function showEnding() {
+        const textEl = document.getElementById('scene-text');
+        let statsText = '\n\n--- СТАТИСТИКА ---\n';
+        statsText += 'Ты доверился Димону? ' + (stats.trustDimon ? 'Да' : 'Нет') + '\n';
+        statsText += 'Заступался за слабых? ' + (stats.stoodUp ? 'Да' : 'Нет') + '\n';
+        statsText += 'Выбрал честный труд? ' + (stats.choseHonest ? 'Да' : 'Нет') + '\n';
+        statsText += 'Пошёл в криминал? ' + (stats.choseCriminal ? 'Да' : 'Нет') + '\n';
+        statsText += 'Работал в охране? ' + (stats.choseSecurity ? 'Да' : 'Нет') + '\n';
+        statsText += 'Поцеловал Киру? ' + (stats.kissedKira ? 'Да' : 'Нет') + '\n';
+        statsText += 'Финальная концовка: ' + (stats.finalEnding || 'неизвестно') + '\n';
+        textEl.innerHTML = '🏁 Конец.\n\nСпасибо за игру!\n\n' + statsText;
+        const choicesEl = document.getElementById('choices');
+        choicesEl.innerHTML = '';
+        const restartBtn = document.createElement('button');
+        restartBtn.className = 'restart-btn';
+        restartBtn.textContent = '🔄 Начать заново';
+        restartBtn.addEventListener('click', resetGame);
+        choicesEl.appendChild(restartBtn);
+        localStorage.removeItem('saveProgress');
+        document.getElementById('speaker-name').className = '';
+        document.getElementById('progress-fill').style.width = '100%';
+    }
+
+    function resetGame() {
+        localStorage.removeItem('saveProgress');
+        visitedScenes = new Set();
+        stats = { trustDimon: false, stoodUp: false, choseHonest: false, choseCriminal: false, choseSecurity: false, kissedKira: false, finalEnding: '' };
+        currentSceneId = storyData.startScene;
+        renderScene(currentSceneId);
+    }
+
+    window.onload = loadStory;
+</script>
+</body>
+</html>
