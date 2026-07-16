@@ -134,7 +134,79 @@
             z-index: 2;
             font-family: 'Press Start 2P', monospace;
         }
-        /* Адаптивность */
+
+        /* ----- МОДАЛЬНОЕ ПРЕДУПРЕЖДЕНИЕ ----- */
+        #warning-overlay {
+            display: flex;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.85);
+            z-index: 10;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            animation: pixelFade 0.4s steps(2);
+        }
+        #warning-modal {
+            background: #1e1612;
+            border: 6px solid #4a3a32;
+            box-shadow: inset 0 0 0 3px #0f0a08, 0 0 40px rgba(0,0,0,0.9);
+            padding: 24px 20px 20px;
+            max-width: 90%;
+            max-height: 80%;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            image-rendering: pixelated;
+            text-align: center;
+        }
+        #warning-title {
+            font-size: 16px;
+            color: #f0d8c8;
+            letter-spacing: 2px;
+            border-bottom: 3px solid #3a2c24;
+            padding-bottom: 8px;
+        }
+        #warning-text {
+            font-size: 11px;
+            line-height: 1.8;
+            color: #d4c4b0;
+            padding: 4px 0;
+        }
+        #warning-text a {
+            color: #c07050;
+            text-decoration: none;
+            border-bottom: 2px solid #3a2c24;
+        }
+        #warning-text a:hover {
+            color: #f0d8c8;
+            border-color: #b8a090;
+        }
+        #warning-btn {
+            background: #2a1e18;
+            border: 3px solid #b06040;
+            color: #f0d8c8;
+            padding: 12px 20px;
+            font-family: 'Press Start 2P', monospace;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.1s steps(2);
+            box-shadow: inset 0 0 0 2px #0f0a08;
+            touch-action: manipulation;
+            margin-top: 8px;
+        }
+        #warning-btn:hover {
+            background: #4a3228;
+            border-color: #c07050;
+        }
+        #warning-btn:active {
+            transform: scale(0.95);
+        }
+
         @media (max-width: 700px) {
             #menu-container {
                 height: 90vh;
@@ -156,6 +228,16 @@
             #menu-buttons {
                 width: 80%;
             }
+            #warning-title {
+                font-size: 14px;
+            }
+            #warning-text {
+                font-size: 10px;
+            }
+            #warning-btn {
+                font-size: 10px;
+                padding: 10px 16px;
+            }
         }
         @media (max-width: 400px) {
             #title {
@@ -169,23 +251,42 @@
     </style>
 </head>
 <body>
-    <div id="menu-container">
-        <div id="bg-layer"></div>
-        <div id="title">BROKEN PROMISES</div>
-        <div id="subtitle">История одной жизни</div>
-        <div id="menu-buttons">
-            <button class="menu-btn play" onclick="startGame()">▶ Играть</button>
-            <button class="menu-btn" onclick="alert('Настройки будут позже')">⚙ Настройки</button>
-            <button class="menu-btn" onclick="alert('Выход (закройте вкладку)')">✕ Выход</button>
-        </div>
-        <div id="version">v0.2.0</div>
-        <div id="footer">32-bit pixel</div>
+<div id="menu-container">
+    <div id="bg-layer"></div>
+    <div id="title">BROKEN PROMISES</div>
+    <div id="subtitle">История одной жизни</div>
+    <div id="menu-buttons">
+        <button class="menu-btn play" onclick="startGame()">▶ Играть</button>
+        <button class="menu-btn" onclick="alert('Настройки будут позже')">⚙ Настройки</button>
+        <button class="menu-btn" onclick="window.open('https://t.me/brokenpromisesgame','_blank')">✉ Поддержать</button>
     </div>
-    <script>
-        function startGame() {
-            // Переход к игре (game.html)
-            window.location.href = 'game.html';
-        }
-    </script>
+    <div id="version">v0.2.2</div>
+    <div id="footer">32-bit pixel</div>
+
+    <!-- Модальное окно предупреждения -->
+    <div id="warning-overlay">
+        <div id="warning-modal">
+            <div id="warning-title">⚠ ВНИМАНИЕ</div>
+            <div id="warning-text">
+                Игра находится на ранней стадии разработки.<br>
+                Возможны баги, изменения сюжета и дизайна.<br><br>
+                Поддержать и следить за новостями можно в телеграм-канале:<br>
+                <a href="https://t.me/brokenpromisesgame" target="_blank">t.me/brokenpromisesgame</a>
+            </div>
+            <button id="warning-btn" onclick="closeWarning()">Я понял, продолжить</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    function closeWarning() {
+        document.getElementById('warning-overlay').style.display = 'none';
+    }
+
+    function startGame() {
+        // Переход к игре (game.html)
+        window.location.href = 'game.html';
+    }
+</script>
 </body>
 </html>
