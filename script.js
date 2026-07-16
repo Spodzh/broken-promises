@@ -35,12 +35,10 @@ function renderScene(sceneId) {
     visitedScenes.add(sceneId);
     localStorage.setItem('saveProgress', JSON.stringify({ scene: sceneId, visited: Array.from(visitedScenes) }));
 
-    // Фон
     if (scene.background) {
         document.getElementById('background').style.backgroundImage = `url('${scene.background}')`;
     }
 
-    // Изображение
     const img = document.getElementById('scene-img');
     if (scene.image) {
         img.src = scene.image;
@@ -51,7 +49,6 @@ function renderScene(sceneId) {
         img.style.display = 'none';
     }
 
-    // Имя говорящего
     const speakerEl = document.getElementById('speaker-name');
     if (scene.speaker) {
         speakerEl.textContent = scene.speaker;
@@ -60,14 +57,12 @@ function renderScene(sceneId) {
         speakerEl.className = '';
     }
 
-    // Текст
     const textEl = document.getElementById('scene-text');
     textEl.innerHTML = '';
     fullText = scene.text_ru || scene.text || '';
     isTyping = true;
     typeText(textEl, fullText, 0, 20);
 
-    // Кнопки выбора
     const choicesEl = document.getElementById('choices');
     choicesEl.innerHTML = '';
     if (scene.choices && scene.choices.length > 0) {
@@ -85,16 +80,15 @@ function renderScene(sceneId) {
             choicesEl.appendChild(btn);
         });
     } else {
-        // Концовка
         showEnding();
     }
 
-    // Обновление прогресса
     const total = storyData.scenes.length;
     const progress = Math.min(100, Math.round((visitedScenes.size / total) * 100));
     document.getElementById('progress-text').textContent = progress + '%';
+    // Обновляем ширину прогресс-бара через after
+    document.querySelector('#progress-bar::after').style.width = progress + '%';
 
-    // Клик по тексту для ускорения печати
     textEl.onclick = function() {
         if (isTyping) {
             clearTimeout(typeTimer);
@@ -125,6 +119,7 @@ function showEnding() {
     choicesEl.appendChild(restartBtn);
     localStorage.removeItem('saveProgress');
     document.getElementById('speaker-name').className = '';
+    document.querySelector('#progress-bar::after').style.width = '100%';
 }
 
 function resetGame() {
