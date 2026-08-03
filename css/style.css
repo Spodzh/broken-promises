@@ -109,6 +109,38 @@ body {
     letter-spacing: 1px;
     opacity: 0.5;
 }
+#studio {
+    position: absolute;
+    bottom: 10px;
+    left: 16px;
+    font-size: 8px;
+    color: #3a2a22;
+    z-index: 1;
+    font-family: 'Press Start 2P', monospace;
+    letter-spacing: 1px;
+    opacity: 0.5;
+}
+
+/* ===== FULLSCREEN BUTTON ===== */
+.fullscreen-btn {
+    position: absolute;
+    top: 10px;
+    left: 12px;
+    z-index: 5;
+    background: rgba(0,0,0,0.5);
+    border: 2px solid #4a3a32;
+    color: #b8a090;
+    padding: 4px 8px;
+    font-size: 14px;
+    cursor: pointer;
+    font-family: 'Press Start 2P', monospace;
+    transition: all 0.15s steps(2);
+    line-height: 1;
+}
+.fullscreen-btn:hover {
+    background: #3a2c24;
+    color: #f0e6d0;
+}
 
 /* ===== ПРЕДУПРЕЖДЕНИЕ ===== */
 #warningOverlay {
@@ -183,7 +215,7 @@ body {
     border-color: #c07050;
 }
 
-/* ===== МОДАЛЬНЫЕ ОКНА (настройки, поддержка) ===== */
+/* ===== МОДАЛЬНЫЕ ОКНА ===== */
 .modal-overlay {
     display: flex;
     position: absolute;
@@ -485,10 +517,15 @@ body {
         font-size: 10px;
         padding: 10px 16px;
     }
-    #version {
+    #version, #studio {
         font-size: 6px;
         bottom: 6px;
+    }
+    #version {
         right: 10px;
+    }
+    #studio {
+        left: 10px;
     }
     #ui {
         padding: 14px;
@@ -505,11 +542,16 @@ body {
     #speaker {
         font-size: 10px;
     }
-    #backBtn {
+    #backBtn, .fullscreen-btn {
         font-size: 7px;
         padding: 3px 8px;
         top: 6px;
+    }
+    #backBtn {
         right: 6px;
+    }
+    .fullscreen-btn {
+        left: 6px;
     }
     .ending-modal {
         padding: 20px;
