@@ -16,17 +16,48 @@
         <button class="btn" id="settingsBtn">⚙ Настройки</button>
         <button class="btn" id="supportBtn">✉ Поддержать</button>
     </div>
-    <div id="version">v2.0.0</div>
-    <div id="warning">
-        <div id="wtitle">⚠ ВНИМАНИЕ</div>
-        <div id="wtext">
-            Игра находится на ранней стадии разработки.
-            Возможны баги, изменения сюжета и дизайна.
+    <div id="version">v2.1.0</div>
 
-            Поддержать и следить за новостями можно в телеграм-канале:
-            t.me/brokenpromisesgame
+    <!-- Предупреждение о ранней стадии -->
+    <div id="warningOverlay">
+        <div id="warningModal">
+            <div id="warningTitle">⚠ ВНИМАНИЕ</div>
+            <div id="warningText">
+                Игра находится на ранней стадии разработки.<br>
+                Возможны баги, изменения сюжета и дизайна.
+            </div>
+            <div id="warningCheckbox">
+                <input type="checkbox" id="dontShowAgain">
+                <label for="dontShowAgain">Не показывать больше</label>
+            </div>
+            <button id="warningBtn">Понятно, продолжить</button>
         </div>
-        <button id="wbtn">Я понял, продолжить</button>
+    </div>
+
+    <!-- Модалка настроек -->
+    <div id="settingsOverlay" class="modal-overlay hidden">
+        <div class="modal-box">
+            <div class="modal-title">⚙ Настройки</div>
+            <div class="modal-content">
+                <p>Настройки звука и языка будут добавлены в следующих обновлениях.</p>
+                <p>Следите за новостями в Telegram-канале.</p>
+            </div>
+            <button class="modal-close-btn" onclick="closeSettings()">Закрыть</button>
+        </div>
+    </div>
+
+    <!-- Модалка поддержки -->
+    <div id="supportOverlay" class="modal-overlay hidden">
+        <div class="modal-box">
+            <div class="modal-title">✉ Поддержать</div>
+            <div class="modal-content">
+                <p>Привет! Меня зовут <strong>spodzh</strong>.</p>
+                <p>Я один разрабатываю эту игру без бюджета, опыта и навыков.</p>
+                <p>Если вам нравится проект и вы хотите помочь советом, идеей или просто сказать спасибо — подписывайтесь на Telegram-канал:</p>
+                <button class="btn support-tg-btn" onclick="window.open('https://t.me/brokenpromisesgame','_blank')">📱 Перейти в Telegram</button>
+            </div>
+            <button class="modal-close-btn" onclick="closeSupport()">Закрыть</button>
+        </div>
     </div>
 </div>
 <script src="js/menu.js" charset="UTF-8"></script>
