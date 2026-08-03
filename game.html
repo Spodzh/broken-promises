@@ -16,8 +16,25 @@
         <div id="choices"></div>
         <div id="progress"><div id="fill"></div></div>
     </div>
-    <div id="version">v2.0.0</div>
+    <div id="version">v2.1.0</div>
     <button id="backBtn">← Меню</button>
+
+    <!-- Модалка конца -->
+    <div id="endingOverlay" class="modal-overlay hidden">
+        <div class="modal-box ending-modal">
+            <div class="modal-title ending-title">🏁 Конец</div>
+            <div class="ending-text" id="endingText"></div>
+            <div class="ending-stats-box" id="endingStatsBox" style="display:none;">
+                <div class="ending-stats-title">📊 Статистика ваших выборов</div>
+                <div class="ending-stats-content" id="endingStatsContent"></div>
+            </div>
+            <div class="ending-buttons">
+                <button class="btn ending-btn" id="showStatsBtn">📊 Показать статистику</button>
+                <button class="btn ending-btn restart-btn" id="endingRestartBtn">🔄 Начать заново</button>
+                <button class="btn ending-btn" id="endingMenuBtn">🏠 В меню</button>
+            </div>
+        </div>
+    </div>
 </div>
 <script src="js/story.js" charset="UTF-8"></script>
 <script src="js/game.js" charset="UTF-8"></script>
