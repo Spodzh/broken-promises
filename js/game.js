@@ -9,7 +9,7 @@ var fullText = '';
 var stats = {};
 var endingShown = false;
 
-// Элементы модалки конца
+// Элементы модалки
 var endingOverlay = document.getElementById('endingOverlay');
 var endingText = document.getElementById('endingText');
 var endingStatsBox = document.getElementById('endingStatsBox');
@@ -18,7 +18,7 @@ var showStatsBtn = document.getElementById('showStatsBtn');
 var endingRestartBtn = document.getElementById('endingRestartBtn');
 var endingMenuBtn = document.getElementById('endingMenuBtn');
 
-// Обработчики кнопок модалки
+// Обработчики
 endingRestartBtn.addEventListener('click', resetGame);
 endingMenuBtn.addEventListener('click', function() {
     window.location.href = 'index.html';
@@ -37,7 +37,6 @@ showStatsBtn.addEventListener('click', function() {
     }
 });
 
-// ===== Сбор статистики =====
 function trackChoice(choiceText, nextId) {
     if (choiceText.indexOf("Довериться") !== -1) stats.trustDimon = "Да";
     if (choiceText.indexOf("Ответить резко") !== -1) stats.stoodUp = "Да";
@@ -51,7 +50,6 @@ function trackChoice(choiceText, nextId) {
     if (nextId === "final_choice_bad") stats.ending = "Плохая";
 }
 
-// ===== Рендер сцены =====
 function render(sceneId) {
     var scene = storyData.scenes.find(function(s) { return s.id === sceneId; });
     if (!scene) {
@@ -100,7 +98,6 @@ function render(sceneId) {
     };
 }
 
-// ===== Показ кнопок =====
 function showChoices(scene) {
     var choicesEl = document.getElementById('choices');
     choicesEl.innerHTML = '';
@@ -124,22 +121,19 @@ function showChoices(scene) {
     }
 }
 
-// ===== Печать текста (плавно, с оптимизацией) =====
 function typeWriter(element, text, index, callback) {
     if (index < text.length) {
-        // Используем requestAnimationFrame для плавности
         requestAnimationFrame(function() {
             element.innerHTML += text.charAt(index);
             timer = setTimeout(function() {
                 typeWriter(element, text, index + 1, callback);
-            }, 15); // чуть быстрее для плавности
+            }, 15);
         });
     } else {
         if (callback) callback();
     }
 }
 
-// ===== Показ модалки конца =====
 function showEnd() {
     if (endingShown) return;
     endingShown = true;
@@ -155,14 +149,11 @@ function showEnd() {
     statsVisible = false;
     showStatsBtn.textContent = '📊 Показать статистику';
 
-    // Текст концовки (берём последний текст)
     endingText.textContent = fullText || 'Твоя история завершена.';
-
     endingOverlay.classList.remove('hidden');
     localStorage.removeItem('save');
 }
 
-// ===== Сброс игры =====
 function resetGame() {
     endingOverlay.classList.add('hidden');
     endingShown = false;
@@ -172,7 +163,6 @@ function resetGame() {
     render(currentScene);
 }
 
-// ===== Загрузка сохранения =====
 var saved = localStorage.getItem('save');
 if (saved) {
     try {
@@ -184,7 +174,6 @@ if (saved) {
 }
 render(currentScene);
 
-// ===== Кнопка "Меню" =====
 document.getElementById('backBtn').addEventListener('click', function() {
     window.location.href = 'index.html';
 });
