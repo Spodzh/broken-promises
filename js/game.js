@@ -1,5 +1,5 @@
 // ============================================================
-//  ДВИЖОК ИГРЫ С АВАТАРАМИ (v2.3.0)
+//  ДВИЖОК ИГРЫ (v2.3.1)
 // ============================================================
 var currentScene = storyData.startScene;
 var visited = new Set();
@@ -9,7 +9,7 @@ var fullText = '';
 var stats = {};
 var endingShown = false;
 
-// Кешируем элементы DOM
+// Кешируем DOM
 var textEl = document.getElementById('text');
 var choicesEl = document.getElementById('choices');
 var speakerEl = document.getElementById('speaker');
@@ -25,16 +25,15 @@ var showStatsBtn = document.getElementById('showStatsBtn');
 var endingRestartBtn = document.getElementById('endingRestartBtn');
 var endingMenuBtn = document.getElementById('endingMenuBtn');
 
-// ===== АВАТАРЫ =====
+// Аватары
 var avatars = {
     'Повествователь': 'images/portraits/narrator.png',
     'Кира': 'images/portraits/kira.png',
     'Димон': 'images/portraits/dimon.png',
     'Марк': 'images/portraits/mark.png'
 };
-var defaultAvatar = 'images/portraits/default.png'; // заглушка
+var defaultAvatar = 'images/portraits/default.png';
 
-// Обработчики модалки
 endingRestartBtn.addEventListener('click', resetGame);
 endingMenuBtn.addEventListener('click', function() {
     window.location.href = 'index.html';
@@ -75,16 +74,13 @@ function render(sceneId) {
     visited.add(sceneId);
     localStorage.setItem('save', JSON.stringify({ scene: sceneId, visited: Array.from(visited), stats: stats }));
 
-    // Фон
     if (scene.background) {
         bgEl.style.backgroundImage = 'url(' + scene.background + ')';
     }
 
-    // Спикер и аватар
     if (scene.speaker) {
         speakerEl.textContent = scene.speaker;
         speakerEl.className = 'show';
-        // Устанавливаем аватар
         var avatarPath = avatars[scene.speaker] || defaultAvatar;
         avatarEl.src = avatarPath;
         avatarEl.className = 'visible';
@@ -93,7 +89,6 @@ function render(sceneId) {
         avatarEl.className = '';
     }
 
-    // Текст
     textEl.innerHTML = '';
     fullText = scene.text || '';
     choicesEl.innerHTML = '';
@@ -104,7 +99,6 @@ function render(sceneId) {
         showChoices(scene);
     });
 
-    // Прогресс
     var total = storyData.scenes.length;
     var progress = Math.min(100, Math.round((visited.size / total) * 100));
     fillEl.style.width = progress + '%';
