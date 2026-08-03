@@ -15,7 +15,6 @@ var choicesEl = document.getElementById('choices');
 var speakerEl = document.getElementById('speaker');
 var bgEl = document.getElementById('bg');
 var fillEl = document.getElementById('fill');
-var progressText = document.getElementById('progress-text');
 
 var endingOverlay = document.getElementById('endingOverlay');
 var endingText = document.getElementById('endingText');
@@ -129,7 +128,7 @@ function typeWriter(element, text, index, callback) {
             element.innerHTML += text.charAt(index);
             timer = setTimeout(function() {
                 typeWriter(element, text, index + 1, callback);
-            }, 12); // ускоряем до 12 мс для плавности
+            }, 12);
         });
     } else {
         if (callback) callback();
@@ -178,15 +177,4 @@ render(currentScene);
 
 document.getElementById('backBtn').addEventListener('click', function() {
     window.location.href = 'index.html';
-});
-
-// Fullscreen
-document.getElementById('fullscreenBtn').addEventListener('click', function() {
-    if (!document.fullscreenElement) {
-        document.documentElement.requestFullscreen().catch(function(err) {});
-    } else {
-        if (document.exitFullscreen) {
-            document.exitFullscreen();
-        }
-    }
 });
