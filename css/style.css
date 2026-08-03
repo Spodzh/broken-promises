@@ -1,47 +1,63 @@
-/* ===== БАЗОВЫЕ СТИЛИ (остаются как были) ===== */
+/* ===== ПРЕДУПРЕЖДЕНИЕ ===== */
+#warningOverlay { ... } /* остаётся без изменений */
 
-/* ===== ДОБАВЛЯЕМ СТИЛИ ДЛЯ АВАТАРА ===== */
-#speaker-wrapper {
+#warningModal {
+    background: #1e1612;
+    border: 6px solid #4a3a32;
+    box-shadow: inset 0 0 0 3px #0f0a08, 0 0 40px rgba(0,0,0,0.9);
+    padding: 30px;
+    max-width: 500px;
+    width: 100%;
+    text-align: center;
+}
+#warningTitle { ... }
+#warningText { ... }
+
+/* ===== КАСТОМНЫЙ ЧЕКБОКС ===== */
+#warningCheckbox {
     display: flex;
     align-items: center;
-    gap: 12px;
-    margin-bottom: 8px;
-}
-#speaker-avatar {
-    width: 48px;
-    height: 48px;
-    border: 3px solid #3a2c24;
-    border-radius: 50%;
-    image-rendering: pixelated;
-    background: #0f0a08;
-    object-fit: cover;
-    display: none;
-}
-#speaker-avatar.visible {
-    display: block;
-}
-#speaker {
-    font-size: 12px;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 20px;
+    font-size: 11px;
     color: #b8a090;
-    border-bottom: 3px solid #3a2c24;
-    padding-bottom: 4px;
-    display: none;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    flex: 1;
+    cursor: pointer;
 }
-#speaker.show {
+#warningCheckbox input[type="checkbox"] {
+    position: relative;
+    appearance: none; /* убираем стандартный вид */
+    -webkit-appearance: none;
+    width: 20px;
+    height: 20px;
+    background: #0f0a08;
+    border: 2px solid #4a3a32;
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: all 0.15s steps(2);
+}
+#warningCheckbox input[type="checkbox"]:checked {
+    background: #b06040;
+    border-color: #b06040;
+}
+#warningCheckbox input[type="checkbox"]:checked::after {
+    content: '✓';
     display: block;
+    color: #f0d8c8;
+    font-size: 16px;
+    line-height: 18px;
+    text-align: center;
+    font-weight: bold;
 }
+#warningCheckbox label {
+    cursor: pointer;
+    font-size: 11px;
+    color: #b8a090;
+}
+#warningCheckbox label:hover {
+    color: #f0e6d0;
+}
+#warningBtn { ... } /* остаётся без изменений */
 
-/* Адаптив для мобильных */
-@media (max-width: 700px) {
-    #speaker-avatar {
-        width: 36px;
-        height: 36px;
-        border-width: 2px;
-    }
-    #speaker {
-        font-size: 10px;
-    }
-}
+/* ===== МОДАЛЬНЫЕ ОКНА ===== */
+... (остальное без изменений)
