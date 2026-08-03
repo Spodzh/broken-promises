@@ -1,5 +1,5 @@
 // ============================================================
-//  ДВИЖОК ИГРЫ (С ПЛАВНОСТЬЮ И МОДАЛКОЙ КОНЦА)
+//  ДВИЖОК ИГРЫ (ОПТИМИЗИРОВАННЫЙ)
 // ============================================================
 var currentScene = storyData.startScene;
 var visited = new Set();
@@ -9,7 +9,14 @@ var fullText = '';
 var stats = {};
 var endingShown = false;
 
-// Элементы модалки
+// Кешируем элементы DOM для производительности
+var textEl = document.getElementById('text');
+var choicesEl = document.getElementById('choices');
+var speakerEl = document.getElementById('speaker');
+var bgEl = document.getElementById('bg');
+var fillEl = document.getElementById('fill');
+var progressText = document.getElementById('progress-text');
+
 var endingOverlay = document.getElementById('endingOverlay');
 var endingText = document.getElementById('endingText');
 var endingStatsBox = document.getElementById('endingStatsBox');
@@ -53,29 +60,25 @@ function trackChoice(choiceText, nextId) {
 function render(sceneId) {
     var scene = storyData.scenes.find(function(s) { return s.id === sceneId; });
     if (!scene) {
-        document.getElementById('text').innerHTML = 'Сцена не найдена.';
+        textEl.innerHTML = 'Сцена не найдена.';
         return;
     }
     visited.add(sceneId);
     localStorage.setItem('save', JSON.stringify({ scene: sceneId, visited: Array.from(visited), stats: stats }));
 
     if (scene.background) {
-        document.getElementById('bg').style.backgroundImage = 'url(' + scene.background + ')';
+        bgEl.style.backgroundImage = 'url(' + scene.background + ')';
     }
 
-    var speaker = document.getElementById('speaker');
     if (scene.speaker) {
-        speaker.textContent = scene.speaker;
-        speaker.className = 'show';
+        speakerEl.textContent = scene.speaker;
+        speakerEl.className = 'show';
     } else {
-        speaker.className = '';
+        speakerEl.className = '';
     }
 
-    var textEl = document.getElementById('text');
     textEl.innerHTML = '';
     fullText = scene.text || '';
-
-    var choicesEl = document.getElementById('choices');
     choicesEl.innerHTML = '';
 
     isTyping = true;
@@ -86,7 +89,7 @@ function render(sceneId) {
 
     var total = storyData.scenes.length;
     var progress = Math.min(100, Math.round((visited.size / total) * 100));
-    document.getElementById('fill').style.width = progress + '%';
+    fillEl.style.width = progress + '%';
 
     textEl.onclick = function() {
         if (isTyping) {
@@ -99,7 +102,6 @@ function render(sceneId) {
 }
 
 function showChoices(scene) {
-    var choicesEl = document.getElementById('choices');
     choicesEl.innerHTML = '';
     if (scene.choices && scene.choices.length > 0) {
         scene.choices.forEach(function(choice) {
@@ -127,7 +129,7 @@ function typeWriter(element, text, index, callback) {
             element.innerHTML += text.charAt(index);
             timer = setTimeout(function() {
                 typeWriter(element, text, index + 1, callback);
-            }, 15);
+            }, 12); // ускоряем до 12 мс для плавности
         });
     } else {
         if (callback) callback();
@@ -176,4 +178,15 @@ render(currentScene);
 
 document.getElementById('backBtn').addEventListener('click', function() {
     window.location.href = 'index.html';
+});
+
+// Fullscreen
+document.getElementById('fullscreenBtn').addEventListener('click', function() {
+    if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(function(err) {});
+    } else {
+        if (document.exitFullscreen) {
+            document.exitFullscreen();
+        }
+    }
 });
