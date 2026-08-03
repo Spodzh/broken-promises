@@ -2,7 +2,6 @@
 //  МЕНЮ: обработчики кнопок, модалок
 // ============================================================
 
-// Предупреждение
 var warningOverlay = document.getElementById('warningOverlay');
 var dontShowAgain = document.getElementById('dontShowAgain');
 
@@ -17,22 +16,18 @@ document.getElementById('warningBtn').addEventListener('click', function() {
     warningOverlay.classList.add('hidden');
 });
 
-// Кнопка "Играть"
 document.getElementById('playBtn').addEventListener('click', function() {
     window.location.href = 'game.html';
 });
 
-// Настройки
 document.getElementById('settingsBtn').addEventListener('click', function() {
     document.getElementById('settingsOverlay').classList.remove('hidden');
 });
 
-// Поддержка
 document.getElementById('supportBtn').addEventListener('click', function() {
     document.getElementById('supportOverlay').classList.remove('hidden');
 });
 
-// Закрытие модалок
 function closeSettings() {
     document.getElementById('settingsOverlay').classList.add('hidden');
 }
