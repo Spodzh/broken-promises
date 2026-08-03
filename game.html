@@ -4,51 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
     <title>Broken Promises</title>
+    <link rel="stylesheet" href="css/style.css">
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
-    <style>
-        /* ===== ВСЕ СТИЛИ ДЛЯ ИГРЫ ===== */
-        * { margin:0; padding:0; box-sizing:border-box; image-rendering:pixelated; }
-        body { background:#0d0a08; display:flex; justify-content:center; align-items:center; min-height:100vh; font-family:'Press Start 2P',monospace; padding:10px; }
-        #game { width:800px; max-width:100%; height:600px; max-height:90vh; background:linear-gradient(145deg,#1a1410,#0f0a08); border:6px solid #3a2c24; box-shadow:0 0 0 4px #5a4a3a,0 0 0 8px #2a1e18,inset 0 0 60px rgba(0,0,0,0.9); position:relative; overflow:hidden; display:flex; flex-direction:column; animation:pixelFade 0.6s steps(2); }
-        #game::before { content:''; position:absolute; top:0; left:0; width:100%; height:100%; background:repeating-linear-gradient(0deg,rgba(0,0,0,0.03) 0px,rgba(0,0,0,0.03) 3px,transparent 3px,transparent 6px); z-index:0; pointer-events:none; }
-        #bg { position:absolute; top:0; left:0; width:100%; height:100%; background-size:cover; background-position:center; opacity:0.25; image-rendering:pixelated; transition:background-image 1s steps(3); filter:brightness(0.8) saturate(0.6); z-index:1; }
-        #ui { position:relative; z-index:2; flex:1; display:flex; flex-direction:column; justify-content:flex-end; padding:20px; }
-        #speaker-wrapper { display:flex; align-items:center; gap:12px; margin-bottom:8px; }
-        #speaker-avatar { width:48px; height:48px; border:3px solid #3a2c24; border-radius:50%; image-rendering:pixelated; background:#0f0a08; object-fit:cover; display:none; }
-        #speaker-avatar.visible { display:block; }
-        #speaker { font-size:12px; color:#b8a090; border-bottom:3px solid #3a2c24; padding-bottom:4px; display:none; text-transform:uppercase; letter-spacing:1px; flex:1; }
-        #speaker.show { display:block; }
-        #text { flex:1; overflow-y:auto; color:#d4c8bc; font-size:13px; line-height:1.8; cursor:pointer; min-height:3em; padding-right:8px; text-shadow:0 0 10px rgba(0,0,0,0.5); will-change:contents; }
-        #text::-webkit-scrollbar { width:6px; background:#1e1612; }
-        #text::-webkit-scrollbar-thumb { background:#4a3a32; border:1px solid #2a1e18; }
-        #choices { display:flex; flex-wrap:wrap; gap:10px; margin-top:10px; }
-        #choices .btn { flex:1 1 45%; font-size:11px; padding:8px 14px; opacity:0.5; pointer-events:none; }
-        #choices .btn.active { opacity:1; pointer-events:auto; }
-        #progress { height:5px; background:#1a1410; border:2px solid #3a2c24; box-shadow:inset 0 0 0 2px #0a0705; position:relative; margin-top:10px; overflow:hidden; }
-        #fill { height:100%; width:0%; background:#7a4a3a; transition:width 0.3s steps(3); }
-        #backBtn { position:absolute; top:10px; right:12px; z-index:3; background:rgba(0,0,0,0.6); border:2px solid #4a3a32; color:#b8a090; padding:4px 10px; font-size:8px; cursor:pointer; font-family:'Press Start 2P',monospace; transition:all 0.15s steps(2); }
-        #backBtn:hover { background:#3a2c24; color:#f0e6d0; }
-        #version { position:absolute; bottom:4px; right:12px; font-size:7px; color:#3a2a22; z-index:3; font-family:'Press Start 2P',monospace; letter-spacing:1px; opacity:0.4; }
-        .modal-overlay { display:flex; position:absolute; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:20; justify-content:center; align-items:center; padding:30px; animation:pixelFade 0.3s steps(2); }
-        .modal-overlay.hidden { display:none; }
-        .modal-box { background:#1e1612; border:6px solid #4a3a32; box-shadow:inset 0 0 0 3px #0f0a08,0 0 40px rgba(0,0,0,0.9); padding:30px; max-width:550px; width:100%; text-align:center; }
-        .modal-title { font-size:22px; color:#f0d8c8; letter-spacing:2px; border-bottom:3px solid #3a2c24; padding-bottom:12px; margin-bottom:16px; }
-        .ending-text { font-size:13px; color:#d4c4b0; line-height:1.8; margin-bottom:16px; text-align:left; padding:0 4px; }
-        .ending-stats-box { background:#0f0a08; border:2px solid #4a3a32; padding:14px; margin-bottom:16px; text-align:left; }
-        .ending-stats-title { font-size:11px; color:#f0d8c8; margin-bottom:8px; letter-spacing:1px; }
-        .ending-stats-content { font-size:10px; color:#b8a090; line-height:1.8; white-space:pre-line; }
-        .ending-buttons { display:flex; flex-wrap:wrap; gap:10px; justify-content:center; }
-        .ending-btn { flex:1 1 30%; min-width:100px; font-size:10px; padding:10px 14px; }
-        .ending-btn.restart-btn { background:#2a1e18; border-color:#b06040; color:#f0d8c8; }
-        .ending-btn.restart-btn:hover { background:#4a3228; border-color:#c07050; }
-        .ending-btn { background:#1e1612; border:3px solid #4a3a32; color:#d4c4b0; padding:10px 14px; font-family:'Press Start 2P',monospace; font-size:10px; cursor:pointer; box-shadow:inset 0 0 0 2px #0f0a08; transition:all 0.15s steps(2); touch-action:manipulation; }
-        .ending-btn:hover { background:#3a2c24; color:#f0e6d0; border-color:#b8a090; }
-        #showStatsBtn { background:#1e1612; border-color:#4a3a32; }
-        #showStatsBtn:hover { background:#3a2c24; }
-        @media (max-width:700px) { #game { height:90vh; padding:20px; border-width:4px; box-shadow:0 0 0 2px #5a4a3a,0 0 0 4px #2a1e18; } #ui { padding:14px; } #speaker-avatar { width:36px; height:36px; border-width:2px; } #speaker { font-size:10px; } #text { font-size:11px; } #choices .btn { font-size:9px; padding:6px 10px; flex:1 1 100%; } #backBtn { font-size:7px; padding:3px 8px; top:6px; right:6px; } #version { font-size:6px; } .ending-text { font-size:11px; } .ending-btn { font-size:8px; padding:8px 12px; min-width:80px; } }
-        @media (max-width:400px) { #text { font-size:9px; } #choices .btn { font-size:8px; padding:4px 8px; } }
-        @keyframes pixelFade { 0% { opacity:0; transform:scale(0.96); } 100% { opacity:1; transform:scale(1); } }
-    </style>
 </head>
 <body>
 <div id="game">
@@ -62,7 +19,7 @@
         <div id="choices"></div>
         <div id="progress"><div id="fill"></div></div>
     </div>
-    <div id="version">v2.3.2</div>
+    <div id="version">v2.3.1</div>
     <button id="backBtn">← Меню</button>
 
     <!-- Модалка конца -->
@@ -75,227 +32,14 @@
                 <div class="ending-stats-content" id="endingStatsContent"></div>
             </div>
             <div class="ending-buttons">
-                <button class="ending-btn" id="showStatsBtn">📊 Показать статистику</button>
-                <button class="ending-btn restart-btn" id="endingRestartBtn">🔄 Начать заново</button>
-                <button class="ending-btn" id="endingMenuBtn">🏠 В меню</button>
+                <button class="btn ending-btn" id="showStatsBtn">📊 Показать статистику</button>
+                <button class="btn ending-btn restart-btn" id="endingRestartBtn">🔄 Начать заново</button>
+                <button class="btn ending-btn" id="endingMenuBtn">🏠 В меню</button>
             </div>
         </div>
     </div>
 </div>
-<script>
-// ============================================================
-//  СЦЕНАРИЙ (38+ СЦЕН) И ДВИЖОК ИГРЫ
-// ============================================================
-var storyData = {
-    startScene: "birth",
-    scenes: [
-        { id: "birth", speaker: "Повествователь", text: "Декабрь 2000. Заветченск. Ты родился в хрущёвке. Отец — грузчик, мать — уборщица. Денег в обрез. Тебя назвали Марком. Твоя жизнь — история сломанных обещаний.", image: "images/birth.png", background: "images/winter_bg.png", choices: [{ text: "Посмотреть на мир →", nextId: "childhood_1" }] },
-        { id: "childhood_1", speaker: "Повествователь", text: "Тебе 3 года. Мама пересчитывает мелочь. Отец поднимается по лестнице — шаги тяжёлые, недобрые.", image: "images/room.png", background: "images/apt_bg.png", choices: [ { text: "Выйти к отцу", nextId: "childhood_2A" }, { text: "Спрятаться под стол", nextId: "childhood_2B" } ] },
-        { id: "childhood_2A", speaker: "Повествователь", text: "Отец злой, отталкивает тебя. Мама плачет. Ты запоминаешь стыд и боль.", image: "images/angry_dad.png", background: "images/apt_bg.png", choices: [{ text: "Запомнить", nextId: "childhood_3" }] },
-        { id: "childhood_2B", speaker: "Повествователь", text: "Ты сжимаешься под столом, боишься громких звуков. С этого дня ты боишься конфликтов.", image: "images/under_table.png", background: "images/apt_bg.png", choices: [{ text: "Запомнить страх", nextId: "childhood_3" }] },
-        { id: "childhood_3", speaker: "Повествователь", text: "В 5 лет ты пошёл в детский сад. Там ты впервые столкнулся с жестокостью: старшие мальчики отобрали твою игрушку.", image: "images/kindergarten.png", background: "images/apt_bg.png", choices: [ { text: "Попытаться забрать игрушку", nextId: "childhood_4A" }, { text: "Пожаловаться воспитательнице", nextId: "childhood_4B" } ] },
-        { id: "childhood_4A", speaker: "Повествователь", text: "Ты попытался забрать игрушку силой, но получил по голове. Воспитательница наказала тебя.", image: "images/kindergarten.png", background: "images/apt_bg.png", choices: [{ text: "Продолжить", nextId: "yard" }] },
-        { id: "childhood_4B", speaker: "Повествователь", text: "Ты пожаловался, но воспитательница не обратила внимания. Ты понял, что надеяться на защиту бесполезно.", image: "images/kindergarten.png", background: "images/apt_bg.png", choices: [{ text: "Продолжить", nextId: "yard" }] },
-        { id: "yard", speaker: "Повествователь", text: "Во дворе ты встречаешь Димку — такого же худого пацана. Он показывает тайник с журналами и рогаткой.", image: "images/yard.png", background: "images/yard_bg.png", choices: [ { text: "Довериться Димону", nextId: "school_1" }, { text: "Дружить с осторожностью", nextId: "school_1" } ] },
-        { id: "school_1", speaker: "Повествователь", text: "5-й класс. Ты сидишь с девочкой Кирой. Она рисует и просит точилку.", image: "images/classroom.png", background: "images/school_bg.png", choices: [ { text: "Дать точилку молча", nextId: "school_1_1" }, { text: "Пошутить", nextId: "school_1_1" } ] },
-        { id: "school_1_1", speaker: "Кира", text: "— Спасибо. А ты всегда такой молчаливый? — улыбается она. Ты краснеешь.", image: "images/classroom.png", background: "images/school_bg.png", choices: [ { text: "Поговорить о рисунке", nextId: "school_2" }, { text: "Отвернуться", nextId: "school_2" } ] },
-        { id: "school_2", speaker: "Повествователь", text: "Старшеклассники во главе с Геной «Мясом» зажимают тебя в тупике. Рвут дневник, смеются.", image: "images/bullying.png", background: "images/school_bg.png", choices: [ { text: "Стерпеть", nextId: "school_2_1" }, { text: "Ответить резко", nextId: "school_2_1" }, { text: "Позвать Димку", nextId: "school_2_1" } ] },
-        { id: "school_2_1", speaker: "Повествователь", text: "Ты делаешь выбор. Этот случай меняет твоё отношение к силе и справедливости.", image: "images/bullying.png", background: "images/school_bg.png", choices: [{ text: "Запомнить", nextId: "school_3" }] },
-        { id: "school_3", speaker: "Кира", text: "Кира даёт тебе ириску: «Не обращай внимания, они идиоты».", image: "images/ira_iris.png", background: "images/school_bg.png", choices: [{ text: "Улыбнуться", nextId: "school_4" }] },
-        { id: "school_4", speaker: "Повествователь", text: "Заканчивается 9-й класс. Мама говорит: «Денег нет, иди в ПТУ». Димон уходит в армию, Кира уезжает.", image: "images/farewell.png", background: "images/autumn_bg.png", choices: [ { text: "Поцеловать Киру", nextId: "ptu_1" }, { text: "Обнять", nextId: "ptu_1" } ] },
-        { id: "ptu_1", speaker: "Повествователь", text: "ПТУ №34. Компания Коляна, Костяна и Серёги предлагает украсть инструмент.", image: "images/ptu_workshop.png", background: "images/ptu_bg.png", choices: [ { text: "Согласиться", nextId: "ptu_2A" }, { text: "Отказаться", nextId: "ptu_2B" } ] },
-        { id: "ptu_2A", speaker: "Повествователь", text: "Ты украл болгарку. Тебя не поймали. Ты теперь «свой».", image: "images/theft.png", background: "images/ptu_bg.png", choices: [ { text: "Продолжить воровать", nextId: "ptu_3A" }, { text: "Завязать", nextId: "ptu_3B" } ] },
-        { id: "ptu_2B", speaker: "Повествователь", text: "Ты отказался. Тебя изолировали, перевели в другую группу. Ты работаешь один.", image: "images/lonely_ptu.png", background: "images/ptu_bg.png", choices: [ { text: "Продолжить честно", nextId: "father_death" }, { text: "Попытаться подружиться", nextId: "ptu_3B" } ] },
-        { id: "ptu_3A", speaker: "Повествователь", text: "Вы начинаете мелкие кражи. Деньги появляются, но ты чувствуешь, что идёшь по наклонной.", image: "images/theft.png", background: "images/ptu_bg.png", choices: [ { text: "Закопаться глубже", nextId: "father_death" }, { text: "Остановиться", nextId: "father_death" } ] },
-        { id: "ptu_3B", speaker: "Повествователь", text: "Ты решаешь не связываться с криминалом. Ты работаешь штукатуром, учишься.", image: "images/lonely_ptu.png", background: "images/ptu_bg.png", choices: [{ text: "Продолжить", nextId: "father_death" }] },
-        { id: "father_death", speaker: "Повествователь", text: "Тебе 17. Звонок: отец умер на работе. Ты стоишь в коридоре ПТУ.", image: "images/phone_call.png", background: "images/ptu_bg.png", choices: [ { text: "Заплакать", nextId: "funeral" }, { text: "Взять ответственность", nextId: "funeral" }, { text: "Озлобиться", nextId: "funeral" } ] },
-        { id: "funeral", speaker: "Повествователь", text: "Похороны. Пришли Димон и Кира. Она взяла тебя за руку.", image: "images/funeral.png", background: "images/cemetery_bg.png", choices: [{ text: "Держаться за Киру", nextId: "work_choice" }] },
-        { id: "work_choice", speaker: "Повествователь", text: "После ПТУ ты идёшь на стройку. Дядька Гена предлагает выбор.", image: "images/construction.png", background: "images/site_bg.png", choices: [ { text: "Честно работать", nextId: "work_honest" }, { text: "Левые подработки", nextId: "work_criminal" }, { text: "Уйти к Димону в охрану", nextId: "work_security" } ] },
-        { id: "work_honest", speaker: "Повествователь", text: "Ты работаешь честно, становишься прорабом. Кира пишет тебе.", image: "images/foreman.png", background: "images/site_bg.png", choices: [ { text: "Продолжать", nextId: "work_honest_2" }, { text: "Попросить Киру приехать", nextId: "work_honest_2" } ] },
-        { id: "work_honest_2", speaker: "Повествователь", text: "Ты становишься мастером. Однажды видишь, как на стройке обижают новенького.", image: "images/construction.png", background: "images/site_bg.png", choices: [ { text: "Заступиться за него", nextId: "work_honest_3" }, { text: "Пройти мимо", nextId: "work_honest_3" } ] },
-        { id: "work_honest_3", speaker: "Повествователь", text: "Ты заступился. Бригадир заметил твою смелость и предложил повышение. Жизнь налаживается.", image: "images/foreman.png", background: "images/site_bg.png", choices: [ { text: "Написать Кире", nextId: "final_choice_good" }, { text: "Остаться в Заветченске", nextId: "final_choice_mid" } ] },
-        { id: "work_criminal", speaker: "Повествователь", text: "Ты втягиваешься в криминал. Однажды тебя подставляют.", image: "images/dark_alley.png", background: "images/night_bg.png", choices: [ { text: "Закопаться глубже", nextId: "work_criminal_2" }, { text: "Попытаться выйти", nextId: "work_criminal_2" } ] },
-        { id: "work_criminal_2", speaker: "Повествователь", text: "Ты в криминале. Тебя вызывают на разборку.", image: "images/dark_alley.png", background: "images/night_bg.png", choices: [ { text: "Идти до конца", nextId: "final_choice_bad" }, { text: "Завязать", nextId: "final_choice_bad" } ] },
-        { id: "work_security", speaker: "Повествователь", text: "Ты работаешь в клубе. Видишь Киру, она разведена.", image: "images/club.png", background: "images/club_bg.png", choices: [ { text: "Подойти", nextId: "work_security_1" }, { text: "Уйти", nextId: "final_choice_bad" } ] },
-        { id: "work_security_1", speaker: "Кира", text: "— Ты изменился, Марк. Рада, что ты нашёл себя.", image: "images/club.png", background: "images/club_bg.png", choices: [{ text: "Поговорить", nextId: "final_choice_mid" }] },
-        { id: "final_choice_good", speaker: "Повествователь", text: "Кира приходит в строймаркет. Вы решаете начать сначала.", image: "images/store.png", background: "images/store_bg.png", choices: [ { text: "Уехать с ней", nextId: "ending_good_1" }, { text: "Построить дом", nextId: "ending_good_2" } ] },
-        { id: "final_choice_mid", speaker: "Повествователь", text: "Вы говорите до утра, но она уезжает одна.", image: "images/bar.png", background: "images/bar_bg.png", choices: [ { text: "Догнать", nextId: "ending_mid_1" }, { text: "Сдаться", nextId: "ending_mid_2" } ] },
-        { id: "final_choice_bad", speaker: "Повествователь", text: "Ты погибаешь в подворотне от ножа.", image: "images/death_street.png", background: "images/night_bg.png", choices: [] },
-        { id: "ending_good_1", speaker: "Повествователь", text: "Авария на трассе. Ты умираешь счастливым, держа Киру за руку.", image: "images/car_crash.png", background: "images/road_bg.png", choices: [] },
-        { id: "ending_good_2", speaker: "Повествователь", text: "Ты строил дом для Киры. Умер от инфаркта, но дом остался.", image: "images/house.png", background: "images/home_bg.png", choices: [] },
-        { id: "ending_mid_1", speaker: "Повествователь", text: "Ты догнал её, но через год спился. Кира ушла.", image: "images/station.png", background: "images/station_bg.png", choices: [] },
-        { id: "ending_mid_2", speaker: "Повествователь", text: "Ты остался в Заветченске, спился и умер в 30.", image: "images/apartment_death.png", background: "images/apt_bg.png", choices: [] }
-    ]
-};
-
-// ===== ДВИЖОК ИГРЫ =====
-var currentScene = storyData.startScene;
-var visited = new Set();
-var isTyping = false;
-var timer = null;
-var fullText = '';
-var stats = {};
-var endingShown = false;
-
-var avatars = {
-    'Повествователь': 'images/portraits/narrator.png',
-    'Кира': 'images/portraits/kira.png'
-};
-var defaultAvatar = 'images/portraits/default.png';
-
-var textEl = document.getElementById('text');
-var choicesEl = document.getElementById('choices');
-var speakerEl = document.getElementById('speaker');
-var avatarEl = document.getElementById('speaker-avatar');
-var bgEl = document.getElementById('bg');
-var fillEl = document.getElementById('fill');
-
-var endingOverlay = document.getElementById('endingOverlay');
-var endingText = document.getElementById('endingText');
-var endingStatsBox = document.getElementById('endingStatsBox');
-var endingStatsContent = document.getElementById('endingStatsContent');
-var showStatsBtn = document.getElementById('showStatsBtn');
-var endingRestartBtn = document.getElementById('endingRestartBtn');
-var endingMenuBtn = document.getElementById('endingMenuBtn');
-
-endingRestartBtn.addEventListener('click', resetGame);
-endingMenuBtn.addEventListener('click', function() { window.location.href = 'index.html'; });
-
-var statsVisible = false;
-showStatsBtn.addEventListener('click', function() {
-    if (statsVisible) {
-        endingStatsBox.style.display = 'none';
-        statsVisible = false;
-        showStatsBtn.textContent = '📊 Показать статистику';
-    } else {
-        endingStatsBox.style.display = 'block';
-        statsVisible = true;
-        showStatsBtn.textContent = '📊 Скрыть статистику';
-    }
-});
-
-function trackChoice(choiceText, nextId) {
-    if (choiceText.indexOf("Довериться") !== -1) stats.trustDimon = "Да";
-    if (choiceText.indexOf("Ответить резко") !== -1) stats.stoodUp = "Да";
-    if (choiceText.indexOf("Заступиться") !== -1) stats.stoodUp = "Да";
-    if (nextId === "work_honest") stats.path = "Честный труд";
-    if (nextId === "work_criminal") stats.path = "Криминал";
-    if (nextId === "work_security") stats.path = "Охрана";
-    if (choiceText.indexOf("Поцеловать") !== -1) stats.kissed = "Да";
-    if (nextId === "ending_good_1" || nextId === "ending_good_2") stats.ending = "Хорошая";
-    if (nextId === "ending_mid_1" || nextId === "ending_mid_2") stats.ending = "Средняя";
-    if (nextId === "final_choice_bad") stats.ending = "Плохая";
-}
-
-function render(sceneId) {
-    var scene = storyData.scenes.find(function(s) { return s.id === sceneId; });
-    if (!scene) { textEl.innerHTML = 'Сцена не найдена.'; return; }
-    visited.add(sceneId);
-    localStorage.setItem('save', JSON.stringify({ scene: sceneId, visited: Array.from(visited), stats: stats }));
-
-    if (scene.background) { bgEl.style.backgroundImage = 'url(' + scene.background + ')'; }
-
-    if (scene.speaker) {
-        speakerEl.textContent = scene.speaker;
-        speakerEl.className = 'show';
-        var avatarPath = avatars[scene.speaker] || defaultAvatar;
-        avatarEl.src = avatarPath;
-        avatarEl.className = 'visible';
-    } else {
-        speakerEl.className = '';
-        avatarEl.className = '';
-    }
-
-    textEl.innerHTML = '';
-    fullText = scene.text || '';
-    choicesEl.innerHTML = '';
-
-    isTyping = true;
-    typeWriter(textEl, fullText, 0, function() {
-        isTyping = false;
-        showChoices(scene);
-    });
-
-    var total = storyData.scenes.length;
-    var progress = Math.min(100, Math.round((visited.size / total) * 100));
-    fillEl.style.width = progress + '%';
-
-    textEl.onclick = function() {
-        if (isTyping) {
-            clearTimeout(timer);
-            textEl.innerHTML = fullText;
-            isTyping = false;
-            showChoices(scene);
-        }
-    };
-}
-
-function showChoices(scene) {
-    choicesEl.innerHTML = '';
-    if (scene.choices && scene.choices.length > 0) {
-        scene.choices.forEach(function(choice) {
-            var btn = document.createElement('button');
-            btn.className = 'btn active';
-            btn.textContent = choice.text;
-            btn.onclick = function() {
-                trackChoice(choice.text, choice.nextId);
-                if (choice.nextId) { render(choice.nextId); } else { showEnd(); }
-            };
-            choicesEl.appendChild(btn);
-        });
-    } else { showEnd(); }
-}
-
-function typeWriter(element, text, index, callback) {
-    if (index < text.length) {
-        requestAnimationFrame(function() {
-            element.innerHTML += text.charAt(index);
-            timer = setTimeout(function() { typeWriter(element, text, index + 1, callback); }, 12);
-        });
-    } else { if (callback) callback(); }
-}
-
-function showEnd() {
-    if (endingShown) return;
-    endingShown = true;
-    var statsText = '';
-    statsText += 'Доверился Димону? ' + (stats.trustDimon || 'Нет') + '\n';
-    statsText += 'Заступался за слабых? ' + (stats.stoodUp || 'Нет') + '\n';
-    statsText += 'Путь в жизни: ' + (stats.path || 'Не выбран') + '\n';
-    statsText += 'Поцеловал Киру? ' + (stats.kissed || 'Нет') + '\n';
-    statsText += 'Финальная концовка: ' + (stats.ending || 'Неизвестно');
-    endingStatsContent.textContent = statsText;
-    endingStatsBox.style.display = 'none';
-    statsVisible = false;
-    showStatsBtn.textContent = '📊 Показать статистику';
-    endingText.textContent = fullText || 'Твоя история завершена.';
-    endingOverlay.classList.remove('hidden');
-    localStorage.removeItem('save');
-}
-
-function resetGame() {
-    endingOverlay.classList.add('hidden');
-    endingShown = false;
-    visited = new Set();
-    stats = {};
-    currentScene = storyData.startScene;
-    render(currentScene);
-}
-
-var saved = localStorage.getItem('save');
-if (saved) {
-    try {
-        var data = JSON.parse(saved);
-        currentScene = data.scene || storyData.startScene;
-        visited = new Set(data.visited || []);
-        stats = data.stats || {};
-    } catch(e) {}
-}
-render(currentScene);
-
-document.getElementById('backBtn').addEventListener('click', function() {
-    window.location.href = 'index.html';
-});
-</script>
+<script src="js/story.js" charset="UTF-8"></script>
+<script src="js/game.js" charset="UTF-8"></script>
 </body>
 </html>
