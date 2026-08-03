@@ -162,8 +162,6 @@ body {
     line-height: 1.8;
     margin-bottom: 20px;
 }
-
-/* ===== КАСТОМНЫЙ ЧЕКБОКС ===== */
 #warningCheckbox {
     display: flex;
     align-items: center;
@@ -175,9 +173,8 @@ body {
     cursor: pointer;
 }
 #warningCheckbox input[type="checkbox"] {
-    position: relative;
-    appearance: none;
     -webkit-appearance: none;
+    appearance: none;
     width: 20px;
     height: 20px;
     background: #0f0a08;
@@ -207,7 +204,6 @@ body {
 #warningCheckbox label:hover {
     color: #f0e6d0;
 }
-
 #warningBtn {
     background: #2a1e18;
     border: 3px solid #b06040;
