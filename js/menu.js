@@ -1,12 +1,11 @@
 // ============================================================
-//  МЕНЮ: обработчики кнопок и модалок
+//  МЕНЮ: обработчики кнопок, модалки, fullscreen
 // ============================================================
 
 // Предупреждение
 var warningOverlay = document.getElementById('warningOverlay');
 var dontShowAgain = document.getElementById('dontShowAgain');
 
-// Проверяем, было ли уже скрыто предупреждение
 if (localStorage.getItem('hideWarning') === 'true') {
     warningOverlay.classList.add('hidden');
 }
@@ -23,14 +22,27 @@ document.getElementById('playBtn').addEventListener('click', function() {
     window.location.href = 'game.html';
 });
 
-// Кнопка "Настройки"
+// Настройки
 document.getElementById('settingsBtn').addEventListener('click', function() {
     document.getElementById('settingsOverlay').classList.remove('hidden');
 });
 
-// Кнопка "Поддержать"
+// Поддержка
 document.getElementById('supportBtn').addEventListener('click', function() {
     document.getElementById('supportOverlay').classList.remove('hidden');
+});
+
+// Fullscreen
+document.getElementById('fullscreenBtn').addEventListener('click', function() {
+    if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(function(err) {
+            // Если fullscreen не поддерживается или заблокирован — игнорируем
+        });
+    } else {
+        if (document.exitFullscreen) {
+            document.exitFullscreen();
+        }
+    }
 });
 
 // Закрытие модалок
@@ -41,7 +53,6 @@ function closeSupport() {
     document.getElementById('supportOverlay').classList.add('hidden');
 }
 
-// Закрытие по клику на overlay (фон)
 document.querySelectorAll('.modal-overlay').forEach(function(overlay) {
     overlay.addEventListener('click', function(e) {
         if (e.target === overlay) {
