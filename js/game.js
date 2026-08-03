@@ -1,5 +1,5 @@
 // ============================================================
-//  ДВИЖОК ИГРЫ (ОПТИМИЗИРОВАННЫЙ)
+//  ДВИЖОК ИГРЫ С АВАТАРАМИ (v2.3.0)
 // ============================================================
 var currentScene = storyData.startScene;
 var visited = new Set();
@@ -9,10 +9,11 @@ var fullText = '';
 var stats = {};
 var endingShown = false;
 
-// Кешируем элементы DOM для производительности
+// Кешируем элементы DOM
 var textEl = document.getElementById('text');
 var choicesEl = document.getElementById('choices');
 var speakerEl = document.getElementById('speaker');
+var avatarEl = document.getElementById('speaker-avatar');
 var bgEl = document.getElementById('bg');
 var fillEl = document.getElementById('fill');
 
@@ -24,7 +25,16 @@ var showStatsBtn = document.getElementById('showStatsBtn');
 var endingRestartBtn = document.getElementById('endingRestartBtn');
 var endingMenuBtn = document.getElementById('endingMenuBtn');
 
-// Обработчики
+// ===== АВАТАРЫ =====
+var avatars = {
+    'Повествователь': 'images/portraits/narrator.png',
+    'Кира': 'images/portraits/kira.png',
+    'Димон': 'images/portraits/dimon.png',
+    'Марк': 'images/portraits/mark.png'
+};
+var defaultAvatar = 'images/portraits/default.png'; // заглушка
+
+// Обработчики модалки
 endingRestartBtn.addEventListener('click', resetGame);
 endingMenuBtn.addEventListener('click', function() {
     window.location.href = 'index.html';
@@ -65,17 +75,25 @@ function render(sceneId) {
     visited.add(sceneId);
     localStorage.setItem('save', JSON.stringify({ scene: sceneId, visited: Array.from(visited), stats: stats }));
 
+    // Фон
     if (scene.background) {
         bgEl.style.backgroundImage = 'url(' + scene.background + ')';
     }
 
+    // Спикер и аватар
     if (scene.speaker) {
         speakerEl.textContent = scene.speaker;
         speakerEl.className = 'show';
+        // Устанавливаем аватар
+        var avatarPath = avatars[scene.speaker] || defaultAvatar;
+        avatarEl.src = avatarPath;
+        avatarEl.className = 'visible';
     } else {
         speakerEl.className = '';
+        avatarEl.className = '';
     }
 
+    // Текст
     textEl.innerHTML = '';
     fullText = scene.text || '';
     choicesEl.innerHTML = '';
@@ -86,6 +104,7 @@ function render(sceneId) {
         showChoices(scene);
     });
 
+    // Прогресс
     var total = storyData.scenes.length;
     var progress = Math.min(100, Math.round((visited.size / total) * 100));
     fillEl.style.width = progress + '%';
