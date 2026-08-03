@@ -1,5 +1,5 @@
 // ============================================================
-//  ДВИЖОК ИГРЫ
+//  ДВИЖОК ИГРЫ (С ПЛАВНОСТЬЮ И МОДАЛКОЙ КОНЦА)
 // ============================================================
 var currentScene = storyData.startScene;
 var visited = new Set();
@@ -7,7 +7,37 @@ var isTyping = false;
 var timer = null;
 var fullText = '';
 var stats = {};
+var endingShown = false;
 
+// Элементы модалки конца
+var endingOverlay = document.getElementById('endingOverlay');
+var endingText = document.getElementById('endingText');
+var endingStatsBox = document.getElementById('endingStatsBox');
+var endingStatsContent = document.getElementById('endingStatsContent');
+var showStatsBtn = document.getElementById('showStatsBtn');
+var endingRestartBtn = document.getElementById('endingRestartBtn');
+var endingMenuBtn = document.getElementById('endingMenuBtn');
+
+// Обработчики кнопок модалки
+endingRestartBtn.addEventListener('click', resetGame);
+endingMenuBtn.addEventListener('click', function() {
+    window.location.href = 'index.html';
+});
+
+var statsVisible = false;
+showStatsBtn.addEventListener('click', function() {
+    if (statsVisible) {
+        endingStatsBox.style.display = 'none';
+        statsVisible = false;
+        showStatsBtn.textContent = '📊 Показать статистику';
+    } else {
+        endingStatsBox.style.display = 'block';
+        statsVisible = true;
+        showStatsBtn.textContent = '📊 Скрыть статистику';
+    }
+});
+
+// ===== Сбор статистики =====
 function trackChoice(choiceText, nextId) {
     if (choiceText.indexOf("Довериться") !== -1) stats.trustDimon = "Да";
     if (choiceText.indexOf("Ответить резко") !== -1) stats.stoodUp = "Да";
@@ -21,6 +51,7 @@ function trackChoice(choiceText, nextId) {
     if (nextId === "final_choice_bad") stats.ending = "Плохая";
 }
 
+// ===== Рендер сцены =====
 function render(sceneId) {
     var scene = storyData.scenes.find(function(s) { return s.id === sceneId; });
     if (!scene) {
@@ -69,6 +100,7 @@ function render(sceneId) {
     };
 }
 
+// ===== Показ кнопок =====
 function showChoices(scene) {
     var choicesEl = document.getElementById('choices');
     choicesEl.innerHTML = '';
@@ -92,47 +124,55 @@ function showChoices(scene) {
     }
 }
 
+// ===== Печать текста (плавно, с оптимизацией) =====
 function typeWriter(element, text, index, callback) {
     if (index < text.length) {
-        element.innerHTML += text.charAt(index);
-        timer = setTimeout(function() {
-            typeWriter(element, text, index + 1, callback);
-        }, 20);
+        // Используем requestAnimationFrame для плавности
+        requestAnimationFrame(function() {
+            element.innerHTML += text.charAt(index);
+            timer = setTimeout(function() {
+                typeWriter(element, text, index + 1, callback);
+            }, 15); // чуть быстрее для плавности
+        });
     } else {
         if (callback) callback();
     }
 }
 
+// ===== Показ модалки конца =====
 function showEnd() {
-    var textEl = document.getElementById('text');
+    if (endingShown) return;
+    endingShown = true;
+
     var statsText = '';
-    statsText += '--- СТАТИСТИКА ВЫБОРОВ ---\n';
     statsText += 'Доверился Димону? ' + (stats.trustDimon || 'Нет') + '\n';
     statsText += 'Заступался за слабых? ' + (stats.stoodUp || 'Нет') + '\n';
     statsText += 'Путь в жизни: ' + (stats.path || 'Не выбран') + '\n';
     statsText += 'Поцеловал Киру? ' + (stats.kissed || 'Нет') + '\n';
-    statsText += 'Финальная концовка: ' + (stats.ending || 'Неизвестно') + '\n';
-    statsText += '----------------------------------';
-    textEl.innerHTML = '🏁 Конец. Спасибо за игру!\n\n' + statsText;
+    statsText += 'Финальная концовка: ' + (stats.ending || 'Неизвестно');
+    endingStatsContent.textContent = statsText;
+    endingStatsBox.style.display = 'none';
+    statsVisible = false;
+    showStatsBtn.textContent = '📊 Показать статистику';
 
-    var choicesEl = document.getElementById('choices');
-    choicesEl.innerHTML = '';
-    var btn = document.createElement('button');
-    btn.className = 'btn restart-btn';
-    btn.textContent = '🔄 Начать заново';
-    btn.onclick = resetGame;
-    choicesEl.appendChild(btn);
+    // Текст концовки (берём последний текст)
+    endingText.textContent = fullText || 'Твоя история завершена.';
+
+    endingOverlay.classList.remove('hidden');
     localStorage.removeItem('save');
 }
 
+// ===== Сброс игры =====
 function resetGame() {
+    endingOverlay.classList.add('hidden');
+    endingShown = false;
     visited = new Set();
     stats = {};
     currentScene = storyData.startScene;
     render(currentScene);
 }
 
-// Загрузка сохранения
+// ===== Загрузка сохранения =====
 var saved = localStorage.getItem('save');
 if (saved) {
     try {
@@ -144,7 +184,7 @@ if (saved) {
 }
 render(currentScene);
 
-// Кнопка "Меню"
-document.getElementById('backBtn').onclick = function() {
+// ===== Кнопка "Меню" =====
+document.getElementById('backBtn').addEventListener('click', function() {
     window.location.href = 'index.html';
-};
+});
