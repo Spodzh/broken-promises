@@ -1,5 +1,5 @@
 // ============================================================
-//  МЕНЮ: обработчики кнопок, модалки, fullscreen
+//  МЕНЮ: обработчики кнопок, модалок
 // ============================================================
 
 // Предупреждение
@@ -30,19 +30,6 @@ document.getElementById('settingsBtn').addEventListener('click', function() {
 // Поддержка
 document.getElementById('supportBtn').addEventListener('click', function() {
     document.getElementById('supportOverlay').classList.remove('hidden');
-});
-
-// Fullscreen
-document.getElementById('fullscreenBtn').addEventListener('click', function() {
-    if (!document.fullscreenElement) {
-        document.documentElement.requestFullscreen().catch(function(err) {
-            // Если fullscreen не поддерживается или заблокирован — игнорируем
-        });
-    } else {
-        if (document.exitFullscreen) {
-            document.exitFullscreen();
-        }
-    }
 });
 
 // Закрытие модалок
