@@ -8,61 +8,48 @@
     <style>
         * { margin:0; padding:0; box-sizing:border-box; }
         body { background:#0d0a08; display:flex; justify-content:center; align-items:center; min-height:100vh; font-family:'Press Start 2P',monospace; padding:10px; }
-        #m { width:700px; max-width:100%; height:500px; max-height:90vh; background:#1a1410; border:4px solid #3a2c24; display:flex; flex-direction:column; justify-content:center; align-items:center; position:relative; padding:20px; }
-        #t { font-size:28px; color:#d4c4b0; letter-spacing:4px; margin-bottom:8px; }
-        #s { font-size:12px; color:#7a6a5a; margin-bottom:30px; }
-        #b { display:flex; flex-direction:column; gap:12px; width:70%; max-width:250px; }
-        .btn { background:#1e1612; border:2px solid #4a3a32; color:#d4c4b0; padding:12px; font-family:'Press Start 2P',monospace; font-size:12px; cursor:pointer; text-align:center; }
+        #g { width:700px; max-width:100%; height:500px; max-height:90vh; background:#1a1410; border:4px solid #3a2c24; position:relative; overflow:hidden; display:flex; flex-direction:column; }
+        #bg { position:absolute; top:0; left:0; width:100%; height:100%; background-size:cover; background-position:center; opacity:0.3; }
+        #ui { position:relative; z-index:2; flex:1; display:flex; flex-direction:column; justify-content:flex-end; padding:16px; }
+        #sp { font-size:11px; color:#b8a090; border-bottom:2px solid #3a2c24; padding-bottom:4px; margin-bottom:6px; display:none; }
+        #sp.s { display:block; }
+        #tx { flex:1; overflow-y:auto; color:#d4c4b0; font-size:12px; line-height:1.6; cursor:pointer; min-height:3em; }
+        #ch { display:flex; flex-wrap:wrap; gap:8px; margin-top:8px; }
+        .btn { background:#1e1612; border:2px solid #4a3a32; color:#d4c4b0; padding:6px 12px; font-family:'Press Start 2P',monospace; font-size:10px; cursor:pointer; flex:1 1 45%; text-align:center; }
         .btn:hover { background:#3a2c24; }
-        .btn.p { border-color:#b06040; }
-        #v { position:absolute; bottom:8px; right:12px; font-size:8px; color:#3a2a22; }
-        #w { display:flex; position:absolute; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); justify-content:center; align-items:center; flex-direction:column; padding:20px; }
-        #w.h { display:none; }
-        #wt { font-size:16px; color:#f0d8c8; margin-bottom:12px; }
-        #wx { font-size:10px; color:#d4c4b0; text-align:center; line-height:1.8; max-width:400px; margin-bottom:16px; }
-        #wb { background:#2a1e18; border:2px solid #b06040; color:#f0d8c8; padding:10px 20px; font-family:'Press Start 2P',monospace; font-size:12px; cursor:pointer; }
-        @media (max-width:600px) { #t { font-size:22px; } .btn { font-size:10px; } }
+        #pr { height:4px; background:#1a1410; position:relative; margin-top:6px; }
+        #fl { height:100%; width:0%; background:#7a4a3a; transition:width 0.3s; }
+        #v { position:absolute; bottom:2px; right:8px; font-size:7px; color:#3a2a22; z-index:3; }
+        #bk { position:absolute; top:8px; left:8px; z-index:3; background:rgba(0,0,0,0.5); border:1px solid #4a3a32; color:#b8a090; padding:4px 10px; font-size:8px; cursor:pointer; font-family:'Press Start 2P',monospace; }
+        @media (max-width:600px) { #g { height:90vh; } #tx { font-size:10px; } .btn { font-size:8px; } }
     </style>
 </head>
 <body>
-<div id="m">
-    <div id="t">BROKEN PROMISES</div>
-    <div id="s"></div>
-    <div id="b">
-        <button class="btn p" id="p1"></button>
-        <button class="btn" id="p2"></button>
-        <button class="btn" id="p3"></button>
+<div id="g">
+    <div id="bg"></div>
+    <div id="ui">
+        <div id="sp"></div>
+        <div id="tx"></div>
+        <div id="ch"></div>
+        <div id="pr"><div id="fl"></div></div>
     </div>
     <div id="v">v0.3.6</div>
-    <div id="w">
-        <div id="wt"></div>
-        <div id="wx"></div>
-        <button id="wb"></button>
-    </div>
+    <button id="bk">← Menu</button>
 </div>
 <script>
 // ========== BASE64 ==========
-var B = {
-    s:'0JjRgdGC0L7RgNC40Y8g0L7QtNC90L7QuSDRgdC40LfQvdC4',
-    p1:'4pa6INCY0LPRgNCw0YLRjA==',
-    p2:'4pmZINCd0LDRgdGC0YDQvtC50LrQuA==',
-    p3:'4pyJINCf0L7QtNC00LXRgNC20LDRgtGMPw==',
-    wt:'4p2gINCS0J3QmNCc0JDQndCY0JU=',
-    wx:'0JjQs9GA0LAg0L3QsNGF0L7QtNC40YLRgdGPINC90LAg0YDQsNC90L3QtdC5INGB0YLQsNC00LjQuCDRgNCw0LfRgNCw0LHQvtGC0LrQuC4NCtCS0L7Qt9C80L7QttC90Ysg0LHQoNCz0LgsINC40LfQvNC10L3QtdC90LjRjyDRgdGO0LbQtdGC0LAg0Lgg0LTQuNC30LDQudC90LAuDQoNClDQn9C+0LTQtNC10YDQttCw0YLRjCDQuCDRgdC70LXQtNC40YLRjCDQt9CwINC90L7QstC+0YHRgtGP0LzQuCDQvNC+0LbQvdC+INCyINGC0LXQu9C10LPRgNCw0Lwt0LrQsNC90LDQu9C1Og0KdC5tZS9icm9rZW5wcm9taXNlc2dhbWU=',
-    wb:'0K8g0L/QvtC90Y/Riywg0L/RgNC+0LTQvtC70LbQuNGC0Yw='
-};
+var U = 'eyJiYWNrIjoi4oaQINCc0LXQvdGOKiIsInJlc3RhcnQiOiLQodC90LDRh9Cw0LvQviIsIm1lbnUiOiLQkiDQvNC10L3RjiIsImVuZFRpdGxlIjoi0JrQntCd0JXQpiJ9';
+var S = 'eyJzdGFydFNjZW5lIjoiYmlydGgiLCJzY2VuZXMiOlt7ImlkIjoiYmlydGgiLCJzcGVha2VyIjoi0J/QvtCy0LXRgdGC0LLQvtCy0LDRgtC10LvRjCIsInRleHQiOiLQlNC10LrQsNCx0YDRjCAyMDAwLiDQl9Cw0LLQtdGC0YfQtdC90YHQutCwLiDQotGLINGA0L7QtNC40LvRgdGPINCyINGE0YDRg9GJ0ZHQstC60LUuINCe0YLQtdGGIC0g0LPRgNGD0LfRh9C40LosINC80LDRgtGMIC0g0YPQsdC+0YDQvtGJ0LjQutCwLiDQlNC10L3QtdCzINCyINC+0LHRgNC10LcuINCk0LXQsdGPINC90LDQt9C+0LLQsNC70Lgg0JzQsNGA0LrQvtC8LiDQotCy0L7RjyDQttC40LfQvdGMIC0g0LjRgdGC0L7RgNC40Y8g0YHQu9C+0LzQsNC90L3Ri9GFINC+0LHQtdGJ0LDQvdC40LkuiwiaW1hZ2UiOiJpbWFnZXMvYmlydGgucG5nIiwiYmFja2dyb3VuZCI6ImltYWdlcy93aW50ZXJfYmcucG5nIiwiY2hvaWNlcyI6W3sidGV4dCI6ItCf0L7RgdC80L7RgtGA0LXRgtGMINC90LAg0LzQuNGAIOKGkiIsIm5leHRJZCI6ImNoaWxkaG9vZF8xIn1dfSx7ImlkIjoiY2hpbGRob29kXzEiLCJzcGVha2VyIjoi0J/QvtCy0LXRgdGC0LLQvtCy0LDRgtC10LvRjCIsInRleHQiOiLQpNC10LHRjCAzINCz0L7QtNCwLiDQnNCw0LzQsCDQv9C10YDQtdGB0YfQuNGC0YvQstCw0LXRgiDQvNC10LvQvtGF0YwuINCe0YLQtdGGINC/0L7QtNC90LjQvNCw0LXRgtGB0Y8g0L/QviDQu9C10YHRgtC90LjRhtC1IC0g0YjQsNCz0Lgg0YLRj9C20ZbQvtC70YzQuSwg0L3QtdC00L7QsdGA0YvQtS4iLCJpbWFnZSI6ImltYWdlcy9yb29tLnBuZyIsImJhY2tncm91bmQiOiJpbWFnZXMvYXB0X2JnLnBuZyIsImNob2ljZXMiOlt7InRleHQiOiLQktGL0LnRgtC4INC6INC+0YLQtdCz0YMifSx7InRleHQiOiLQodC/0YDRj9GC0LDRgtGM0YHRjyDQv9C+0LQg0YHRgtC+0LwifV19XX0=';
 function D(s){return atob(s);}
-document.getElementById('s').textContent=D(B.s);
-document.getElementById('p1').textContent=D(B.p1);
-document.getElementById('p2').textContent=D(B.p2);
-document.getElementById('p3').textContent=D(B.p3);
-document.getElementById('wt').textContent=D(B.wt);
-document.getElementById('wx').textContent=D(B.wx);
-document.getElementById('wb').textContent=D(B.wb);
-document.getElementById('p1').onclick=function(){window.location.href='game.html';};
-document.getElementById('p2').onclick=function(){alert(D('0J3QsNGB0YLRgNC+0LnQutC4INCx0YPQtNGD0YIg0L/QvtC30LbQtQ=='));};
-document.getElementById('p3').onclick=function(){window.open('https://t.me/brokenpromisesgame','_blank');};
-document.getElementById('wb').onclick=function(){document.getElementById('w').className='h';};
+var UO=JSON.parse(D(U));
+var ST=JSON.parse(D(S));
+document.getElementById('bk').textContent=UO.back;
+var cs=ST.startScene, vis=new Set(), ty=false, tm=null, ft='', st={};
+function r(id){var sc=ST.scenes.find(function(x){return x.id===id;});if(!sc){document.getElementById('tx').textContent='Scene not found.';return;}vis.add(id);localStorage.setItem('save',JSON.stringify({scene:id,visited:[...vis],stats:st}));if(sc.background){document.getElementById('bg').style.backgroundImage='url('+sc.background+')';}var sp=document.getElementById('sp');if(sc.speaker){sp.textContent=sc.speaker;sp.className='s';}else{sp.className='';}var el=document.getElementById('tx');el.innerHTML='';ft=sc.text||'';ty=true;tw(el,ft,0);var ch=document.getElementById('ch');ch.innerHTML='';if(sc.choices&&sc.choices.length){sc.choices.forEach(function(c){var b=document.createElement('button');b.className='btn';b.textContent=c.text;b.onclick=function(){if(c.nextId){r(c.nextId);}else{se();}};ch.appendChild(b);});}else{se();}var total=ST.scenes.length;var p=Math.min(100,Math.round((vis.size/total)*100));document.getElementById('fl').style.width=p+'%';el.onclick=function(){if(ty){clearTimeout(tm);el.innerHTML=ft;ty=false;}};}
+function tw(el,t,i){if(i<t.length){el.innerHTML+=t.charAt(i);tm=setTimeout(function(){tw(el,t,i+1);},20);}else{ty=false;}}
+function se(){document.getElementById('tx').textContent='🏁 THE END. THANK YOU!';var ch=document.getElementById('ch');ch.innerHTML='';var b=document.createElement('button');b.className='btn';b.textContent=UO.restart;b.onclick=rs;ch.appendChild(b);localStorage.removeItem('save');}
+function rs(){vis=new Set();st={};cs=ST.startScene;r(cs);}
+var saved=localStorage.getItem('save');if(saved){var data=JSON.parse(saved);cs=data.scene||ST.startScene;vis=new Set(data.visited||[]);st=data.stats||{};}r(cs);
 </script>
 </body>
 </html>
