@@ -15,15 +15,16 @@
         #speaker.show { display:block; }
         #text { flex:1; overflow-y:auto; color:#d4c4b0; font-size:12px; line-height:1.6; cursor:pointer; min-height:3em; }
         #choices { display:flex; flex-wrap:wrap; gap:8px; margin-top:8px; }
-        .btn { background:#1e1612; border:2px solid #4a3a32; color:#d4c4b0; padding:6px 12px; font-family:'Press Start 2P',monospace; font-size:10px; cursor:pointer; flex:1 1 45%; text-align:center; }
-        .btn:hover { background:#3a2c24; }
+        .btn { background:#1e1612; border:2px solid #4a3a32; color:#d4c4b0; padding:6px 12px; font-family:'Press Start 2P',monospace; font-size:10px; cursor:pointer; flex:1 1 45%; text-align:center; opacity:0.5; pointer-events:none; transition:opacity 0.2s; }
+        .btn.active { opacity:1; pointer-events:auto; }
+        .btn:hover.active { background:#3a2c24; }
         #progress { height:4px; background:#1a1410; position:relative; margin-top:6px; }
         #fill { height:100%; width:0%; background:#7a4a3a; transition:width 0.3s; }
         #version { position:absolute; bottom:2px; right:8px; font-size:7px; color:#3a2a22; z-index:3; }
         #backBtn { position:absolute; top:8px; right:8px; z-index:3; background:rgba(0,0,0,0.5); border:1px solid #4a3a32; color:#b8a090; padding:4px 8px; font-size:8px; cursor:pointer; font-family:'Press Start 2P',monospace; border-radius:2px; }
         #backBtn:hover { background:#3a2c24; }
         .stats-box { background:#0f0a08; border:2px solid #4a3a32; padding:10px; margin:4px 0; font-size:9px; line-height:1.8; color:#b8a090; white-space:pre-line; }
-        .restart-btn { background:#2a1e18; border-color:#b06040; color:#f0d8c8; flex:1 1 100%; }
+        .restart-btn { background:#2a1e18; border-color:#b06040; color:#f0d8c8; flex:1 1 100%; opacity:1; pointer-events:auto; }
         .restart-btn:hover { background:#4a3228; }
         @media (max-width:600px) {
             #game { height:90vh; }
@@ -43,7 +44,7 @@
         <div id="choices"></div>
         <div id="progress"><div id="fill"></div></div>
     </div>
-    <div id="version">v1.0.0</div>
+    <div id="version">v1.0.1</div>
     <button id="backBtn">← Меню</button>
 </div>
 <script>
@@ -320,7 +321,7 @@ var storyData = {
 };
 
 // ============================================================
-//  ДВИЖОК ИГРЫ
+//  ДВИЖОК ИГРЫ С БЛОКИРОВКОЙ КНОПОК
 // ============================================================
 var currentScene = storyData.startScene;
 var visited = new Set();
@@ -366,15 +367,41 @@ function render(sceneId) {
     var textEl = document.getElementById('text');
     textEl.innerHTML = '';
     fullText = scene.text || '';
-    isTyping = true;
-    typeWriter(textEl, fullText, 0);
 
+    // БЛОКИРУЕМ КНОПКИ ПОКА ИДЁТ ПЕЧАТЬ
+    var choicesEl = document.getElementById('choices');
+    choicesEl.innerHTML = '';
+    // Показываем заглушку (кнопки будут активны только после печати)
+
+    isTyping = true;
+    typeWriter(textEl, fullText, 0, function() {
+        // После окончания печати - активируем кнопки
+        isTyping = false;
+        showChoices(scene);
+    });
+
+    // Прогресс
+    var total = storyData.scenes.length;
+    var progress = Math.min(100, Math.round((visited.size / total) * 100));
+    document.getElementById('fill').style.width = progress + '%';
+
+    textEl.onclick = function() {
+        if (isTyping) {
+            clearTimeout(timer);
+            textEl.innerHTML = fullText;
+            isTyping = false;
+            showChoices(scene);
+        }
+    };
+}
+
+function showChoices(scene) {
     var choicesEl = document.getElementById('choices');
     choicesEl.innerHTML = '';
     if (scene.choices && scene.choices.length > 0) {
         scene.choices.forEach(function(choice) {
             var btn = document.createElement('button');
-            btn.className = 'btn';
+            btn.className = 'btn active'; // Активная кнопка
             btn.textContent = choice.text;
             btn.onclick = function() {
                 trackChoice(choice.text, choice.nextId);
@@ -389,28 +416,16 @@ function render(sceneId) {
     } else {
         showEnd();
     }
-
-    var total = storyData.scenes.length;
-    var progress = Math.min(100, Math.round((visited.size / total) * 100));
-    document.getElementById('fill').style.width = progress + '%';
-
-    textEl.onclick = function() {
-        if (isTyping) {
-            clearTimeout(timer);
-            textEl.innerHTML = fullText;
-            isTyping = false;
-        }
-    };
 }
 
-function typeWriter(element, text, index) {
+function typeWriter(element, text, index, callback) {
     if (index < text.length) {
         element.innerHTML += text.charAt(index);
         timer = setTimeout(function() {
-            typeWriter(element, text, index + 1);
+            typeWriter(element, text, index + 1, callback);
         }, 20);
     } else {
-        isTyping = false;
+        if (callback) callback();
     }
 }
 
