@@ -1,4 +1,4 @@
-// Вставляем тексты
+// Вставляем тексты в элементы
 document.getElementById('subtitle').textContent = LANG.menu.subtitle;
 document.getElementById('playBtn').textContent = LANG.menu.play;
 document.getElementById('settingsBtn').textContent = LANG.menu.settings;
@@ -7,7 +7,7 @@ document.getElementById('wtitle').textContent = LANG.menu.warningTitle;
 document.getElementById('wtext').textContent = LANG.menu.warningText;
 document.getElementById('wbtn').textContent = LANG.menu.warningBtn;
 
-// Обработчики
+// Обработчики кнопок
 document.getElementById('playBtn').onclick = function() {
     window.location.href = 'game.html';
 };
