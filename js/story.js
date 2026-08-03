@@ -1,5 +1,5 @@
 // ============================================================
-//  СЦЕНАРИЙ ИГРЫ (РАСШИРЕННЫЙ ДО 27+ СЦЕН)
+//  РАСШИРЕННЫЙ СЦЕНАРИЙ (35+ СЦЕН)
 // ============================================================
 var storyData = {
     startScene: "birth",
@@ -30,7 +30,7 @@ var storyData = {
             text: "Отец злой, отталкивает тебя. Мама плачет. Ты запоминаешь стыд и боль.",
             image: "images/angry_dad.png",
             background: "images/apt_bg.png",
-            choices: [{ text: "Запомнить", nextId: "yard" }]
+            choices: [{ text: "Запомнить", nextId: "childhood_3" }]
         },
         {
             id: "childhood_2B",
@@ -38,7 +38,34 @@ var storyData = {
             text: "Ты сжимаешься под столом, боишься громких звуков. С этого дня ты боишься конфликтов.",
             image: "images/under_table.png",
             background: "images/apt_bg.png",
-            choices: [{ text: "Запомнить страх", nextId: "yard" }]
+            choices: [{ text: "Запомнить страх", nextId: "childhood_3" }]
+        },
+        {
+            id: "childhood_3",
+            speaker: "Повествователь",
+            text: "В 5 лет ты пошёл в детский сад. Там ты впервые столкнулся с жестокостью: старшие мальчики отобрали твою игрушку. Ты не плакал, но запомнил это чувство несправедливости.",
+            image: "images/kindergarten.png",
+            background: "images/apt_bg.png",
+            choices: [
+                { text: "Попытаться забрать игрушку", nextId: "childhood_4A" },
+                { text: "Пожаловаться воспитательнице", nextId: "childhood_4B" }
+            ]
+        },
+        {
+            id: "childhood_4A",
+            speaker: "Повествователь",
+            text: "Ты попытался забрать игрушку силой, но получил по голове. Воспитательница наказала тебя за драку. Ты понял, что мир несправедлив.",
+            image: "images/kindergarten.png",
+            background: "images/apt_bg.png",
+            choices: [{ text: "Продолжить", nextId: "yard" }]
+        },
+        {
+            id: "childhood_4B",
+            speaker: "Повествователь",
+            text: "Ты пожаловался воспитательнице, но она не обратила внимания. Ты понял, что надеяться на защиту бесполезно, и научился полагаться только на себя.",
+            image: "images/kindergarten.png",
+            background: "images/apt_bg.png",
+            choices: [{ text: "Продолжить", nextId: "yard" }]
         },
         {
             id: "yard",
@@ -131,12 +158,37 @@ var storyData = {
             text: "Ты украл болгарку. Тебя не поймали. Ты теперь «свой».",
             image: "images/theft.png",
             background: "images/ptu_bg.png",
-            choices: [{ text: "Продолжить", nextId: "father_death" }]
+            choices: [
+                { text: "Продолжить воровать", nextId: "ptu_3A" },
+                { text: "Завязать, пока не поздно", nextId: "ptu_3B" }
+            ]
         },
         {
             id: "ptu_2B",
             speaker: "Повествователь",
             text: "Ты отказался. Тебя изолировали, перевели в другую группу. Ты работаешь один, но честно.",
+            image: "images/lonely_ptu.png",
+            background: "images/ptu_bg.png",
+            choices: [
+                { text: "Продолжить честно работать", nextId: "father_death" },
+                { text: "Попытаться подружиться с другими", nextId: "ptu_3B" }
+            ]
+        },
+        {
+            id: "ptu_3A",
+            speaker: "Повествователь",
+            text: "Вы начинаете мелкие кражи регулярно. Деньги появляются, но ты чувствуешь, что идёшь по наклонной.",
+            image: "images/theft.png",
+            background: "images/ptu_bg.png",
+            choices: [
+                { text: "Закопаться глубже", nextId: "father_death" },
+                { text: "Остановиться и вернуться на путь честности", nextId: "father_death" }
+            ]
+        },
+        {
+            id: "ptu_3B",
+            speaker: "Повествователь",
+            text: "Ты решаешь не связываться с криминалом. Ты работаешь штукатуром, учишься, но чувствуешь себя одиноким.",
             image: "images/lonely_ptu.png",
             background: "images/ptu_bg.png",
             choices: [{ text: "Продолжить", nextId: "father_death" }]
@@ -180,7 +232,21 @@ var storyData = {
             text: "Ты работаешь честно, становишься прорабом. Кира пишет тебе.",
             image: "images/foreman.png",
             background: "images/site_bg.png",
-            choices: [{ text: "Продолжать", nextId: "final_choice_good" }]
+            choices: [
+                { text: "Продолжать строительство", nextId: "work_honest_2" },
+                { text: "Попросить Киру приехать", nextId: "work_honest_2" }
+            ]
+        },
+        {
+            id: "work_honest_2",
+            speaker: "Повествователь",
+            text: "Ты становишься мастером. Однажды видишь, как на стройке обижают новенького пацана. Это напоминает тебе твоё детство.",
+            image: "images/construction.png",
+            background: "images/site_bg.png",
+            choices: [
+                { text: "Заступиться за него", nextId: "final_choice_good" },
+                { text: "Пройти мимо", nextId: "final_choice_good" }
+            ]
         },
         {
             id: "work_criminal",
@@ -188,7 +254,21 @@ var storyData = {
             text: "Ты втягиваешься в криминал. Однажды тебя подставляют.",
             image: "images/dark_alley.png",
             background: "images/night_bg.png",
-            choices: [{ text: "Закопаться", nextId: "final_choice_bad" }]
+            choices: [
+                { text: "Закопаться глубже", nextId: "work_criminal_2" },
+                { text: "Попытаться выйти из игры", nextId: "work_criminal_2" }
+            ]
+        },
+        {
+            id: "work_criminal_2",
+            speaker: "Повествователь",
+            text: "Ты в криминале. Тебя вызывают на разборку. Ты понимаешь, что это твой последний шанс.",
+            image: "images/dark_alley.png",
+            background: "images/night_bg.png",
+            choices: [
+                { text: "Идти до конца", nextId: "final_choice_bad" },
+                { text: "Завязать и уйти в легальную жизнь", nextId: "final_choice_bad" }
+            ]
         },
         {
             id: "work_security",
@@ -209,7 +289,7 @@ var storyData = {
             background: "images/club_bg.png",
             choices: [{ text: "Поговорить", nextId: "final_choice_mid" }]
         },
-        // === ФИНАЛЬНЫЕ РАЗВИЛКИ И КОНЦОВКИ ===
+        // === ФИНАЛЬНЫЕ РАЗВИЛКИ ===
         {
             id: "final_choice_good",
             speaker: "Повествователь",
@@ -240,6 +320,7 @@ var storyData = {
             background: "images/night_bg.png",
             choices: []
         },
+        // === КОНЦОВКИ ===
         {
             id: "ending_good_1",
             speaker: "Повествователь",
