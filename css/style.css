@@ -121,27 +121,6 @@ body {
     opacity: 0.5;
 }
 
-/* ===== FULLSCREEN BUTTON ===== */
-.fullscreen-btn {
-    position: absolute;
-    top: 10px;
-    left: 12px;
-    z-index: 5;
-    background: rgba(0,0,0,0.5);
-    border: 2px solid #4a3a32;
-    color: #b8a090;
-    padding: 4px 8px;
-    font-size: 14px;
-    cursor: pointer;
-    font-family: 'Press Start 2P', monospace;
-    transition: all 0.15s steps(2);
-    line-height: 1;
-}
-.fullscreen-btn:hover {
-    background: #3a2c24;
-    color: #f0e6d0;
-}
-
 /* ===== ПРЕДУПРЕЖДЕНИЕ ===== */
 #warningOverlay {
     display: flex;
@@ -542,16 +521,11 @@ body {
     #speaker {
         font-size: 10px;
     }
-    #backBtn, .fullscreen-btn {
+    #backBtn {
         font-size: 7px;
         padding: 3px 8px;
         top: 6px;
-    }
-    #backBtn {
         right: 6px;
-    }
-    .fullscreen-btn {
-        left: 6px;
     }
     .ending-modal {
         padding: 20px;
