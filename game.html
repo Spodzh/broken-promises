@@ -590,4 +590,107 @@
         textEl.innerHTML = '';
         fullText = scene.text || '';
 
-        var choicesEl
+        var choicesEl = document.getElementById('choices');
+        choicesEl.innerHTML = '';
+
+        isTyping = true;
+        typeWriter(textEl, fullText, 0, function() {
+            isTyping = false;
+            showChoices(scene);
+        });
+
+        var total = storyData.scenes.length;
+        var progress = Math.min(100, Math.round((visited.size / total) * 100));
+        document.getElementById('fill').style.width = progress + '%';
+
+        textEl.onclick = function() {
+            if (isTyping) {
+                clearTimeout(timer);
+                textEl.innerHTML = fullText;
+                isTyping = false;
+                showChoices(scene);
+            }
+        };
+    }
+
+    function showChoices(scene) {
+        var choicesEl = document.getElementById('choices');
+        choicesEl.innerHTML = '';
+        if (scene.choices && scene.choices.length > 0) {
+            scene.choices.forEach(function(choice) {
+                var btn = document.createElement('button');
+                btn.className = 'btn active';
+                btn.textContent = choice.text;
+                btn.onclick = function() {
+                    trackChoice(choice.text, choice.nextId);
+                    if (choice.nextId) {
+                        render(choice.nextId);
+                    } else {
+                        showEnd();
+                    }
+                };
+                choicesEl.appendChild(btn);
+            });
+        } else {
+            showEnd();
+        }
+    }
+
+    function typeWriter(element, text, index, callback) {
+        if (index < text.length) {
+            element.innerHTML += text.charAt(index);
+            timer = setTimeout(function() {
+                typeWriter(element, text, index + 1, callback);
+            }, 20);
+        } else {
+            if (callback) callback();
+        }
+    }
+
+    function showEnd() {
+        var textEl = document.getElementById('text');
+        var statsText = '';
+        statsText += '--- СТАТИСТИКА ВЫБОРОВ ---\n';
+        statsText += 'Доверился Димону? ' + (stats.trustDimon || 'Нет') + '\n';
+        statsText += 'Заступался за слабых? ' + (stats.stoodUp || 'Нет') + '\n';
+        statsText += 'Путь в жизни: ' + (stats.path || 'Не выбран') + '\n';
+        statsText += 'Поцеловал Киру? ' + (stats.kissed || 'Нет') + '\n';
+        statsText += 'Финальная концовка: ' + (stats.ending || 'Неизвестно') + '\n';
+        statsText += '----------------------------------';
+        textEl.innerHTML = '🏁 Конец. Спасибо за игру!\n\n' + statsText;
+
+        var choicesEl = document.getElementById('choices');
+        choicesEl.innerHTML = '';
+        var btn = document.createElement('button');
+        btn.className = 'btn restart-btn';
+        btn.textContent = '🔄 Начать заново';
+        btn.onclick = resetGame;
+        choicesEl.appendChild(btn);
+        localStorage.removeItem('save');
+    }
+
+    function resetGame() {
+        visited = new Set();
+        stats = {};
+        currentScene = storyData.startScene;
+        render(currentScene);
+    }
+
+    // Загрузка сохранения
+    var saved = localStorage.getItem('save');
+    if (saved) {
+        try {
+            var data = JSON.parse(saved);
+            currentScene = data.scene || storyData.startScene;
+            visited = new Set(data.visited || []);
+            stats = data.stats || {};
+        } catch(e) {}
+    }
+    render(currentScene);
+
+    document.getElementById('backBtn').onclick = function() {
+        window.location.href = 'index.html';
+    };
+</script>
+</body>
+</html>
