@@ -1,5 +1,5 @@
 // ============================================================
-//  РАСШИРЕННЫЙ СЦЕНАРИЙ (35+ СЦЕН)
+//  РАСШИРЕННЫЙ СЦЕНАРИЙ (38+ СЦЕН)
 // ============================================================
 var storyData = {
     startScene: "birth",
@@ -244,8 +244,19 @@ var storyData = {
             image: "images/construction.png",
             background: "images/site_bg.png",
             choices: [
-                { text: "Заступиться за него", nextId: "final_choice_good" },
-                { text: "Пройти мимо", nextId: "final_choice_good" }
+                { text: "Заступиться за него", nextId: "work_honest_3" },
+                { text: "Пройти мимо", nextId: "work_honest_3" }
+            ]
+        },
+        {
+            id: "work_honest_3",
+            speaker: "Повествователь",
+            text: "Ты заступился за парня. Бригадир заметил твою смелость и предложил тебе повышение. Теперь ты бригадир. Жизнь налаживается, но ты часто вспоминаешь Киру.",
+            image: "images/foreman.png",
+            background: "images/site_bg.png",
+            choices: [
+                { text: "Написать Кире", nextId: "final_choice_good" },
+                { text: "Остаться в Заветченске", nextId: "final_choice_mid" }
             ]
         },
         {
