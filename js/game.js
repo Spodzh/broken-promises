@@ -1,4 +1,4 @@
-// Движок игры (использует storyData и LANG)
+// Движок игры (без текста, только логика)
 var currentScene = storyData.startScene;
 var visited = new Set();
 var isTyping = false;
