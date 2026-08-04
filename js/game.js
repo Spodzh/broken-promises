@@ -1,5 +1,5 @@
 // ============================================================
-//  ДВИЖОК ИГРЫ (v2.4.0)
+//  ДВИЖОК ИГРЫ (v2.4.1)
 // ============================================================
 var currentScene = storyData.startScene;
 var visited = new Set();
@@ -25,12 +25,15 @@ var showStatsBtn = document.getElementById('showStatsBtn');
 var endingRestartBtn = document.getElementById('endingRestartBtn');
 var endingMenuBtn = document.getElementById('endingMenuBtn');
 
-// Аватары
+// ===== АВАТАРЫ ДЛЯ ВСЕХ ПЕРСОНАЖЕЙ =====
 var avatars = {
     'Повествователь': 'images/portraits/narrator.png',
     'Кира': 'images/portraits/kira.png',
     'Димон': 'images/portraits/dimon.png',
-    'Марк': 'images/portraits/mark.png'
+    'Марк': 'images/portraits/mark.png',
+    'Серёга': 'images/portraits/sergey.png',
+    'Дядька Гена': 'images/portraits/gena.png',
+    'Мама': 'images/portraits/mom.png'
 };
 var defaultAvatar = 'images/portraits/default.png';
 
