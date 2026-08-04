@@ -1,5 +1,5 @@
 // ============================================================
-//  ПИКСЕЛЬНЫЙ ДОЖДЬ + ТУМАН + МОЛНИИ + ЛИСТЬЯ + ЛУЖИ
+//  ДОЖДЬ + ТУМАН + МОЛНИИ + ЛИСТЬЯ + ФОНАРЬ + ОКНА + ПАР
 // ============================================================
 (function() {
     var canvas = document.getElementById('rainCanvas');
@@ -10,14 +10,28 @@
     var width, height;
     var drops = [];
     var fogParticles = [];
+    var steamParticles = [];
     var leaves = [];
     var lightning = null;
     var lightningTimer = 0;
     var lightningInterval = 180;
+    var windows = [];
+    var glassDrops = [];
 
     var numDrops = 180;
     var numFog = 30;
+    var numSteam = 20;
     var numLeaves = 12;
+    var numGlassDrops = 8;
+
+    // Фонарь
+    var lamp = {
+        x: 0,
+        y: 0,
+        glow: 0,
+        flicker: 0,
+        on: true
+    };
 
     function resize() {
         var container = canvas.parentElement;
@@ -27,7 +41,12 @@
         canvas.height = height;
         initDrops();
         initFog();
+        initSteam();
         initLeaves();
+        initWindows();
+        initGlassDrops();
+        lamp.x = 40;
+        lamp.y = height - 60;
     }
 
     function initDrops() {
@@ -57,18 +76,72 @@
         }
     }
 
+    function initSteam() {
+        steamParticles = [];
+        for (var i = 0; i < numSteam; i++) {
+            steamParticles.push({
+                x: Math.random() * width,
+                y: height - Math.random() * 100,
+                size: 10 + Math.random() * 30,
+                speedY: -0.2 - Math.random() * 0.5,
+                speedX: (Math.random() - 0.5) * 0.3,
+                opacity: 0.03 + Math.random() * 0.05,
+                life: 0
+            });
+        }
+    }
+
     function initLeaves() {
         leaves = [];
         for (var i = 0; i < numLeaves; i++) {
             leaves.push({
                 x: Math.random() * width,
-                y: Math.random() * height - height,
-                size: 3 + Math.floor(Math.random() * 4),
-                speedY: 0.3 + Math.random() * 0.6,
-                speedX: 0.2 + Math.random() * 0.4,
-                opacity: 0.3 + Math.random() * 0.4,
+                y: Math.random() * height,
+                size: 3 + Math.floor(Math.random() * 5),
+                speedX: -0.5 + Math.random() * 1.5,
+                speedY: 0.2 + Math.random() * 0.8,
                 rotation: Math.random() * Math.PI * 2,
-                rotSpeed: (Math.random() - 0.5) * 0.02
+                rotSpeed: (Math.random() - 0.5) * 0.05,
+                color: Math.random() > 0.6 ? '#7a5a3a' : '#5a4a3a'
+            });
+        }
+    }
+
+    function initWindows() {
+        windows = [];
+        // Создаём несколько окон на заднем плане
+        var positions = [
+            { x: 50, y: 40 },
+            { x: 150, y: 30 },
+            { x: 280, y: 60 },
+            { x: 400, y: 20 },
+            { x: 550, y: 50 },
+            { x: 700, y: 35 }
+        ];
+        for (var i = 0; i < positions.length; i++) {
+            var w = positions[i];
+            windows.push({
+                x: w.x,
+                y: w.y,
+                width: 20 + Math.random() * 20,
+                height: 25 + Math.random() * 15,
+                on: Math.random() > 0.3,
+                flickerTimer: 0,
+                flickerInterval: 100 + Math.random() * 200
+            });
+        }
+    }
+
+    function initGlassDrops() {
+        glassDrops = [];
+        for (var i = 0; i < numGlassDrops; i++) {
+            glassDrops.push({
+                x: 20 + Math.random() * (width - 40),
+                y: 20 + Math.random() * (height - 40),
+                speed: 0.3 + Math.random() * 0.6,
+                size: 2 + Math.floor(Math.random() * 4),
+                length: 4 + Math.random() * 8,
+                opacity: 0.1 + Math.random() * 0.15
             });
         }
     }
@@ -129,47 +202,129 @@
         ctx.fillRect(0, 0, width, height);
     }
 
-    function drawPuddles() {
-        // Рисуем несколько светлых пятен в нижней части
-        for (var i = 0; i < 5; i++) {
-            var x = (i * 0.2 + 0.1) * width;
-            var y = height - 20 - Math.random() * 30;
-            var radius = 10 + Math.random() * 20;
-            ctx.fillStyle = 'rgba(180, 200, 220, 0.03)';
-            ctx.fillRect(x, y, radius, radius * 0.3);
-            ctx.fillStyle = 'rgba(200, 210, 220, 0.02)';
-            ctx.fillRect(x + 3, y + 2, radius * 0.5, radius * 0.2);
+    function drawLamp() {
+        var l = lamp;
+        if (!l.on) return;
+        ctx.save();
+        var gradient = ctx.createRadialGradient(l.x, l.y, 5, l.x, l.y, 70);
+        gradient.addColorStop(0, 'rgba(200, 180, 100, ' + (0.1 + l.glow * 0.1) + ')');
+        gradient.addColorStop(1, 'rgba(200, 180, 100, 0)');
+        ctx.fillStyle = gradient;
+        ctx.fillRect(l.x - 70, l.y - 70, 140, 140);
+        ctx.restore();
+
+        ctx.fillStyle = '#3a2c24';
+        ctx.fillRect(l.x - 2, l.y - 20, 4, 20);
+        ctx.fillRect(l.x - 6, l.y - 26, 12, 6);
+        ctx.fillStyle = '#f0e6d0';
+        ctx.fillRect(l.x - 3, l.y - 28, 6, 4);
+        ctx.fillStyle = '#b8a090';
+        ctx.fillRect(l.x - 2, l.y - 30, 4, 2);
+        l.flicker++;
+        if (l.flicker > 30 + Math.random() * 60) {
+            l.flicker = 0;
+            if (Math.random() > 0.7) {
+                l.on = !l.on;
+                if (l.on) l.glow = 0.5 + Math.random() * 0.5;
+            } else {
+                l.glow = 0.5 + Math.random() * 0.5;
+            }
+        }
+    }
+
+    function drawWindows() {
+        for (var i = 0; i < windows.length; i++) {
+            var w = windows[i];
+            if (!w.on) continue;
+            var brightness = 0.4 + Math.random() * 0.2;
+            ctx.fillStyle = 'rgba(255, 200, 100, ' + brightness + ')';
+            ctx.fillRect(w.x, w.y, w.width, w.height);
+            ctx.fillStyle = 'rgba(255, 255, 200, 0.2)';
+            ctx.fillRect(w.x + 2, w.y + 2, w.width - 4, w.height - 4);
+            // Мерцание
+            w.flickerTimer++;
+            if (w.flickerTimer > w.flickerInterval + Math.random() * 50) {
+                w.flickerTimer = 0;
+                if (Math.random() > 0.8) {
+                    w.on = !w.on;
+                }
+            }
+        }
+    }
+
+    function drawSteam() {
+        for (var i = 0; i < steamParticles.length; i++) {
+            var s = steamParticles[i];
+            ctx.fillStyle = 'rgba(200, 210, 220, ' + s.opacity + ')';
+            var size = s.size;
+            var x = Math.floor(s.x);
+            var y = Math.floor(s.y);
+            for (var dx = 0; dx < size; dx += 4) {
+                for (var dy = 0; dy < size * 0.6; dy += 4) {
+                    if (Math.random() > 0.4) continue;
+                    ctx.fillRect(x + dx, y + dy, 2, 2);
+                }
+            }
+            s.y += s.speedY;
+            s.x += s.speedX;
+            if (s.y < -s.size) {
+                s.y = height + Math.random() * 20;
+                s.x = Math.random() * width;
+                s.size = 10 + Math.random() * 30;
+                s.opacity = 0.03 + Math.random() * 0.05;
+            }
+        }
+    }
+
+    function drawGlassDrops() {
+        for (var i = 0; i < glassDrops.length; i++) {
+            var d = glassDrops[i];
+            ctx.fillStyle = 'rgba(255, 255, 255, ' + d.opacity + ')';
+            for (var j = 0; j < d.length; j++) {
+                var yPos = Math.floor(d.y + j);
+                var xPos = Math.floor(d.x);
+                ctx.fillRect(xPos, yPos, d.size, 1);
+            }
+            d.y += d.speed;
+            if (d.y > height - 20) {
+                d.y = 20;
+                d.x = 20 + Math.random() * (width - 40);
+                d.speed = 0.3 + Math.random() * 0.6;
+                d.length = 4 + Math.random() * 8;
+                d.opacity = 0.1 + Math.random() * 0.15;
+            }
         }
     }
 
     function drawLeaves() {
         for (var i = 0; i < leaves.length; i++) {
-            var l = leaves[i];
-            ctx.fillStyle = 'rgba(60, 50, 40, ' + l.opacity + ')';
-            var size = l.size;
-            // Рисуем лист как прямоугольник с поворотом
+            var leaf = leaves[i];
             ctx.save();
-            ctx.translate(Math.floor(l.x), Math.floor(l.y));
-            ctx.rotate(l.rotation);
-            ctx.fillRect(-size/2, -size/4, size, size/2);
+            ctx.translate(leaf.x, leaf.y);
+            ctx.rotate(leaf.rotation);
+            ctx.fillStyle = leaf.color;
+            ctx.fillRect(-leaf.size/2, -leaf.size/2, leaf.size, leaf.size);
+            ctx.fillRect(-leaf.size/4, -leaf.size/4, leaf.size/2, leaf.size/2);
             ctx.restore();
-            // Движение
-            l.x += l.speedX * 0.5;
-            l.y += l.speedY;
-            l.rotation += l.rotSpeed;
-            if (l.y > height + 20) {
-                l.y = -20 - Math.random() * 30;
-                l.x = Math.random() * width;
-                l.speedX = 0.2 + Math.random() * 0.4;
-                l.speedY = 0.3 + Math.random() * 0.6;
+            leaf.x += leaf.speedX;
+            leaf.y += leaf.speedY;
+            leaf.rotation += leaf.rotSpeed;
+            if (leaf.x > width + 20) {
+                leaf.x = -20;
+                leaf.y = Math.random() * height;
             }
-            if (l.x > width + 20) l.x = -20;
-            if (l.x < -20) l.x = width + 20;
+            if (leaf.y > height + 20) {
+                leaf.y = -20;
+                leaf.x = Math.random() * width;
+            }
         }
     }
 
     function drawRain() {
         ctx.clearRect(0, 0, width, height);
+
+        // Окна (на заднем плане)
+        drawWindows();
 
         // Туман
         for (var i = 0; i < fogParticles.length; i++) {
@@ -191,6 +346,12 @@
             }
         }
 
+        // Пар
+        drawSteam();
+
+        // Листья
+        drawLeaves();
+
         // Дождь
         for (var i = 0; i < drops.length; i++) {
             var d = drops[i];
@@ -210,11 +371,11 @@
             }
         }
 
-        // Лужи
-        drawPuddles();
+        // Капли на стекле
+        drawGlassDrops();
 
-        // Листья
-        drawLeaves();
+        // Фонарь
+        drawLamp();
 
         // Молнии
         if (lightning) {
@@ -239,4 +400,5 @@
     window.addEventListener('resize', resize);
     resize();
     drawRain();
+})();
 })();
