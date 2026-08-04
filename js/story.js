@@ -1,5 +1,5 @@
 // ============================================================
-//  СЦЕНАРИЙ С ДИАЛОГАМИ (v2.4.0)
+//  СЦЕНАРИЙ С ДИАЛОГАМИ (v2.4.1)
 // ============================================================
 var storyData = {
     startScene: "birth",
@@ -67,17 +67,43 @@ var storyData = {
             background: "images/apt_bg.png",
             choices: [{ text: "Продолжить", nextId: "yard" }]
         },
+        // ========== ДИАЛОГ С ДИМОНОМ ==========
         {
             id: "yard",
             speaker: "Повествователь",
-            text: "Во дворе ты встречаешь Димку — такого же худого пацана. Он показывает тайник с журналами и рогаткой. Вы становитесь друзьями.",
+            text: "Во дворе ты встречаешь Димку — такого же худого пацана. Он показывает тайник с журналами и рогаткой.",
             image: "images/yard.png",
             background: "images/yard_bg.png",
             choices: [
-                { text: "Довериться Димону", nextId: "school_1" },
+                { text: "Довериться Димону", nextId: "dialog_dim_1" },
                 { text: "Дружить с осторожностью", nextId: "school_1" }
             ]
         },
+        {
+            id: "dialog_dim_1",
+            speaker: "Димон",
+            text: "— Смотри, что я нашёл! Тайник. Тут журналы и рогатка. Хочешь, покажу, как стрелять?",
+            image: "images/yard.png",
+            background: "images/yard_bg.png",
+            choices: [{ text: "Да, покажи!", nextId: "dialog_dim_2" }]
+        },
+        {
+            id: "dialog_dim_2",
+            speaker: "Марк",
+            text: "— Круто! А где ты это взял?",
+            image: "images/yard.png",
+            background: "images/yard_bg.png",
+            choices: [{ text: "→", nextId: "dialog_dim_3" }]
+        },
+        {
+            id: "dialog_dim_3",
+            speaker: "Димон",
+            text: "— Нашёл на свалке. Теперь это наше место. Никому не говори, ладно?",
+            image: "images/yard.png",
+            background: "images/yard_bg.png",
+            choices: [{ text: "Ладно, договорились", nextId: "school_1" }]
+        },
+        // =========================================
         // === АКТ 2: ШКОЛА ===
         {
             id: "school_1",
@@ -97,11 +123,11 @@ var storyData = {
             image: "images/classroom.png",
             background: "images/school_bg.png",
             choices: [
-                { text: "Поговорить о рисунке", nextId: "dialog_kira_1" },   // Запускаем диалог
+                { text: "Поговорить о рисунке", nextId: "dialog_kira_1" },
                 { text: "Отвернуться", nextId: "school_2" }
             ]
         },
-        // ---- Диалог с Кирой (3 реплики) ----
+        // ---- Диалог с Кирой (первая встреча) ----
         {
             id: "dialog_kira_1",
             speaker: "Кира",
@@ -126,7 +152,7 @@ var storyData = {
             background: "images/school_bg.png",
             choices: [{ text: "Хорошо", nextId: "school_2" }]
         },
-        // ---------------------------------
+        // -----------------------------------------
         {
             id: "school_2",
             speaker: "Повествователь",
@@ -153,8 +179,29 @@ var storyData = {
             text: "Кира даёт тебе ириску: «Не обращай внимания, они идиоты».",
             image: "images/ira_iris.png",
             background: "images/school_bg.png",
-            choices: [{ text: "Улыбнуться", nextId: "school_4" }]
+            choices: [
+                { text: "Улыбнуться", nextId: "dialog_kira_2_1" },
+                { text: "Промолчать", nextId: "school_4" }
+            ]
         },
+        // ---- Диалог с Кирой после ириски ----
+        {
+            id: "dialog_kira_2_1",
+            speaker: "Марк",
+            text: "— Спасибо, Кира. Ты всегда такая добрая ко мне.",
+            image: "images/ira_iris.png",
+            background: "images/school_bg.png",
+            choices: [{ text: "→", nextId: "dialog_kira_2_2" }]
+        },
+        {
+            id: "dialog_kira_2_2",
+            speaker: "Кира",
+            text: "— Это просто ириска. Но если хочешь, могу угощать тебя каждый день.",
+            image: "images/ira_iris.png",
+            background: "images/school_bg.png",
+            choices: [{ text: "Спасибо, я бы хотел", nextId: "school_4" }]
+        },
+        // -----------------------------------------
         {
             id: "school_4",
             speaker: "Повествователь",
@@ -174,10 +221,28 @@ var storyData = {
             image: "images/ptu_workshop.png",
             background: "images/ptu_bg.png",
             choices: [
-                { text: "Согласиться", nextId: "ptu_2A" },
+                { text: "Согласиться", nextId: "dialog_sergey_1" },
                 { text: "Отказаться", nextId: "ptu_2B" }
             ]
         },
+        // ---- Диалог с Серёгой ----
+        {
+            id: "dialog_sergey_1",
+            speaker: "Серёга",
+            text: "— Ты че, новенький? Хочешь быть с нами? Тогда докажи — укради болгарку с первого этажа. Легко.",
+            image: "images/ptu_workshop.png",
+            background: "images/ptu_bg.png",
+            choices: [{ text: "Я согласен", nextId: "dialog_sergey_2" }]
+        },
+        {
+            id: "dialog_sergey_2",
+            speaker: "Марк",
+            text: "— Хорошо. Я сделаю это.",
+            image: "images/ptu_workshop.png",
+            background: "images/ptu_bg.png",
+            choices: [{ text: "Пойти на дело", nextId: "ptu_2A" }]
+        },
+        // ---------------------------------
         {
             id: "ptu_2A",
             speaker: "Повествователь",
@@ -234,16 +299,57 @@ var storyData = {
         {
             id: "funeral",
             speaker: "Повествователь",
-            text: "Похороны. Пришли Димон и Кира. Она взяла тебя за руку.",
+            text: "Похороны. Пришли Димон и Кира. Мама плачет. Ты стоишь рядом.",
             image: "images/funeral.png",
             background: "images/cemetery_bg.png",
-            choices: [{ text: "Держаться за Киру", nextId: "work_choice" }]
+            choices: [
+                { text: "Обнять маму", nextId: "dialog_mom_1" },
+                { text: "Держаться за Киру", nextId: "work_choice" }
+            ]
         },
+        // ---- Диалог с мамой ----
+        {
+            id: "dialog_mom_1",
+            speaker: "Мама",
+            text: "— Сынок... мы остались одни. Но ты у меня сильный. Мы справимся.",
+            image: "images/funeral.png",
+            background: "images/cemetery_bg.png",
+            choices: [{ text: "Я всегда буду рядом, мам", nextId: "dialog_mom_2" }]
+        },
+        {
+            id: "dialog_mom_2",
+            speaker: "Марк",
+            text: "— Не плачь. Я найду работу, мы выберемся из этой нищеты.",
+            image: "images/funeral.png",
+            background: "images/cemetery_bg.png",
+            choices: [{ text: "Продолжить", nextId: "work_choice" }]
+        },
+        // ---------------------------------
         // === АКТ 4: РАБОТА ===
         {
             id: "work_choice",
             speaker: "Повествователь",
-            text: "После ПТУ ты идёшь на стройку. Дядька Гена предлагает выбор.",
+            text: "После ПТУ ты идёшь на стройку. Дядька Гена, бригадир, смотрит на тебя оценивающе.",
+            image: "images/construction.png",
+            background: "images/site_bg.png",
+            choices: [
+                { text: "Поговорить с дядькой Геной", nextId: "dialog_gena_1" },
+                { text: "Просто начать работать", nextId: "work_honest" }
+            ]
+        },
+        // ---- Диалог с дядькой Геной ----
+        {
+            id: "dialog_gena_1",
+            speaker: "Дядька Гена",
+            text: "— Новенький? Молодой ещё. Чего умеешь? Штукатурить? Красить? Или только болгарку воровать?",
+            image: "images/construction.png",
+            background: "images/site_bg.png",
+            choices: [{ text: "Я могу всё, что скажете", nextId: "dialog_gena_2" }]
+        },
+        {
+            id: "dialog_gena_2",
+            speaker: "Марк",
+            text: "— Я хочу работать честно. Научусь всему, что нужно.",
             image: "images/construction.png",
             background: "images/site_bg.png",
             choices: [
@@ -252,6 +358,7 @@ var storyData = {
                 { text: "Уйти к Димону в охрану", nextId: "work_security" }
             ]
         },
+        // -----------------------------------------
         {
             id: "work_honest",
             speaker: "Повествователь",
@@ -281,10 +388,31 @@ var storyData = {
             image: "images/foreman.png",
             background: "images/site_bg.png",
             choices: [
-                { text: "Написать Кире", nextId: "final_choice_good" },
+                { text: "Написать Кире", nextId: "dialog_kira_final_1" },
                 { text: "Остаться в Заветченске", nextId: "final_choice_mid" }
             ]
         },
+        // ---- Финальный диалог с Кирой ----
+        {
+            id: "dialog_kira_final_1",
+            speaker: "Кира",
+            text: "— Марк, я слышала, ты стал бригадиром. Я горжусь тобой.",
+            image: "images/store.png",
+            background: "images/store_bg.png",
+            choices: [{ text: "Спасибо, Кира. Я скучаю по тебе", nextId: "dialog_kira_final_2" }]
+        },
+        {
+            id: "dialog_kira_final_2",
+            speaker: "Марк",
+            text: "— Может, нам стоит начать сначала?",
+            image: "images/store.png",
+            background: "images/store_bg.png",
+            choices: [
+                { text: "Уехать с ней", nextId: "ending_good_1" },
+                { text: "Построить дом", nextId: "ending_good_2" }
+            ]
+        },
+        // -----------------------------------------
         {
             id: "work_criminal",
             speaker: "Повествователь",
