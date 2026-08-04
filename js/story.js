@@ -1,5 +1,5 @@
 // ============================================================
-//  РАСШИРЕННЫЙ СЦЕНАРИЙ (38+ СЦЕН)
+//  СЦЕНАРИЙ С ДИАЛОГАМИ (v2.4.0)
 // ============================================================
 var storyData = {
     startScene: "birth",
@@ -97,10 +97,36 @@ var storyData = {
             image: "images/classroom.png",
             background: "images/school_bg.png",
             choices: [
-                { text: "Поговорить о рисунке", nextId: "school_2" },
+                { text: "Поговорить о рисунке", nextId: "dialog_kira_1" },   // Запускаем диалог
                 { text: "Отвернуться", nextId: "school_2" }
             ]
         },
+        // ---- Диалог с Кирой (3 реплики) ----
+        {
+            id: "dialog_kira_1",
+            speaker: "Кира",
+            text: "— Ты знаешь, я часто рисую наш двор. А ты любишь рисовать?",
+            image: "images/classroom.png",
+            background: "images/school_bg.png",
+            choices: [{ text: "Продолжить разговор →", nextId: "dialog_kira_2" }]
+        },
+        {
+            id: "dialog_kira_2",
+            speaker: "Марк",
+            text: "— Не очень. Я больше люблю смотреть, как ты рисуешь. У тебя здорово получается.",
+            image: "images/classroom.png",
+            background: "images/school_bg.png",
+            choices: [{ text: "→", nextId: "dialog_kira_3" }]
+        },
+        {
+            id: "dialog_kira_3",
+            speaker: "Кира",
+            text: "— Спасибо! Может, как-нибудь нарисуем вместе?",
+            image: "images/classroom.png",
+            background: "images/school_bg.png",
+            choices: [{ text: "Хорошо", nextId: "school_2" }]
+        },
+        // ---------------------------------
         {
             id: "school_2",
             speaker: "Повествователь",
