@@ -9,6 +9,9 @@
 </head>
 <body>
 <div id="menu">
+    <!-- Слой дождя -->
+    <canvas id="rainCanvas"></canvas>
+
     <div id="title">BROKEN PROMISES</div>
     <div id="subtitle">История одной жизни</div>
     <div id="buttons">
@@ -16,14 +19,15 @@
         <button class="btn" id="settingsBtn">⚙ Настройки</button>
         <button class="btn" id="supportBtn">✉ Поддержать</button>
     </div>
-    <div id="version">v2.4.1</div>
+    <div id="version">v2.5.0</div>
     <div id="studio">SPOGELSE GAME</div>
 
-    <!-- Предупреждение, модалки – без изменений -->
+    <!-- Остальные модалки (без изменений) -->
     <div id="warningOverlay">...</div>
     <div id="settingsOverlay" class="modal-overlay hidden">...</div>
     <div id="supportOverlay" class="modal-overlay hidden">...</div>
 </div>
 <script src="js/menu.js" charset="UTF-8"></script>
+<script src="js/rain.js" charset="UTF-8"></script>
 </body>
 </html>
