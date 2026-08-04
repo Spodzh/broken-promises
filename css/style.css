@@ -108,15 +108,11 @@ body {
     border-color: #c07050;
 }
 #version {
-    position: absolute;
-    bottom: 10px;
-    right: 16px;
-    font-size: 8px;
-    color: #3a2a22;
-    z-index: 1;
-    font-family: 'Press Start 2P', monospace;
-    letter-spacing: 1px;
-    opacity: 0.5;
+    animation: pulse 3s infinite alternate;
+}
+@keyframes pulse {
+    0% { opacity: 0.3; }
+    100% { opacity: 0.9; }
 }
 #studio {
     position: absolute;
