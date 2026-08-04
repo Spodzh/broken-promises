@@ -1,5 +1,5 @@
 // ============================================================
-//  ПИКСЕЛЬНЫЙ ДОЖДЬ + ТУМАН + МОЛНИИ
+//  ПИКСЕЛЬНЫЙ ДОЖДЬ + ТУМАН + МОЛНИИ + ЛИСТЬЯ + ЛУЖИ
 // ============================================================
 (function() {
     var canvas = document.getElementById('rainCanvas');
@@ -10,12 +10,14 @@
     var width, height;
     var drops = [];
     var fogParticles = [];
+    var leaves = [];
     var lightning = null;
     var lightningTimer = 0;
     var lightningInterval = 180;
 
     var numDrops = 180;
     var numFog = 30;
+    var numLeaves = 12;
 
     function resize() {
         var container = canvas.parentElement;
@@ -25,6 +27,7 @@
         canvas.height = height;
         initDrops();
         initFog();
+        initLeaves();
     }
 
     function initDrops() {
@@ -50,6 +53,22 @@
                 size: 30 + Math.random() * 80,
                 speedX: 0.1 + Math.random() * 0.3,
                 opacity: 0.02 + Math.random() * 0.04
+            });
+        }
+    }
+
+    function initLeaves() {
+        leaves = [];
+        for (var i = 0; i < numLeaves; i++) {
+            leaves.push({
+                x: Math.random() * width,
+                y: Math.random() * height - height,
+                size: 3 + Math.floor(Math.random() * 4),
+                speedY: 0.3 + Math.random() * 0.6,
+                speedX: 0.2 + Math.random() * 0.4,
+                opacity: 0.3 + Math.random() * 0.4,
+                rotation: Math.random() * Math.PI * 2,
+                rotSpeed: (Math.random() - 0.5) * 0.02
             });
         }
     }
@@ -110,6 +129,45 @@
         ctx.fillRect(0, 0, width, height);
     }
 
+    function drawPuddles() {
+        // Рисуем несколько светлых пятен в нижней части
+        for (var i = 0; i < 5; i++) {
+            var x = (i * 0.2 + 0.1) * width;
+            var y = height - 20 - Math.random() * 30;
+            var radius = 10 + Math.random() * 20;
+            ctx.fillStyle = 'rgba(180, 200, 220, 0.03)';
+            ctx.fillRect(x, y, radius, radius * 0.3);
+            ctx.fillStyle = 'rgba(200, 210, 220, 0.02)';
+            ctx.fillRect(x + 3, y + 2, radius * 0.5, radius * 0.2);
+        }
+    }
+
+    function drawLeaves() {
+        for (var i = 0; i < leaves.length; i++) {
+            var l = leaves[i];
+            ctx.fillStyle = 'rgba(60, 50, 40, ' + l.opacity + ')';
+            var size = l.size;
+            // Рисуем лист как прямоугольник с поворотом
+            ctx.save();
+            ctx.translate(Math.floor(l.x), Math.floor(l.y));
+            ctx.rotate(l.rotation);
+            ctx.fillRect(-size/2, -size/4, size, size/2);
+            ctx.restore();
+            // Движение
+            l.x += l.speedX * 0.5;
+            l.y += l.speedY;
+            l.rotation += l.rotSpeed;
+            if (l.y > height + 20) {
+                l.y = -20 - Math.random() * 30;
+                l.x = Math.random() * width;
+                l.speedX = 0.2 + Math.random() * 0.4;
+                l.speedY = 0.3 + Math.random() * 0.6;
+            }
+            if (l.x > width + 20) l.x = -20;
+            if (l.x < -20) l.x = width + 20;
+        }
+    }
+
     function drawRain() {
         ctx.clearRect(0, 0, width, height);
 
@@ -151,6 +209,12 @@
                 d.opacity = 0.25 + Math.random() * 0.4;
             }
         }
+
+        // Лужи
+        drawPuddles();
+
+        // Листья
+        drawLeaves();
 
         // Молнии
         if (lightning) {
