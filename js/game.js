@@ -1,5 +1,5 @@
 // ============================================================
-//  ДВИЖОК ИГРЫ (v2.4.1)
+//  ДВИЖОК ИГРЫ (v2.5.0)
 // ============================================================
 var currentScene = storyData.startScene;
 var visited = new Set();
@@ -25,7 +25,7 @@ var showStatsBtn = document.getElementById('showStatsBtn');
 var endingRestartBtn = document.getElementById('endingRestartBtn');
 var endingMenuBtn = document.getElementById('endingMenuBtn');
 
-// ===== АВАТАРЫ ДЛЯ ВСЕХ ПЕРСОНАЖЕЙ =====
+// ===== АВАТАРЫ =====
 var avatars = {
     'Повествователь': 'images/portraits/narrator.png',
     'Кира': 'images/portraits/kira.png',
