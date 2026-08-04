@@ -1,5 +1,5 @@
 // ============================================================
-//  ДВИЖОК ИГРЫ (v2.5.0)
+//  ДВИЖОК ИГРЫ (v2.6.0)
 // ============================================================
 var currentScene = storyData.startScene;
 var visited = new Set();
@@ -33,7 +33,8 @@ var avatars = {
     'Марк': 'images/portraits/mark.png',
     'Серёга': 'images/portraits/sergey.png',
     'Дядька Гена': 'images/portraits/gena.png',
-    'Мама': 'images/portraits/mom.png'
+    'Мама': 'images/portraits/mom.png',
+    'Продавщица': 'images/portraits/seller.png'   // новая
 };
 var defaultAvatar = 'images/portraits/default.png';
 
