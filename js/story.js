@@ -1,5 +1,5 @@
 // ============================================================
-//  СЦЕНАРИЙ С ДИАЛОГАМИ (v2.5.0)
+//  СЦЕНАРИЙ С КОМИССИОНКОЙ (v2.6.0)
 // ============================================================
 var storyData = {
     startScene: "birth",
@@ -67,7 +67,6 @@ var storyData = {
             background: "images/apt_bg.png",
             choices: [{ text: "Продолжить", nextId: "yard" }]
         },
-        // ========== ДИАЛОГ С ДИМОНОМ ==========
         {
             id: "yard",
             speaker: "Повествователь",
@@ -103,7 +102,6 @@ var storyData = {
             background: "images/yard_bg.png",
             choices: [{ text: "Ладно, договорились", nextId: "school_1" }]
         },
-        // =========================================
         // === АКТ 2: ШКОЛА ===
         {
             id: "school_1",
@@ -127,7 +125,6 @@ var storyData = {
                 { text: "Отвернуться", nextId: "school_2" }
             ]
         },
-        // ---- Диалог с Кирой (первая встреча) ----
         {
             id: "dialog_kira_1",
             speaker: "Кира",
@@ -152,7 +149,6 @@ var storyData = {
             background: "images/school_bg.png",
             choices: [{ text: "Хорошо", nextId: "school_2" }]
         },
-        // -----------------------------------------
         {
             id: "school_2",
             speaker: "Повествователь",
@@ -184,7 +180,6 @@ var storyData = {
                 { text: "Промолчать", nextId: "school_4" }
             ]
         },
-        // ---- Диалог с Кирой после ириски ----
         {
             id: "dialog_kira_2_1",
             speaker: "Марк",
@@ -201,7 +196,6 @@ var storyData = {
             background: "images/school_bg.png",
             choices: [{ text: "Спасибо, я бы хотел", nextId: "school_4" }]
         },
-        // -----------------------------------------
         {
             id: "school_4",
             speaker: "Повествователь",
@@ -209,9 +203,90 @@ var storyData = {
             image: "images/farewell.png",
             background: "images/autumn_bg.png",
             choices: [
-                { text: "Поцеловать Киру", nextId: "ptu_1" },
-                { text: "Обнять", nextId: "ptu_1" }
+                { text: "Поцеловать Киру", nextId: "street_comission" },
+                { text: "Обнять", nextId: "street_comission" }
             ]
+        },
+        // === НОВАЯ ВЕТКА: КОМИССИОНКА ===
+        {
+            id: "street_comission",
+            speaker: "Повествователь",
+            text: "Ты идёшь по улице и замечаешь старую комиссионку. На витрине тускло горит лампа. Внутри, кажется, есть что-то интересное.",
+            image: "images/comission_shop.png",
+            background: "images/comission_shop.png",
+            choices: [
+                { text: "Зайти в комиссионку", nextId: "comission_enter" },
+                { text: "Пойти домой", nextId: "ptu_1" }
+            ]
+        },
+        {
+            id: "comission_enter",
+            speaker: "Продавщица",
+            text: "— О, Марк! Ты ведь сын Люды? Как вырос! Что ищешь? — улыбается женщина за прилавком.",
+            image: "images/comission_shop.png",
+            background: "images/comission_shop.png",
+            choices: [{ text: "Осмотреть полки", nextId: "comission_shelf" }]
+        },
+        {
+            id: "comission_shelf",
+            speaker: "Повествователь",
+            text: "На полке ты видишь несколько вещей: игровая приставка GameStation 3, старый фотоаппарат Danon, стопка журналов MAXON и кассеты с хитами HANDRA. Что бы ты хотел рассмотреть поближе?",
+            image: "images/comission_shelf.png",
+            background: "images/comission_shop.png",
+            choices: [
+                { text: "GameStation 3", nextId: "comission_choose_gamestation" },
+                { text: "Фотоаппарат Danon", nextId: "comission_choose_danon" },
+                { text: "Журналы MAXON", nextId: "comission_choose_maxon" },
+                { text: "Кассеты HANDRA", nextId: "comission_choose_handra" }
+            ]
+        },
+        {
+            id: "comission_choose_gamestation",
+            speaker: "Повествователь",
+            text: "Ты берёшь в руки приставку. Она кажется старой, но рабочей. Ты представляешь, как будешь играть в неё с друзьями.",
+            image: "images/items/gamestation3.png",
+            background: "images/comission_shop.png",
+            choices: [{ text: "Пойти к кассе", nextId: "comission_cash" }]
+        },
+        {
+            id: "comission_choose_danon",
+            speaker: "Повествователь",
+            text: "Ты берёшь фотоаппарат. Он тяжёлый, с большим объективом. Ты мечтаешь научиться фотографировать.",
+            image: "images/items/danon.png",
+            background: "images/comission_shop.png",
+            choices: [{ text: "Пойти к кассе", nextId: "comission_cash" }]
+        },
+        {
+            id: "comission_choose_maxon",
+            speaker: "Повествователь",
+            text: "Ты перелистываешь журналы. На обложках — компьютеры и игры. Ты бы хотел купить их все, но денег мало.",
+            image: "images/items/maxon.png",
+            background: "images/comission_shop.png",
+            choices: [{ text: "Пойти к кассе", nextId: "comission_cash" }]
+        },
+        {
+            id: "comission_choose_handra",
+            speaker: "Повествователь",
+            text: "Ты рассматриваешь кассеты. Это любимые группы твоего отца. Ты бы хотел послушать их, но...",
+            image: "images/items/handra.png",
+            background: "images/comission_shop.png",
+            choices: [{ text: "Пойти к кассе", nextId: "comission_cash" }]
+        },
+        {
+            id: "comission_cash",
+            speaker: "Продавщица",
+            text: "— Это стоит 3000 рублей, — говорит она. Ты лезешь в карман и находишь всего 500. Тебе становится стыдно. Ты ставишь вещь обратно и выходишь на улицу.",
+            image: "images/comission_shop.png",
+            background: "images/comission_shop.png",
+            choices: [{ text: "Уйти грустным", nextId: "comission_exit" }]
+        },
+        {
+            id: "comission_exit",
+            speaker: "Повествователь",
+            text: "Ты выходишь из комиссионки. На душе тяжело. Ты понимаешь, что без денег здесь делать нечего. Ты идёшь домой, думая о том, что когда-нибудь купишь что-то из этих вещей.",
+            image: "images/comission_shop.png",
+            background: "images/comission_shop.png",
+            choices: [{ text: "Продолжить", nextId: "ptu_1" }]
         },
         // === АКТ 3: ПТУ И СМЕРТЬ ОТЦА ===
         {
@@ -225,7 +300,6 @@ var storyData = {
                 { text: "Отказаться", nextId: "ptu_2B" }
             ]
         },
-        // ---- Диалог с Серёгой ----
         {
             id: "dialog_sergey_1",
             speaker: "Серёга",
@@ -242,7 +316,6 @@ var storyData = {
             background: "images/ptu_bg.png",
             choices: [{ text: "Пойти на дело", nextId: "ptu_2A" }]
         },
-        // ---------------------------------
         {
             id: "ptu_2A",
             speaker: "Повествователь",
@@ -307,7 +380,6 @@ var storyData = {
                 { text: "Держаться за Киру", nextId: "work_choice" }
             ]
         },
-        // ---- Диалог с мамой ----
         {
             id: "dialog_mom_1",
             speaker: "Мама",
@@ -324,7 +396,6 @@ var storyData = {
             background: "images/cemetery_bg.png",
             choices: [{ text: "Продолжить", nextId: "work_choice" }]
         },
-        // ---------------------------------
         // === АКТ 4: РАБОТА ===
         {
             id: "work_choice",
@@ -337,7 +408,6 @@ var storyData = {
                 { text: "Просто начать работать", nextId: "work_honest" }
             ]
         },
-        // ---- Диалог с дядькой Геной ----
         {
             id: "dialog_gena_1",
             speaker: "Дядька Гена",
@@ -358,7 +428,6 @@ var storyData = {
                 { text: "Уйти к Димону в охрану", nextId: "work_security" }
             ]
         },
-        // -----------------------------------------
         {
             id: "work_honest",
             speaker: "Повествователь",
@@ -392,7 +461,6 @@ var storyData = {
                 { text: "Остаться в Заветченске", nextId: "final_choice_mid" }
             ]
         },
-        // ---- Финальный диалог с Кирой ----
         {
             id: "dialog_kira_final_1",
             speaker: "Кира",
@@ -412,7 +480,6 @@ var storyData = {
                 { text: "Построить дом", nextId: "ending_good_2" }
             ]
         },
-        // -----------------------------------------
         {
             id: "work_criminal",
             speaker: "Повествователь",
