@@ -618,3 +618,10 @@ body {
     0% { opacity: 0; transform: scale(0.96); }
     100% { opacity: 1; transform: scale(1); }
 }
+#title {
+    animation: titleFloat 2.5s infinite alternate ease-in-out;
+}
+@keyframes titleFloat {
+    0% { transform: translateY(0); }
+    100% { transform: translateY(-5px); }
+}
