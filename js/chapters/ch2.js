@@ -1,5 +1,5 @@
 // ============================================================
-//  ГЛАВА 2: ШКОЛА + КОМИССИОНКА
+//  ГЛАВА 2: ШКОЛА + КОМИССИОНКА (с учительницей и Коляном)
 // ============================================================
 window.storyScenes.push(
     {
@@ -8,7 +8,30 @@ window.storyScenes.push(
         text: "Глава 2\nШкола",
         image: "images/chapter_bg.png",
         background: "images/chapter_bg.png",
-        choices: [{ text: "Начать", nextId: "school_1" }]
+        choices: [{ text: "Начать", nextId: "teacher_meet" }]
+    },
+    {
+        id: "teacher_meet",
+        speaker: "Учительница",
+        text: "— Марк, ты опять не выучил стихотворение? Садись, два!",
+        image: null,
+        background: "images/school_bg.png",
+        choices: [
+            { text: "Извиниться и пообещать выучить", nextId: "kolyan_meet" },
+            { text: "Спорить, что я учил", nextId: "kolyan_meet" }
+        ]
+    },
+    {
+        id: "kolyan_meet",
+        speaker: "Колян",
+        text: "— Эй, новенький! Ты че такой дерзкий? Хочешь, я тебя научу уму-разуму?",
+        image: null,
+        background: "images/school_bg.png",
+        choices: [
+            { text: "Сказать, что я не боюсь", nextId: "school_1" },
+            { text: "Промолчать и уйти", nextId: "school_1" },
+            { text: "Предложить дружбу", nextId: "school_1" }
+        ]
     },
     {
         id: "school_1",
