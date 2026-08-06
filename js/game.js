@@ -9,8 +9,10 @@ var fullText = '';
 var stats = {};
 var endingShown = false;
 var currentSlot = null;
+var avatarAnimInterval = null;
+var currentEmotion = 'neutral';
 
-// Проверка слота
+// Проверяем, загружена ли игра из слота
 var urlParams = new URLSearchParams(window.location.search);
 var slotParam = urlParams.get('slot');
 if (slotParam) {
@@ -42,7 +44,7 @@ var showStatsBtn = document.getElementById('showStatsBtn');
 var endingRestartBtn = document.getElementById('endingRestartBtn');
 var endingMenuBtn = document.getElementById('endingMenuBtn');
 
-// ===== АВАТАРЫ =====
+// ===== АВАТАРЫ (добавлены новые) =====
 var avatars = {
     'Повествователь': 'images/portraits/narrator.png',
     'Кира': 'images/portraits/kira.png',
@@ -52,6 +54,7 @@ var avatars = {
     'Дядька Гена': 'images/portraits/gena.png',
     'Мама': 'images/portraits/mom.png',
     'Продавщица': 'images/portraits/seller.png',
+    // Новые персонажи
     'Тётя Зина': 'images/portraits/zina.png',
     'Учительница': 'images/portraits/teacher.png',
     'Колян': 'images/portraits/kolyan.png',
@@ -59,27 +62,30 @@ var avatars = {
 };
 var defaultAvatar = 'images/portraits/default.png';
 
+// ===== МУЗЫКА =====
+var bgMusic = document.getElementById('bgMusic');
+if (localStorage.getItem('musicEnabled') !== 'false') {
+    bgMusic.play().catch(function(e) {});
+}
+var savedVolume = localStorage.getItem('volume');
+if (savedVolume !== null) {
+    bgMusic.volume = parseFloat(savedVolume);
+} else {
+    bgMusic.volume = 0.7;
+}
+
 // ===== АНИМАЦИИ АВАТАРОВ =====
-var avatarAnimInterval = null;
-var currentEmotion = 'neutral';
-
-// Карта эмоций (папки с аватарками)
-var emotionMap = {
-    'neutral': 'images/portraits/',
-    'smile': 'images/portraits/smile/',
-    'sad': 'images/portraits/sad/'
-};
-
 function startAvatarAnimations() {
     if (avatarAnimInterval) clearInterval(avatarAnimInterval);
     avatarAnimInterval = setInterval(function() {
+        if (!avatarEl.classList.contains('visible')) return;
         // Моргание (случайно)
-        if (Math.random() < 0.3 && avatarEl.classList.contains('visible')) {
+        if (Math.random() < 0.3) {
             avatarEl.style.transition = 'none';
             avatarEl.style.opacity = '0';
             setTimeout(function() {
                 avatarEl.style.opacity = '1';
-                avatarEl.style.transition = 'opacity 0.1s steps(2)';
+                avatarEl.style.transition = 'opacity 0.1s';
             }, 100);
         }
     }, 4000);
@@ -102,16 +108,13 @@ function updateAvatarEmotion(emotion) {
     }
 }
 
-// ===== МУЗЫКА =====
-var bgMusic = document.getElementById('bgMusic');
-if (localStorage.getItem('musicEnabled') !== 'false') {
-    bgMusic.play().catch(function(e) {});
-}
-var savedVolume = localStorage.getItem('volume');
-if (savedVolume !== null) {
-    bgMusic.volume = parseFloat(savedVolume);
-} else {
-    bgMusic.volume = 0.7;
+// ===== ПИКСЕЛЬНЫЙ ПЕРЕХОД =====
+function fadeToScene(sceneId) {
+    transitionOverlay.classList.add('active');
+    setTimeout(function() {
+        render(sceneId);
+        transitionOverlay.classList.remove('active');
+    }, 500);
 }
 
 endingRestartBtn.addEventListener('click', resetGame);
@@ -162,15 +165,6 @@ function autoSave() {
     }
 }
 
-// ===== ПИКСЕЛЬНЫЙ ПЕРЕХОД =====
-function fadeToScene(sceneId) {
-    transitionOverlay.classList.add('active');
-    setTimeout(function() {
-        render(sceneId);
-        transitionOverlay.classList.remove('active');
-    }, 500);
-}
-
 function render(sceneId) {
     var scene = storyData.scenes.find(function(s) { return s.id === sceneId; });
     if (!scene) {
@@ -193,14 +187,12 @@ function render(sceneId) {
         var avatarPath = avatars[scene.speaker] || defaultAvatar;
         avatarEl.src = avatarPath;
         avatarEl.className = 'visible';
-        // Запускаем анимации аватара (если есть)
+        // Запускаем анимации, если они ещё не запущены
         if (!avatarAnimInterval) startAvatarAnimations();
-        // Эмоция (по умолчанию нейтральная)
-        // В будущем можно добавить поле emotion в сцены
     } else {
         speakerEl.className = '';
         avatarEl.className = '';
-        stopAvatarAnimations();
+        if (avatarAnimInterval) stopAvatarAnimations();
     }
 
     // Картинка предмета
