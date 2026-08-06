@@ -1,5 +1,5 @@
 // ============================================================
-//  ДВИЖОК ИГРЫ (v2.7.2)
+//  ДВИЖОК ИГРЫ (v2.8.0) – с сохранениями и переходами
 // ============================================================
 var currentScene = storyData.startScene;
 var visited = new Set();
@@ -8,6 +8,21 @@ var timer = null;
 var fullText = '';
 var stats = {};
 var endingShown = false;
+var currentSlot = null;
+
+// Проверяем, загружена ли игра из слота
+var urlParams = new URLSearchParams(window.location.search);
+var slotParam = urlParams.get('slot');
+if (slotParam) {
+    currentSlot = parseInt(slotParam);
+    var savedData = SaveSystem.load(currentSlot);
+    if (savedData) {
+        currentScene = savedData.scene || storyData.startScene;
+        visited = new Set(savedData.visited || []);
+        stats = savedData.stats || {};
+        // восстанавливаем прогресс
+    }
+}
 
 // Кешируем DOM
 var textEl = document.getElementById('text');
@@ -45,6 +60,12 @@ var bgMusic = document.getElementById('bgMusic');
 if (localStorage.getItem('musicEnabled') !== 'false') {
     bgMusic.play().catch(function(e) {});
 }
+var savedVolume = localStorage.getItem('volume');
+if (savedVolume !== null) {
+    bgMusic.volume = parseFloat(savedVolume);
+} else {
+    bgMusic.volume = 0.7;
+}
 
 endingRestartBtn.addEventListener('click', resetGame);
 endingMenuBtn.addEventListener('click', function() {
@@ -75,6 +96,25 @@ function trackChoice(choiceText, nextId) {
     if (nextId === "ending_good_1" || nextId === "ending_good_2") stats.ending = "Хорошая";
     if (nextId === "ending_mid_1" || nextId === "ending_mid_2") stats.ending = "Средняя";
     if (nextId === "final_choice_bad") stats.ending = "Плохая";
+    // Глава
+    if (nextId.indexOf("chapter_") !== -1) {
+        stats.chapter = parseInt(nextId.split('_')[1]);
+    }
+    // Сохраняем после каждого выбора (в текущий слот или автосохранение)
+    autoSave();
+}
+
+function autoSave() {
+    if (currentSlot) {
+        var total = storyData.scenes.length;
+        var progress = Math.min(100, Math.round((visited.size / total) * 100));
+        SaveSystem.save(currentSlot, {
+            scene: currentScene,
+            visited: visited,
+            stats: stats,
+            progress: progress
+        });
+    }
 }
 
 function render(sceneId) {
@@ -84,7 +124,9 @@ function render(sceneId) {
         return;
     }
     visited.add(sceneId);
-    localStorage.setItem('save', JSON.stringify({ scene: sceneId, visited: Array.from(visited), stats: stats }));
+    currentScene = sceneId;
+    // Сохраняем при переходе на новую сцену
+    autoSave();
 
     // Фон
     if (scene.background) {
@@ -103,11 +145,10 @@ function render(sceneId) {
         avatarEl.className = '';
     }
 
-    // Картинка предмета (отдельный блок)
+    // Картинка предмета
     if (scene.image && scene.image.startsWith('images/items/')) {
         itemImg.src = scene.image;
         itemContainer.style.display = 'block';
-        // Анимация появления
         itemImg.style.opacity = '0';
         setTimeout(function() { itemImg.style.opacity = '1'; }, 50);
     } else {
@@ -204,7 +245,7 @@ function resetGame() {
 }
 
 var saved = localStorage.getItem('save');
-if (saved) {
+if (saved && !currentSlot) {
     try {
         var data = JSON.parse(saved);
         currentScene = data.scene || storyData.startScene;
