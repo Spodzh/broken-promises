@@ -11,14 +11,18 @@
 <div id="menu">
     <canvas id="rainCanvas"></canvas>
     <div id="title">BROKEN PROMISES</div>
-    <!-- подзаголовок удалён -->
     <div id="buttons">
         <button class="btn play" id="playBtn">▶ Играть</button>
         <button class="btn" id="settingsBtn">⚙ Настройки</button>
         <button class="btn" id="supportBtn">✉ Поддержать</button>
     </div>
-    <div id="version">v2.5.0</div>
+    <div id="version">v2.7.0</div>
     <div id="studio">SPOGELSE GAME</div>
+
+    <!-- Аудио (музыка) -->
+    <audio id="bgMusic" loop>
+        <source src="music/postpunk.mp3" type="audio/mpeg">
+    </audio>
 
     <!-- Предупреждение -->
     <div id="warningOverlay">
@@ -42,7 +46,11 @@
             <div class="modal-title">⚙ Настройки</div>
             <div class="modal-content">
                 <p>Настройки звука и языка будут добавлены в следующих обновлениях.</p>
-                <p>Следите за новостями в Telegram-канале.</p>
+                <div style="margin: 12px 0; display: flex; align-items: center; gap: 12px; justify-content: center;">
+                    <label for="musicToggle" style="font-size: 11px; color: #b8a090; cursor: pointer;">🎵 Музыка</label>
+                    <input type="checkbox" id="musicToggle" style="width: 20px; height: 20px; accent-color: #b06040; cursor: pointer;">
+                </div>
+                <p style="font-size: 10px; color: #7a6a5a;">Постпанк для атмосферы</p>
             </div>
             <button class="modal-close-btn" onclick="closeSettings()">Закрыть</button>
         </div>
