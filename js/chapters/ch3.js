@@ -1,5 +1,5 @@
 // ============================================================
-//  ГЛАВА 3: ПТУ И ПОТЕРЯ
+//  ГЛАВА 3: ПТУ И ПОТЕРЯ (с бабушкой)
 // ============================================================
 window.storyScenes.push(
     {
@@ -98,7 +98,7 @@ window.storyScenes.push(
         background: "images/cemetery_bg.png",
         choices: [
             { text: "Обнять маму", nextId: "dialog_mom_1" },
-            { text: "Держаться за Киру", nextId: "chapter_4" }
+            { text: "Держаться за Киру", nextId: "grandma_meet" }
         ]
     },
     {
@@ -115,6 +115,17 @@ window.storyScenes.push(
         text: "— Не плачь. Я найду работу, мы выберемся из этой нищеты.",
         image: "images/funeral.png",
         background: "images/cemetery_bg.png",
-        choices: [{ text: "Продолжить", nextId: "chapter_4" }]
+        choices: [{ text: "Продолжить", nextId: "grandma_meet" }]
+    },
+    {
+        id: "grandma_meet",
+        speaker: "Бабушка",
+        text: "— Марк, я слышала о твоей беде. Держи, это тебе на память от деда. Может, пригодится.",
+        image: null,
+        background: "images/apt_bg.png",
+        choices: [
+            { text: "Взять деньги (1000 руб)", nextId: "chapter_4" },
+            { text: "Отказаться, я справлюсь сам", nextId: "chapter_4" }
+        ]
     }
 );
