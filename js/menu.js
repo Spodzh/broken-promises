@@ -1,9 +1,31 @@
 // ============================================================
-//  МЕНЮ: обработчики кнопок, модалок
+//  МЕНЮ: обработчики кнопок, модалок, музыка
 // ============================================================
 
 var warningOverlay = document.getElementById('warningOverlay');
 var dontShowAgain = document.getElementById('dontShowAgain');
+var bgMusic = document.getElementById('bgMusic');
+var musicToggle = document.getElementById('musicToggle');
+
+// Восстановление состояния музыки
+if (localStorage.getItem('musicEnabled') === 'false') {
+    bgMusic.pause();
+    musicToggle.checked = false;
+} else {
+    bgMusic.play().catch(function(e) {});
+    musicToggle.checked = true;
+}
+
+// Сохранение состояния при переключении
+musicToggle.addEventListener('change', function() {
+    if (musicToggle.checked) {
+        bgMusic.play().catch(function(e) {});
+        localStorage.setItem('musicEnabled', 'true');
+    } else {
+        bgMusic.pause();
+        localStorage.setItem('musicEnabled', 'false');
+    }
+});
 
 if (localStorage.getItem('hideWarning') === 'true') {
     warningOverlay.classList.add('hidden');
