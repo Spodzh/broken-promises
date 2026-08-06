@@ -1,66 +1,203 @@
 // ============================================================
-//  МЕНЮ: обработчики кнопок, модалок, музыка
+//  ДВИЖОК ИГРЫ (v2.7.0)
 // ============================================================
+var currentScene = storyData.startScene;
+var visited = new Set();
+var isTyping = false;
+var timer = null;
+var fullText = '';
+var stats = {};
+var endingShown = false;
 
-var warningOverlay = document.getElementById('warningOverlay');
-var dontShowAgain = document.getElementById('dontShowAgain');
+// Кешируем DOM
+var textEl = document.getElementById('text');
+var choicesEl = document.getElementById('choices');
+var speakerEl = document.getElementById('speaker');
+var avatarEl = document.getElementById('speaker-avatar');
+var bgEl = document.getElementById('bg');
+var fillEl = document.getElementById('fill');
+
+var endingOverlay = document.getElementById('endingOverlay');
+var endingText = document.getElementById('endingText');
+var endingStatsBox = document.getElementById('endingStatsBox');
+var endingStatsContent = document.getElementById('endingStatsContent');
+var showStatsBtn = document.getElementById('showStatsBtn');
+var endingRestartBtn = document.getElementById('endingRestartBtn');
+var endingMenuBtn = document.getElementById('endingMenuBtn');
+
+// ===== АВАТАРЫ =====
+var avatars = {
+    'Повествователь': 'images/portraits/narrator.png',
+    'Кира': 'images/portraits/kira.png',
+    'Димон': 'images/portraits/dimon.png',
+    'Марк': 'images/portraits/mark.png',
+    'Серёга': 'images/portraits/sergey.png',
+    'Дядька Гена': 'images/portraits/gena.png',
+    'Мама': 'images/portraits/mom.png',
+    'Продавщица': 'images/portraits/seller.png'
+};
+var defaultAvatar = 'images/portraits/default.png';
+
+// ===== МУЗЫКА =====
 var bgMusic = document.getElementById('bgMusic');
-var musicToggle = document.getElementById('musicToggle');
-
-// Восстановление состояния музыки
-if (localStorage.getItem('musicEnabled') === 'false') {
-    bgMusic.pause();
-    musicToggle.checked = false;
-} else {
+if (localStorage.getItem('musicEnabled') !== 'false') {
     bgMusic.play().catch(function(e) {});
-    musicToggle.checked = true;
 }
 
-// Сохранение состояния при переключении
-musicToggle.addEventListener('change', function() {
-    if (musicToggle.checked) {
-        bgMusic.play().catch(function(e) {});
-        localStorage.setItem('musicEnabled', 'true');
+endingRestartBtn.addEventListener('click', resetGame);
+endingMenuBtn.addEventListener('click', function() {
+    window.location.href = 'index.html';
+});
+
+var statsVisible = false;
+showStatsBtn.addEventListener('click', function() {
+    if (statsVisible) {
+        endingStatsBox.style.display = 'none';
+        statsVisible = false;
+        showStatsBtn.textContent = '📊 Показать статистику';
     } else {
-        bgMusic.pause();
-        localStorage.setItem('musicEnabled', 'false');
+        endingStatsBox.style.display = 'block';
+        statsVisible = true;
+        showStatsBtn.textContent = '📊 Скрыть статистику';
     }
 });
 
-if (localStorage.getItem('hideWarning') === 'true') {
-    warningOverlay.classList.add('hidden');
+function trackChoice(choiceText, nextId) {
+    if (choiceText.indexOf("Довериться") !== -1) stats.trustDimon = "Да";
+    if (choiceText.indexOf("Ответить резко") !== -1) stats.stoodUp = "Да";
+    if (choiceText.indexOf("Заступиться") !== -1) stats.stoodUp = "Да";
+    if (nextId === "work_honest") stats.path = "Честный труд";
+    if (nextId === "work_criminal") stats.path = "Криминал";
+    if (nextId === "work_security") stats.path = "Охрана";
+    if (choiceText.indexOf("Поцеловать") !== -1) stats.kissed = "Да";
+    if (nextId === "ending_good_1" || nextId === "ending_good_2") stats.ending = "Хорошая";
+    if (nextId === "ending_mid_1" || nextId === "ending_mid_2") stats.ending = "Средняя";
+    if (nextId === "final_choice_bad") stats.ending = "Плохая";
 }
 
-document.getElementById('warningBtn').addEventListener('click', function() {
-    if (dontShowAgain.checked) {
-        localStorage.setItem('hideWarning', 'true');
+function render(sceneId) {
+    var scene = storyData.scenes.find(function(s) { return s.id === sceneId; });
+    if (!scene) {
+        textEl.innerHTML = 'Сцена не найдена.';
+        return;
     }
-    warningOverlay.classList.add('hidden');
-});
+    visited.add(sceneId);
+    localStorage.setItem('save', JSON.stringify({ scene: sceneId, visited: Array.from(visited), stats: stats }));
 
-document.getElementById('playBtn').addEventListener('click', function() {
-    window.location.href = 'game.html';
-});
+    if (scene.background) {
+        bgEl.style.backgroundImage = 'url(' + scene.background + ')';
+    }
 
-document.getElementById('settingsBtn').addEventListener('click', function() {
-    document.getElementById('settingsOverlay').classList.remove('hidden');
-});
+    if (scene.speaker) {
+        speakerEl.textContent = scene.speaker;
+        speakerEl.className = 'show';
+        var avatarPath = avatars[scene.speaker] || defaultAvatar;
+        avatarEl.src = avatarPath;
+        avatarEl.className = 'visible';
+    } else {
+        speakerEl.className = '';
+        avatarEl.className = '';
+    }
 
-document.getElementById('supportBtn').addEventListener('click', function() {
-    document.getElementById('supportOverlay').classList.remove('hidden');
-});
+    textEl.innerHTML = '';
+    fullText = scene.text || '';
+    choicesEl.innerHTML = '';
 
-function closeSettings() {
-    document.getElementById('settingsOverlay').classList.add('hidden');
-}
-function closeSupport() {
-    document.getElementById('supportOverlay').classList.add('hidden');
-}
-
-document.querySelectorAll('.modal-overlay').forEach(function(overlay) {
-    overlay.addEventListener('click', function(e) {
-        if (e.target === overlay) {
-            overlay.classList.add('hidden');
-        }
+    isTyping = true;
+    typeWriter(textEl, fullText, 0, function() {
+        isTyping = false;
+        showChoices(scene);
     });
+
+    var total = storyData.scenes.length;
+    var progress = Math.min(100, Math.round((visited.size / total) * 100));
+    fillEl.style.width = progress + '%';
+
+    textEl.onclick = function() {
+        if (isTyping) {
+            clearTimeout(timer);
+            textEl.innerHTML = fullText;
+            isTyping = false;
+            showChoices(scene);
+        }
+    };
+}
+
+function showChoices(scene) {
+    choicesEl.innerHTML = '';
+    if (scene.choices && scene.choices.length > 0) {
+        scene.choices.forEach(function(choice) {
+            var btn = document.createElement('button');
+            btn.className = 'btn active';
+            btn.textContent = choice.text;
+            btn.onclick = function() {
+                trackChoice(choice.text, choice.nextId);
+                if (choice.nextId) {
+                    render(choice.nextId);
+                } else {
+                    showEnd();
+                }
+            };
+            choicesEl.appendChild(btn);
+        });
+    } else {
+        showEnd();
+    }
+}
+
+function typeWriter(element, text, index, callback) {
+    if (index < text.length) {
+        requestAnimationFrame(function() {
+            element.innerHTML += text.charAt(index);
+            timer = setTimeout(function() {
+                typeWriter(element, text, index + 1, callback);
+            }, 12);
+        });
+    } else {
+        if (callback) callback();
+    }
+}
+
+function showEnd() {
+    if (endingShown) return;
+    endingShown = true;
+
+    var statsText = '';
+    statsText += 'Доверился Димону? ' + (stats.trustDimon || 'Нет') + '\n';
+    statsText += 'Заступался за слабых? ' + (stats.stoodUp || 'Нет') + '\n';
+    statsText += 'Путь в жизни: ' + (stats.path || 'Не выбран') + '\n';
+    statsText += 'Поцеловал Киру? ' + (stats.kissed || 'Нет') + '\n';
+    statsText += 'Финальная концовка: ' + (stats.ending || 'Неизвестно');
+    endingStatsContent.textContent = statsText;
+    endingStatsBox.style.display = 'none';
+    statsVisible = false;
+    showStatsBtn.textContent = '📊 Показать статистику';
+
+    endingText.textContent = fullText || 'Твоя история завершена.';
+    endingOverlay.classList.remove('hidden');
+    localStorage.removeItem('save');
+}
+
+function resetGame() {
+    endingOverlay.classList.add('hidden');
+    endingShown = false;
+    visited = new Set();
+    stats = {};
+    currentScene = storyData.startScene;
+    render(currentScene);
+}
+
+var saved = localStorage.getItem('save');
+if (saved) {
+    try {
+        var data = JSON.parse(saved);
+        currentScene = data.scene || storyData.startScene;
+        visited = new Set(data.visited || []);
+        stats = data.stats || {};
+    } catch(e) {}
+}
+render(currentScene);
+
+document.getElementById('backBtn').addEventListener('click', function() {
+    window.location.href = 'index.html';
 });
