@@ -1,5 +1,5 @@
 // ============================================================
-//  ДВИЖОК ИГРЫ (v2.6.0)
+//  ДВИЖОК ИГРЫ (v2.7.1)
 // ============================================================
 var currentScene = storyData.startScene;
 var visited = new Set();
@@ -34,9 +34,15 @@ var avatars = {
     'Серёга': 'images/portraits/sergey.png',
     'Дядька Гена': 'images/portraits/gena.png',
     'Мама': 'images/portraits/mom.png',
-    'Продавщица': 'images/portraits/seller.png'   // новая
+    'Продавщица': 'images/portraits/seller.png'
 };
 var defaultAvatar = 'images/portraits/default.png';
+
+// ===== МУЗЫКА (исправлено) =====
+var bgMusic = document.getElementById('bgMusic');
+if (localStorage.getItem('musicEnabled') !== 'false') {
+    bgMusic.play().catch(function(e) {});
+}
 
 endingRestartBtn.addEventListener('click', resetGame);
 endingMenuBtn.addEventListener('click', function() {
@@ -78,10 +84,12 @@ function render(sceneId) {
     visited.add(sceneId);
     localStorage.setItem('save', JSON.stringify({ scene: sceneId, visited: Array.from(visited), stats: stats }));
 
+    // Фон
     if (scene.background) {
         bgEl.style.backgroundImage = 'url(' + scene.background + ')';
     }
 
+    // Спикер и аватар
     if (scene.speaker) {
         speakerEl.textContent = scene.speaker;
         speakerEl.className = 'show';
@@ -93,9 +101,42 @@ function render(sceneId) {
         avatarEl.className = '';
     }
 
+    // Текст
     textEl.innerHTML = '';
     fullText = scene.text || '';
     choicesEl.innerHTML = '';
+
+    // Картинка предмета (если есть)
+    var imgEl = document.getElementById('scene-img');
+    if (!imgEl) {
+        // Создаём, если нет
+        var imgContainer = document.getElementById('scene-image');
+        if (!imgContainer) {
+            imgContainer = document.createElement('div');
+            imgContainer.id = 'scene-image';
+            imgContainer.style.textAlign = 'center';
+            imgContainer.style.marginBottom = '4px';
+            var ui = document.getElementById('ui');
+            ui.insertBefore(imgContainer, ui.firstChild);
+        }
+        imgEl = document.createElement('img');
+        imgEl.id = 'scene-img';
+        imgEl.style.maxWidth = '100%';
+        imgEl.style.maxHeight = '110px';
+        imgEl.style.border = '3px solid #3a2c24';
+        imgEl.style.imageRendering = 'pixelated';
+        imgEl.style.background = '#0f0a08';
+        imgContainer.appendChild(imgEl);
+    }
+
+    if (scene.image) {
+        imgEl.src = scene.image;
+        imgEl.style.display = 'block';
+        imgEl.style.opacity = '0';
+        setTimeout(function() { imgEl.style.opacity = '1'; }, 50);
+    } else {
+        imgEl.style.display = 'none';
+    }
 
     isTyping = true;
     typeWriter(textEl, fullText, 0, function() {
