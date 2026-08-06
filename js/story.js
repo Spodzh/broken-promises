@@ -1,10 +1,20 @@
 // ============================================================
-//  СЦЕНАРИЙ С КОМИССИОНКОЙ (v2.6.0)
+//  СЦЕНАРИЙ С РАЗБИВКОЙ НА ГЛАВЫ (v2.7.0)
 // ============================================================
 var storyData = {
-    startScene: "birth",
+    startScene: "chapter_1",
     scenes: [
-        // === АКТ 1: РОЖДЕНИЕ И ДЕТСТВО ===
+        // ============================================================
+        //  ГЛАВА 1: ДЕТСТВО
+        // ============================================================
+        {
+            id: "chapter_1",
+            speaker: null,
+            text: "Глава 1\nДетство",
+            image: "images/chapter_bg.png",
+            background: "images/chapter_bg.png",
+            choices: [{ text: "Начать", nextId: "birth" }]
+        },
         {
             id: "birth",
             speaker: "Повествователь",
@@ -75,7 +85,7 @@ var storyData = {
             background: "images/yard_bg.png",
             choices: [
                 { text: "Довериться Димону", nextId: "dialog_dim_1" },
-                { text: "Дружить с осторожностью", nextId: "school_1" }
+                { text: "Дружить с осторожностью", nextId: "chapter_2" }
             ]
         },
         {
@@ -100,9 +110,20 @@ var storyData = {
             text: "— Нашёл на свалке. Теперь это наше место. Никому не говори, ладно?",
             image: "images/yard.png",
             background: "images/yard_bg.png",
-            choices: [{ text: "Ладно, договорились", nextId: "school_1" }]
+            choices: [{ text: "Ладно, договорились", nextId: "chapter_2" }]
         },
-        // === АКТ 2: ШКОЛА ===
+
+        // ============================================================
+        //  ГЛАВА 2: ШКОЛА
+        // ============================================================
+        {
+            id: "chapter_2",
+            speaker: null,
+            text: "Глава 2\nШкола",
+            image: "images/chapter_bg.png",
+            background: "images/chapter_bg.png",
+            choices: [{ text: "Начать", nextId: "school_1" }]
+        },
         {
             id: "school_1",
             speaker: "Повествователь",
@@ -207,7 +228,10 @@ var storyData = {
                 { text: "Обнять", nextId: "street_comission" }
             ]
         },
-        // === НОВАЯ ВЕТКА: КОМИССИОНКА ===
+
+        // ============================================================
+        //  ВЕТКА КОМИССИОНКИ (внутри главы 2, перед переходом к главе 3)
+        // ============================================================
         {
             id: "street_comission",
             speaker: "Повествователь",
@@ -216,13 +240,13 @@ var storyData = {
             background: "images/comission_shop.png",
             choices: [
                 { text: "Зайти в комиссионку", nextId: "comission_enter" },
-                { text: "Пойти домой", nextId: "ptu_1" }
+                { text: "Пойти домой", nextId: "chapter_3" }
             ]
         },
         {
             id: "comission_enter",
             speaker: "Продавщица",
-            text: "— О, Марк! Ты ведь сын Люды? Как вырос! Что ищешь? — улыбается женщина за прилавком.",
+            text: "— О, Марк! Ты ведь сын Валентины? Как вырос! Что ищешь? — улыбается женщина за прилавком.",
             image: "images/comission_shop.png",
             background: "images/comission_shop.png",
             choices: [{ text: "Осмотреть полки", nextId: "comission_shelf" }]
@@ -286,9 +310,20 @@ var storyData = {
             text: "Ты выходишь из комиссионки. На душе тяжело. Ты понимаешь, что без денег здесь делать нечего. Ты идёшь домой, думая о том, что когда-нибудь купишь что-то из этих вещей.",
             image: "images/comission_shop.png",
             background: "images/comission_shop.png",
-            choices: [{ text: "Продолжить", nextId: "ptu_1" }]
+            choices: [{ text: "Продолжить", nextId: "chapter_3" }]
         },
-        // === АКТ 3: ПТУ И СМЕРТЬ ОТЦА ===
+
+        // ============================================================
+        //  ГЛАВА 3: ПТУ И ПОТЕРЯ
+        // ============================================================
+        {
+            id: "chapter_3",
+            speaker: null,
+            text: "Глава 3\nПТУ и потеря",
+            image: "images/chapter_bg.png",
+            background: "images/chapter_bg.png",
+            choices: [{ text: "Начать", nextId: "ptu_1" }]
+        },
         {
             id: "ptu_1",
             speaker: "Повествователь",
@@ -377,7 +412,7 @@ var storyData = {
             background: "images/cemetery_bg.png",
             choices: [
                 { text: "Обнять маму", nextId: "dialog_mom_1" },
-                { text: "Держаться за Киру", nextId: "work_choice" }
+                { text: "Держаться за Киру", nextId: "chapter_4" }
             ]
         },
         {
@@ -394,9 +429,20 @@ var storyData = {
             text: "— Не плачь. Я найду работу, мы выберемся из этой нищеты.",
             image: "images/funeral.png",
             background: "images/cemetery_bg.png",
-            choices: [{ text: "Продолжить", nextId: "work_choice" }]
+            choices: [{ text: "Продолжить", nextId: "chapter_4" }]
         },
-        // === АКТ 4: РАБОТА ===
+
+        // ============================================================
+        //  ГЛАВА 4: РАБОТА И ВЫБОР
+        // ============================================================
+        {
+            id: "chapter_4",
+            speaker: null,
+            text: "Глава 4\nРабота и выбор",
+            image: "images/chapter_bg.png",
+            background: "images/chapter_bg.png",
+            choices: [{ text: "Начать", nextId: "work_choice" }]
+        },
         {
             id: "work_choice",
             speaker: "Повествователь",
@@ -521,7 +567,18 @@ var storyData = {
             background: "images/club_bg.png",
             choices: [{ text: "Поговорить", nextId: "final_choice_mid" }]
         },
-        // === ФИНАЛЬНЫЕ РАЗВИЛКИ ===
+
+        // ============================================================
+        //  ГЛАВА 5: ФИНАЛ
+        // ============================================================
+        {
+            id: "chapter_5",
+            speaker: null,
+            text: "Глава 5\nФинал",
+            image: "images/chapter_bg.png",
+            background: "images/chapter_bg.png",
+            choices: [{ text: "Начать", nextId: "final_choice_good" }]
+        },
         {
             id: "final_choice_good",
             speaker: "Повествователь",
@@ -552,7 +609,9 @@ var storyData = {
             background: "images/night_bg.png",
             choices: []
         },
-        // === КОНЦОВКИ ===
+        // ============================================================
+        //  КОНЦОВКИ
+        // ============================================================
         {
             id: "ending_good_1",
             speaker: "Повествователь",
