@@ -1,76 +1,203 @@
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
-    <title>Broken Promises</title>
-    <link rel="stylesheet" href="css/style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
-</head>
-<body>
-<div id="menu">
-    <canvas id="rainCanvas"></canvas>
-    <div id="title">BROKEN PROMISES</div>
-    <div id="buttons">
-        <button class="btn play" id="playBtn">▶ Играть</button>
-        <button class="btn" id="settingsBtn">⚙ Настройки</button>
-        <button class="btn" id="supportBtn">✉ Поддержать</button>
-    </div>
-    <div id="version">v2.7.0</div>
-    <div id="studio">SPOGELSE GAME</div>
+// ============================================================
+//  ДВИЖОК ИГРЫ (v2.7.0)
+// ============================================================
+var currentScene = storyData.startScene;
+var visited = new Set();
+var isTyping = false;
+var timer = null;
+var fullText = '';
+var stats = {};
+var endingShown = false;
 
-    <!-- Аудио (музыка) -->
-    <audio id="bgMusic" loop>
-        <source src="music/postpunk.mp3" type="audio/mpeg">
-    </audio>
+// Кешируем DOM
+var textEl = document.getElementById('text');
+var choicesEl = document.getElementById('choices');
+var speakerEl = document.getElementById('speaker');
+var avatarEl = document.getElementById('speaker-avatar');
+var bgEl = document.getElementById('bg');
+var fillEl = document.getElementById('fill');
 
-    <!-- Предупреждение -->
-    <div id="warningOverlay">
-        <div id="warningModal">
-            <div id="warningTitle">⚠ ВНИМАНИЕ</div>
-            <div id="warningText">
-                Игра находится на ранней стадии разработки.<br>
-                Возможны баги, изменения сюжета и дизайна.
-            </div>
-            <div id="warningCheckbox">
-                <input type="checkbox" id="dontShowAgain">
-                <label for="dontShowAgain">Не показывать больше</label>
-            </div>
-            <button id="warningBtn">Понятно, продолжить</button>
-        </div>
-    </div>
+var endingOverlay = document.getElementById('endingOverlay');
+var endingText = document.getElementById('endingText');
+var endingStatsBox = document.getElementById('endingStatsBox');
+var endingStatsContent = document.getElementById('endingStatsContent');
+var showStatsBtn = document.getElementById('showStatsBtn');
+var endingRestartBtn = document.getElementById('endingRestartBtn');
+var endingMenuBtn = document.getElementById('endingMenuBtn');
 
-    <!-- Модалка настроек -->
-    <div id="settingsOverlay" class="modal-overlay hidden">
-        <div class="modal-box">
-            <div class="modal-title">⚙ Настройки</div>
-            <div class="modal-content">
-                <p>Настройки звука и языка будут добавлены в следующих обновлениях.</p>
-                <div style="margin: 12px 0; display: flex; align-items: center; gap: 12px; justify-content: center;">
-                    <label for="musicToggle" style="font-size: 11px; color: #b8a090; cursor: pointer;">🎵 Музыка</label>
-                    <input type="checkbox" id="musicToggle" style="width: 20px; height: 20px; accent-color: #b06040; cursor: pointer;">
-                </div>
-                <p style="font-size: 10px; color: #7a6a5a;">Постпанк для атмосферы</p>
-            </div>
-            <button class="modal-close-btn" onclick="closeSettings()">Закрыть</button>
-        </div>
-    </div>
+// ===== АВАТАРЫ =====
+var avatars = {
+    'Повествователь': 'images/portraits/narrator.png',
+    'Кира': 'images/portraits/kira.png',
+    'Димон': 'images/portraits/dimon.png',
+    'Марк': 'images/portraits/mark.png',
+    'Серёга': 'images/portraits/sergey.png',
+    'Дядька Гена': 'images/portraits/gena.png',
+    'Мама': 'images/portraits/mom.png',
+    'Продавщица': 'images/portraits/seller.png'
+};
+var defaultAvatar = 'images/portraits/default.png';
 
-    <!-- Модалка поддержки -->
-    <div id="supportOverlay" class="modal-overlay hidden">
-        <div class="modal-box">
-            <div class="modal-title">✉ Поддержать</div>
-            <div class="modal-content">
-                <p>Привет! Меня зовут <strong>spodzh</strong>.</p>
-                <p>Я один разрабатываю эту игру без бюджета, опыта и навыков.</p>
-                <p>Если вам нравится проект и вы хотите помочь советом, идеей или просто сказать спасибо — подписывайтесь на Telegram-канал:</p>
-                <button class="btn support-tg-btn" onclick="window.open('https://t.me/brokenpromisesgame','_blank')">📱 Перейти в Telegram</button>
-            </div>
-            <button class="modal-close-btn" onclick="closeSupport()">Закрыть</button>
-        </div>
-    </div>
-</div>
-<script src="js/menu.js" charset="UTF-8"></script>
-<script src="js/rain.js" charset="UTF-8"></script>
-</body>
-</html>
+// ===== МУЗЫКА =====
+var bgMusic = document.getElementById('bgMusic');
+if (localStorage.getItem('musicEnabled') !== 'false') {
+    bgMusic.play().catch(function(e) {});
+}
+
+endingRestartBtn.addEventListener('click', resetGame);
+endingMenuBtn.addEventListener('click', function() {
+    window.location.href = 'index.html';
+});
+
+var statsVisible = false;
+showStatsBtn.addEventListener('click', function() {
+    if (statsVisible) {
+        endingStatsBox.style.display = 'none';
+        statsVisible = false;
+        showStatsBtn.textContent = '📊 Показать статистику';
+    } else {
+        endingStatsBox.style.display = 'block';
+        statsVisible = true;
+        showStatsBtn.textContent = '📊 Скрыть статистику';
+    }
+});
+
+function trackChoice(choiceText, nextId) {
+    if (choiceText.indexOf("Довериться") !== -1) stats.trustDimon = "Да";
+    if (choiceText.indexOf("Ответить резко") !== -1) stats.stoodUp = "Да";
+    if (choiceText.indexOf("Заступиться") !== -1) stats.stoodUp = "Да";
+    if (nextId === "work_honest") stats.path = "Честный труд";
+    if (nextId === "work_criminal") stats.path = "Криминал";
+    if (nextId === "work_security") stats.path = "Охрана";
+    if (choiceText.indexOf("Поцеловать") !== -1) stats.kissed = "Да";
+    if (nextId === "ending_good_1" || nextId === "ending_good_2") stats.ending = "Хорошая";
+    if (nextId === "ending_mid_1" || nextId === "ending_mid_2") stats.ending = "Средняя";
+    if (nextId === "final_choice_bad") stats.ending = "Плохая";
+}
+
+function render(sceneId) {
+    var scene = storyData.scenes.find(function(s) { return s.id === sceneId; });
+    if (!scene) {
+        textEl.innerHTML = 'Сцена не найдена.';
+        return;
+    }
+    visited.add(sceneId);
+    localStorage.setItem('save', JSON.stringify({ scene: sceneId, visited: Array.from(visited), stats: stats }));
+
+    if (scene.background) {
+        bgEl.style.backgroundImage = 'url(' + scene.background + ')';
+    }
+
+    if (scene.speaker) {
+        speakerEl.textContent = scene.speaker;
+        speakerEl.className = 'show';
+        var avatarPath = avatars[scene.speaker] || defaultAvatar;
+        avatarEl.src = avatarPath;
+        avatarEl.className = 'visible';
+    } else {
+        speakerEl.className = '';
+        avatarEl.className = '';
+    }
+
+    textEl.innerHTML = '';
+    fullText = scene.text || '';
+    choicesEl.innerHTML = '';
+
+    isTyping = true;
+    typeWriter(textEl, fullText, 0, function() {
+        isTyping = false;
+        showChoices(scene);
+    });
+
+    var total = storyData.scenes.length;
+    var progress = Math.min(100, Math.round((visited.size / total) * 100));
+    fillEl.style.width = progress + '%';
+
+    textEl.onclick = function() {
+        if (isTyping) {
+            clearTimeout(timer);
+            textEl.innerHTML = fullText;
+            isTyping = false;
+            showChoices(scene);
+        }
+    };
+}
+
+function showChoices(scene) {
+    choicesEl.innerHTML = '';
+    if (scene.choices && scene.choices.length > 0) {
+        scene.choices.forEach(function(choice) {
+            var btn = document.createElement('button');
+            btn.className = 'btn active';
+            btn.textContent = choice.text;
+            btn.onclick = function() {
+                trackChoice(choice.text, choice.nextId);
+                if (choice.nextId) {
+                    render(choice.nextId);
+                } else {
+                    showEnd();
+                }
+            };
+            choicesEl.appendChild(btn);
+        });
+    } else {
+        showEnd();
+    }
+}
+
+function typeWriter(element, text, index, callback) {
+    if (index < text.length) {
+        requestAnimationFrame(function() {
+            element.innerHTML += text.charAt(index);
+            timer = setTimeout(function() {
+                typeWriter(element, text, index + 1, callback);
+            }, 12);
+        });
+    } else {
+        if (callback) callback();
+    }
+}
+
+function showEnd() {
+    if (endingShown) return;
+    endingShown = true;
+
+    var statsText = '';
+    statsText += 'Доверился Димону? ' + (stats.trustDimon || 'Нет') + '\n';
+    statsText += 'Заступался за слабых? ' + (stats.stoodUp || 'Нет') + '\n';
+    statsText += 'Путь в жизни: ' + (stats.path || 'Не выбран') + '\n';
+    statsText += 'Поцеловал Киру? ' + (stats.kissed || 'Нет') + '\n';
+    statsText += 'Финальная концовка: ' + (stats.ending || 'Неизвестно');
+    endingStatsContent.textContent = statsText;
+    endingStatsBox.style.display = 'none';
+    statsVisible = false;
+    showStatsBtn.textContent = '📊 Показать статистику';
+
+    endingText.textContent = fullText || 'Твоя история завершена.';
+    endingOverlay.classList.remove('hidden');
+    localStorage.removeItem('save');
+}
+
+function resetGame() {
+    endingOverlay.classList.add('hidden');
+    endingShown = false;
+    visited = new Set();
+    stats = {};
+    currentScene = storyData.startScene;
+    render(currentScene);
+}
+
+var saved = localStorage.getItem('save');
+if (saved) {
+    try {
+        var data = JSON.parse(saved);
+        currentScene = data.scene || storyData.startScene;
+        visited = new Set(data.visited || []);
+        stats = data.stats || {};
+    } catch(e) {}
+}
+render(currentScene);
+
+document.getElementById('backBtn').addEventListener('click', function() {
+    window.location.href = 'index.html';
+});
