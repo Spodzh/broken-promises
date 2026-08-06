@@ -63,8 +63,12 @@ body {
     z-index: 1;
     text-align: center;
     margin-bottom: 20px;
+    animation: titleFloat 2.5s infinite alternate ease-in-out;
 }
-/* подзаголовок больше не используется, но стиль оставлен для совместимости */
+@keyframes titleFloat {
+    0% { transform: translateY(0); }
+    100% { transform: translateY(-5px); }
+}
 #subtitle {
     display: none;
 }
@@ -108,6 +112,15 @@ body {
     border-color: #c07050;
 }
 #version {
+    position: absolute;
+    bottom: 10px;
+    right: 16px;
+    font-size: 8px;
+    color: #3a2a22;
+    z-index: 1;
+    font-family: 'Press Start 2P', monospace;
+    letter-spacing: 1px;
+    opacity: 0.5;
     animation: pulse 3s infinite alternate;
 }
 @keyframes pulse {
@@ -347,40 +360,43 @@ body {
     padding: 20px;
 }
 
-/* ===== АВАТАР И СПИКЕР ===== */
+/* ===== НОВЫЙ ДИЗАЙН ДИАЛОГОВ ===== */
 #speaker-wrapper {
     display: flex;
-    align-items: center;
-    gap: 12px;
+    align-items: flex-start;
+    gap: 16px;
     margin-bottom: 8px;
 }
 #speaker-avatar {
-    width: 48px;
-    height: 48px;
+    width: 64px;
+    height: 64px;
     border: 3px solid #3a2c24;
     border-radius: 50%;
     image-rendering: pixelated;
     background: #0f0a08;
     object-fit: cover;
+    flex-shrink: 0;
     display: none;
 }
 #speaker-avatar.visible {
     display: block;
 }
+#speaker-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
 #speaker {
-    font-size: 12px;
-    color: #b8a090;
-    border-bottom: 3px solid #3a2c24;
-    padding-bottom: 4px;
+    font-size: 13px;
+    color: #f0d8c8;
+    margin-bottom: 4px;
     display: none;
     text-transform: uppercase;
     letter-spacing: 1px;
-    flex: 1;
 }
 #speaker.show {
     display: block;
 }
-
 #text {
     flex: 1;
     overflow-y: auto;
@@ -401,6 +417,7 @@ body {
     background: #4a3a32;
     border: 1px solid #2a1e18;
 }
+
 #choices {
     display: flex;
     flex-wrap: wrap;
@@ -559,12 +576,12 @@ body {
         padding: 14px;
     }
     #speaker-avatar {
-        width: 36px;
-        height: 36px;
+        width: 48px;
+        height: 48px;
         border-width: 2px;
     }
     #speaker {
-        font-size: 10px;
+        font-size: 11px;
     }
     #text {
         font-size: 11px;
@@ -613,11 +630,4 @@ body {
 @keyframes pixelFade {
     0% { opacity: 0; transform: scale(0.96); }
     100% { opacity: 1; transform: scale(1); }
-}
-#title {
-    animation: titleFloat 2.5s infinite alternate ease-in-out;
-}
-@keyframes titleFloat {
-    0% { transform: translateY(0); }
-    100% { transform: translateY(-5px); }
 }
