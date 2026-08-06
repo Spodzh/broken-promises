@@ -1,5 +1,5 @@
 // ============================================================
-//  ГЛАВА 1: ДЕТСТВО
+//  ГЛАВА 1: ДЕТСТВО (с новым персонажем – тётя Зина)
 // ============================================================
 window.storyScenes.push(
     {
@@ -80,7 +80,8 @@ window.storyScenes.push(
         background: "images/yard_bg.png",
         choices: [
             { text: "Довериться Димону", nextId: "dialog_dim_1" },
-            { text: "Дружить с осторожностью", nextId: "chapter_2" }
+            { text: "Подойти к тёте Зине", nextId: "zina_meet" },
+            { text: "Пойти в школу", nextId: "chapter_2" }
         ]
     },
     {
@@ -106,5 +107,16 @@ window.storyScenes.push(
         image: "images/yard.png",
         background: "images/yard_bg.png",
         choices: [{ text: "Ладно, договорились", nextId: "chapter_2" }]
+    },
+    {
+        id: "zina_meet",
+        speaker: "Тётя Зина",
+        text: "— Ой, Марк! Ты ли это? Вырос-то как! Держи пирожок, а то худой как щепка.",
+        image: null,
+        background: "images/yard_bg.png",
+        choices: [
+            { text: "Спасибо, тёть Зин!", nextId: "chapter_2" },
+            { text: "Я не голоден", nextId: "chapter_2" }
+        ]
     }
 );
