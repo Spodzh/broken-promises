@@ -116,15 +116,15 @@ body {
     bottom: 10px;
     right: 16px;
     font-size: 8px;
-    color: #3a2a22;
+    color: #7a6a5a;
     z-index: 1;
     font-family: 'Press Start 2P', monospace;
     letter-spacing: 1px;
-    opacity: 0.5;
+    opacity: 0.8;
     animation: pulse 3s infinite alternate;
 }
 @keyframes pulse {
-    0% { opacity: 0.3; }
+    0% { opacity: 0.4; }
     100% { opacity: 0.9; }
 }
 #studio {
@@ -139,7 +139,7 @@ body {
     opacity: 0.5;
 }
 
-/* ===== ПРЕДУПРЕЖДЕНИЕ ===== */
+/* ===== ПРЕДУПРЕЖДЕНИЕ (ДИСКЛЕЙМЕР) ===== */
 #warningOverlay {
     display: flex;
     position: absolute;
@@ -148,7 +148,7 @@ body {
     width: 100%;
     height: 100%;
     background: rgba(0,0,0,0.9);
-    z-index: 10;
+    z-index: 100;
     justify-content: center;
     align-items: center;
     padding: 30px;
@@ -416,6 +416,21 @@ body {
 #text::-webkit-scrollbar-thumb {
     background: #4a3a32;
     border: 1px solid #2a1e18;
+}
+
+/* ===== КАРТИНКИ ПРЕДМЕТОВ ===== */
+#scene-image {
+    text-align: center;
+    margin-bottom: 4px;
+}
+#scene-img {
+    max-width: 100%;
+    max-height: 110px;
+    border: 3px solid #3a2c24;
+    image-rendering: pixelated;
+    background: #0f0a08;
+    transition: opacity 0.4s steps(2);
+    object-fit: contain;
 }
 
 #choices {
