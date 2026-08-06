@@ -10,6 +10,7 @@
 <body>
 <div id="game">
     <div id="bg"></div>
+    <!-- Оверлей для пиксельного перехода -->
     <div id="transition-overlay"></div>
     <div id="ui">
         <div id="item-image"><img id="item-img" src="" alt=""></div>
@@ -26,10 +27,12 @@
     <div id="version">v2.8.0</div>
     <button id="backBtn">← Меню</button>
 
+    <!-- Аудио -->
     <audio id="bgMusic" loop autoplay>
         <source src="music/postpunk.mp3" type="audio/mpeg">
     </audio>
 
+    <!-- Модалка конца -->
     <div id="endingOverlay" class="modal-overlay hidden">
         <div class="modal-box ending-modal">
             <div class="modal-title ending-title">🏁 Конец</div>
@@ -47,6 +50,7 @@
     </div>
 </div>
 
+<!-- Скрипты -->
 <script src="js/save-system.js" charset="UTF-8"></script>
 <script src="js/story.js" charset="UTF-8"></script>
 <script src="js/chapters/ch1.js" charset="UTF-8"></script>
