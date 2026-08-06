@@ -1,25 +1,32 @@
 // ============================================================
-//  МЕНЮ: обработчики кнопок, модалок, музыка
+//  МЕНЮ: обработчики кнопок, модалок, музыка, громкость
 // ============================================================
 
 var warningOverlay = document.getElementById('warningOverlay');
 var dontShowAgain = document.getElementById('dontShowAgain');
 var bgMusic = document.getElementById('bgMusic');
 var musicToggle = document.getElementById('musicToggle');
+var volumeSlider = document.getElementById('volumeSlider');
 
 // Восстановление состояния музыки
 if (localStorage.getItem('musicEnabled') === 'false') {
     bgMusic.pause();
     musicToggle.checked = false;
 } else {
-    // Пытаемся запустить автоплей
-    bgMusic.play().catch(function(e) {
-        // Автоплей может быть заблокирован браузером – ничего страшного
-    });
+    bgMusic.play().catch(function(e) {});
     musicToggle.checked = true;
 }
 
-// Сохранение состояния при переключении
+// Громкость
+var savedVolume = localStorage.getItem('volume');
+if (savedVolume !== null) {
+    bgMusic.volume = parseFloat(savedVolume);
+    if (volumeSlider) volumeSlider.value = savedVolume;
+} else {
+    bgMusic.volume = 0.7;
+    if (volumeSlider) volumeSlider.value = '0.7';
+}
+
 musicToggle.addEventListener('change', function() {
     if (musicToggle.checked) {
         bgMusic.play().catch(function(e) {});
@@ -29,6 +36,14 @@ musicToggle.addEventListener('change', function() {
         localStorage.setItem('musicEnabled', 'false');
     }
 });
+
+if (volumeSlider) {
+    volumeSlider.addEventListener('input', function() {
+        var val = parseFloat(this.value);
+        bgMusic.volume = val;
+        localStorage.setItem('volume', val.toString());
+    });
+}
 
 // Дисклеймер
 if (localStorage.getItem('hideWarning') === 'true') {
@@ -54,6 +69,46 @@ document.getElementById('settingsBtn').addEventListener('click', function() {
 document.getElementById('supportBtn').addEventListener('click', function() {
     document.getElementById('supportOverlay').classList.remove('hidden');
 });
+
+// Кнопка загрузки (новая)
+document.getElementById('loadBtn').addEventListener('click', function() {
+    document.getElementById('loadOverlay').classList.remove('hidden');
+    renderSlots();
+});
+
+function renderSlots() {
+    var slots = SaveSystem.getAllSlots();
+    for (var i = 0; i < SaveSystem.slots.length; i++) {
+        var s = SaveSystem.slots[i];
+        var data = slots[s];
+        var container = document.getElementById('slot-' + s);
+        if (!container) continue;
+        if (data) {
+            container.innerHTML = 
+                '<span class="slot-date">' + data.date + '</span>' +
+                '<span class="slot-progress">' + data.progress + '%</span>' +
+                '<span class="slot-chapter">Глава ' + (data.stats && data.stats.chapter ? data.stats.chapter : '?') + '</span>';
+            container.className = 'slot-card occupied';
+            container.onclick = function(slot) {
+                return function() {
+                    var data = SaveSystem.load(slot);
+                    if (data) {
+                        // Передаём данные в game.html через URL параметры
+                        window.location.href = 'game.html?slot=' + slot;
+                    }
+                };
+            }(s);
+        } else {
+            container.innerHTML = '<span class="slot-empty">Пусто</span>';
+            container.className = 'slot-card empty';
+            container.onclick = null;
+        }
+    }
+}
+
+function closeLoad() {
+    document.getElementById('loadOverlay').classList.add('hidden');
+}
 
 function closeSettings() {
     document.getElementById('settingsOverlay').classList.add('hidden');
