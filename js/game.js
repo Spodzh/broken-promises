@@ -1,5 +1,5 @@
 // ============================================================
-//  ДВИЖОК ИГРЫ (v2.8.0) – с сохранениями и переходами
+//  ДВИЖОК ИГРЫ (v2.8.0) – с анимациями, переходами, эмоциями
 // ============================================================
 var currentScene = storyData.startScene;
 var visited = new Set();
@@ -10,7 +10,7 @@ var stats = {};
 var endingShown = false;
 var currentSlot = null;
 
-// Проверяем, загружена ли игра из слота
+// Проверка слота
 var urlParams = new URLSearchParams(window.location.search);
 var slotParam = urlParams.get('slot');
 if (slotParam) {
@@ -20,7 +20,6 @@ if (slotParam) {
         currentScene = savedData.scene || storyData.startScene;
         visited = new Set(savedData.visited || []);
         stats = savedData.stats || {};
-        // восстанавливаем прогресс
     }
 }
 
@@ -33,6 +32,7 @@ var bgEl = document.getElementById('bg');
 var fillEl = document.getElementById('fill');
 var itemImg = document.getElementById('item-img');
 var itemContainer = document.getElementById('item-image');
+var transitionOverlay = document.getElementById('transition-overlay');
 
 var endingOverlay = document.getElementById('endingOverlay');
 var endingText = document.getElementById('endingText');
@@ -51,9 +51,56 @@ var avatars = {
     'Серёга': 'images/portraits/sergey.png',
     'Дядька Гена': 'images/portraits/gena.png',
     'Мама': 'images/portraits/mom.png',
-    'Продавщица': 'images/portraits/seller.png'
+    'Продавщица': 'images/portraits/seller.png',
+    'Тётя Зина': 'images/portraits/zina.png',
+    'Учительница': 'images/portraits/teacher.png',
+    'Колян': 'images/portraits/kolyan.png',
+    'Бабушка': 'images/portraits/grandma.png'
 };
 var defaultAvatar = 'images/portraits/default.png';
+
+// ===== АНИМАЦИИ АВАТАРОВ =====
+var avatarAnimInterval = null;
+var currentEmotion = 'neutral';
+
+// Карта эмоций (папки с аватарками)
+var emotionMap = {
+    'neutral': 'images/portraits/',
+    'smile': 'images/portraits/smile/',
+    'sad': 'images/portraits/sad/'
+};
+
+function startAvatarAnimations() {
+    if (avatarAnimInterval) clearInterval(avatarAnimInterval);
+    avatarAnimInterval = setInterval(function() {
+        // Моргание (случайно)
+        if (Math.random() < 0.3 && avatarEl.classList.contains('visible')) {
+            avatarEl.style.transition = 'none';
+            avatarEl.style.opacity = '0';
+            setTimeout(function() {
+                avatarEl.style.opacity = '1';
+                avatarEl.style.transition = 'opacity 0.1s steps(2)';
+            }, 100);
+        }
+    }, 4000);
+
+    // Покачивание (CSS-анимация)
+    avatarEl.style.animation = 'avatarFloat 3s infinite alternate ease-in-out';
+}
+
+function stopAvatarAnimations() {
+    if (avatarAnimInterval) clearInterval(avatarAnimInterval);
+    avatarEl.style.animation = '';
+}
+
+function updateAvatarEmotion(emotion) {
+    if (emotion && emotionMap[emotion]) {
+        var base = avatarEl.src.split('/').pop();
+        var newSrc = emotionMap[emotion] + base;
+        avatarEl.src = newSrc;
+        currentEmotion = emotion;
+    }
+}
 
 // ===== МУЗЫКА =====
 var bgMusic = document.getElementById('bgMusic');
@@ -96,11 +143,9 @@ function trackChoice(choiceText, nextId) {
     if (nextId === "ending_good_1" || nextId === "ending_good_2") stats.ending = "Хорошая";
     if (nextId === "ending_mid_1" || nextId === "ending_mid_2") stats.ending = "Средняя";
     if (nextId === "final_choice_bad") stats.ending = "Плохая";
-    // Глава
     if (nextId.indexOf("chapter_") !== -1) {
         stats.chapter = parseInt(nextId.split('_')[1]);
     }
-    // Сохраняем после каждого выбора (в текущий слот или автосохранение)
     autoSave();
 }
 
@@ -117,6 +162,15 @@ function autoSave() {
     }
 }
 
+// ===== ПИКСЕЛЬНЫЙ ПЕРЕХОД =====
+function fadeToScene(sceneId) {
+    transitionOverlay.classList.add('active');
+    setTimeout(function() {
+        render(sceneId);
+        transitionOverlay.classList.remove('active');
+    }, 500);
+}
+
 function render(sceneId) {
     var scene = storyData.scenes.find(function(s) { return s.id === sceneId; });
     if (!scene) {
@@ -125,7 +179,6 @@ function render(sceneId) {
     }
     visited.add(sceneId);
     currentScene = sceneId;
-    // Сохраняем при переходе на новую сцену
     autoSave();
 
     // Фон
@@ -140,9 +193,14 @@ function render(sceneId) {
         var avatarPath = avatars[scene.speaker] || defaultAvatar;
         avatarEl.src = avatarPath;
         avatarEl.className = 'visible';
+        // Запускаем анимации аватара (если есть)
+        if (!avatarAnimInterval) startAvatarAnimations();
+        // Эмоция (по умолчанию нейтральная)
+        // В будущем можно добавить поле emotion в сцены
     } else {
         speakerEl.className = '';
         avatarEl.className = '';
+        stopAvatarAnimations();
     }
 
     // Картинка предмета
@@ -190,7 +248,7 @@ function showChoices(scene) {
             btn.onclick = function() {
                 trackChoice(choice.text, choice.nextId);
                 if (choice.nextId) {
-                    render(choice.nextId);
+                    fadeToScene(choice.nextId);
                 } else {
                     showEnd();
                 }
